@@ -6,10 +6,12 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.directory.api.ldap.model.entry.Attribute;
 import org.apache.directory.api.ldap.model.entry.DefaultEntry;
 import org.apache.directory.api.ldap.model.entry.Entry;
 import org.apache.directory.api.ldap.model.exception.LdapException;
 import org.hy.common.Date;
+import org.hy.common.Help;
 import org.hy.common.StringHelp;
 
 
@@ -19,8 +21,13 @@ import org.hy.common.StringHelp;
 /**
  * LDAP条目配置翻译官。
  * 
- *  1. Java类中的@Ldap注解将被翻译为本类。
- *  2. 再通过本类的 toEntry(...) 方法即可翻译成为 Apache LDAP API 中的条目对象。
+ *  1. 将Java值对象翻译为LDAP条目
+ *     1.1. Java类中的 @Ldap 注解将被翻译为本类。
+ *     1.2. 再通过本类的 toEntry(...) 方法即可翻译成为 Apache LDAP API 中的条目对象。
+ *     
+ *  2. 将LDAP条目翻译为Java值对象的实例
+ *     2.1. Java类中的 @Ldap 注解将被翻译为本类。
+ *     2.2. 再通过本类的 toObject(...) 方法即可翻译 Apache LDAP API 中的条目对象为Java值对象。
  *
  * @author      ZhengWei(HY)
  * @createDate  2017-02-14
@@ -28,6 +35,9 @@ import org.hy.common.StringHelp;
  */
 public class LdapEntry
 {
+    
+    /** Java值对象类的元类型。即有 @Ldap 注解的类 */
+    private Class<?>          metaClass;
 
     /** 
      * LDAP中的"对象类ObjectClass"的名称。
@@ -36,22 +46,29 @@ public class LdapEntry
      */
     private List<String>       objectClasses;
     
-    
-    
     /**
-     * LDAP中的"属性Attribute"的名称 与对应的 Java属性对象
+     * LDAP中的"属性Attribute"的名称 与对应的 Java对象的getter()方法
      * 
      * Map.key   = "属性名称"。 如，o、ou等。
      * Map.value = Java属性对象的getter()方法
      */
-    private Map<String ,Method>  elements;
+    private Map<String ,Method>  elementsToLDAP;
+    
+    /**
+     * LDAP中的"属性Attribute"的名称 与对应的 Java对象的setter()方法
+     * 
+     * Map.key   = "属性名称"。 如，o、ou等。
+     * Map.value = Java属性对象的setter()方法
+     */
+    private Map<String ,Method>  elementsToObject;
 
     
     
     public LdapEntry()
     {
-        this.objectClasses = new ArrayList<String>();
-        this.elements      = new LinkedHashMap<String ,Method>();
+        this.objectClasses    = new ArrayList<String>();
+        this.elementsToLDAP   = new LinkedHashMap<String ,Method>();
+        this.elementsToObject = new LinkedHashMap<String ,Method>();
     }
     
     
@@ -63,12 +80,14 @@ public class LdapEntry
      * @createDate  2017-02-14
      * @version     v1.0
      *
+     * @param i_MetaClass      Java值对象类的元类型。即有 @Ldap 注解的类
      * @param i_ObjectClasses  LDAP中的"对象类ObjectClass"的名称。多个有逗号分隔。有先后有顺序。
      */
-    public LdapEntry(String i_ObjectClasses)
+    public LdapEntry(Class<?> i_MetaClass ,String i_ObjectClasses)
     {
         this();
         
+        this.metaClass = i_MetaClass;
         String [] v_ObjectClasses = StringHelp.replaceAll(i_ObjectClasses ,new String[]{" " ,"\r" ,"\t"} ,new String[]{""}).split(",");
         
         for (int i=0; i<v_ObjectClasses.length; i++)
@@ -87,17 +106,26 @@ public class LdapEntry
      * @version     v1.0
      *
      * @param i_Name
-     * @param i_Method
+     * @param i_GetMethod
+     * @param i_SetMethod
      */
-    public void putElement(String i_Name ,Method i_Method)
+    public void putElement(String i_Name ,Method i_GetMethod ,Method i_SetMethod)
     {
-        this.elements.put(i_Name ,i_Method);
+        if ( i_GetMethod != null )
+        {
+            this.elementsToLDAP  .put(i_Name ,i_GetMethod);
+        }
+        
+        if ( i_SetMethod != null )
+        {
+            this.elementsToObject.put(i_Name ,i_SetMethod);
+        }
     }
     
     
     
     /**
-     * 将本类转为Apache LDAP API 中的条目对象
+     * 将Java值对象翻译为LDAP条目
      * 
      * @author      ZhengWei(HY)
      * @createDate  2017-02-14
@@ -116,7 +144,7 @@ public class LdapEntry
             v_Entry.add("objectClass" ,this.objectClasses.get(v_Index));
         }
         
-        for (Map.Entry<String ,Method> v_Item : this.elements.entrySet())
+        for (Map.Entry<String ,Method> v_Item : this.elementsToLDAP.entrySet())
         {
             try
             {
@@ -128,16 +156,102 @@ public class LdapEntry
             }
             catch (Exception exce)
             {
-                System.out.println(Date.getNowTime().getFull() + " LDAP Attribute name(" + v_Item.getKey() + ") call method(" + v_Item.getValue().getName() + ") is error.");
+                System.out.println(Date.getNowTime().getFull() + " LDAP Attribute name(" + v_Item.getKey() + ") get method(" + v_Item.getValue().getName() + ") value is error.");
                 exce.printStackTrace();
             }
         }
         
         return v_Entry;
     }
+    
+    
+    
+    /**
+     * 将LDAP条目翻译为Java值对象的实例
+     * 
+     * @author      ZhengWei(HY)
+     * @createDate  2017-02-15
+     * @version     v1.0
+     *
+     * @param i_Entry   条目对象
+     * @return
+     */
+    public Object toObject(Entry i_Entry)
+    {
+        Object v_Ret = this.newObject();
+        
+        if ( v_Ret == null )
+        {
+            return v_Ret;
+        }
+        
+        for (Map.Entry<String ,Method> v_Item : this.elementsToObject.entrySet())
+        {
+            try
+            {
+                Attribute v_Attribute   = i_Entry.get(v_Item.getKey());
+                Object    v_MethodParam = Help.toObject(v_Item.getValue().getParameterTypes()[0] ,v_Attribute.get().getString());
+                v_Item.getValue().invoke(v_Ret ,v_MethodParam);
+            }
+            catch (Exception exce)
+            {
+                System.out.println(Date.getNowTime().getFull() + " LDAP Attribute name(" + v_Item.getKey() + ") set method(" + v_Item.getValue().getName() + ") value is error.");
+                exce.printStackTrace();
+            }
+        }
+        
+        return v_Ret;
+    }
+    
+    
+    
+    /**
+     * 构造Java值对象类
+     * 
+     * @author      ZhengWei(HY)
+     * @createDate  2017-02-15
+     * @version     v1.0
+     *
+     * @return
+     */
+    private Object newObject()
+    {
+        try
+        {
+            return this.metaClass.newInstance();
+        }
+        catch (Exception exce)
+        {
+            exce.printStackTrace();
+        }
+        
+        return null;
+    }
 
 
     
+    /**
+     * 获取：Java值对象类的元类型。即有 @Ldap 注解的类
+     */
+    public Class<?> getMetaClass()
+    {
+        return metaClass;
+    }
+
+
+    
+    /**
+     * 设置：Java值对象类的元类型。即有 @Ldap 注解的类
+     * 
+     * @param metaClass 
+     */
+    public void setMetaClass(Class<?> metaClass)
+    {
+        this.metaClass = metaClass;
+    }
+
+
+
     /**
      * 获取：LDAP中的"对象类ObjectClass"的名称。
      * 
@@ -165,29 +279,57 @@ public class LdapEntry
 
     
     /**
-     * 获取：LDAP中的"属性Attribute"的名称 与对应的 Java属性对象
+     * 获取：LDAP中的"属性Attribute"的名称 与对应的 Java对象的getter()方法
      * 
      * Map.key   = "属性名称"。 如，o、ou等。
      * Map.value = Java属性对象的getter()方法
      */
-    public Map<String ,Method> getElements()
+    public Map<String ,Method> getElementsToLDAP()
     {
-        return elements;
+        return elementsToLDAP;
     }
 
 
     
     /**
-     * 设置：LDAP中的"属性Attribute"的名称 与对应的 Java属性对象
+     * 设置：LDAP中的"属性Attribute"的名称 与对应的 Java对象的getter()方法
      * 
      * Map.key   = "属性名称"。 如，o、ou等。
      * Map.value = Java属性对象的getter()方法
      * 
-     * @param elements 
+     * @param elementsToLDAP 
      */
-    public void setElements(Map<String ,Method> elements)
+    public void setElementsToLDAP(Map<String ,Method> elementsToLDAP)
     {
-        this.elements = elements;
+        this.elementsToLDAP = elementsToLDAP;
+    }
+
+
+    
+    /**
+     * 获取：LDAP中的"属性Attribute"的名称 与对应的 Java对象的setter()方法
+     * 
+     * Map.key   = "属性名称"。 如，o、ou等。
+     * Map.value = Java属性对象的setter()方法
+     */
+    public Map<String ,Method> getElementsToObject()
+    {
+        return elementsToObject;
+    }
+
+
+    
+    /**
+     * 设置：LDAP中的"属性Attribute"的名称 与对应的 Java对象的setter()方法
+     * 
+     * Map.key   = "属性名称"。 如，o、ou等。
+     * Map.value = Java属性对象的setter()方法
+     * 
+     * @param elementsToObject 
+     */
+    public void setElementsToObject(Map<String ,Method> elementsToObject)
+    {
+        this.elementsToObject = elementsToObject;
     }
     
 }

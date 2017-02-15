@@ -1,6 +1,7 @@
 package org.hy.common.ldap.junit;
 
 import org.hy.common.ldap.annotation.Ldap;
+import org.hy.common.xml.SerializableDef;
 
 
 
@@ -16,9 +17,13 @@ import org.hy.common.ldap.annotation.Ldap;
  * @version     v1.0
  */
 @Ldap("top ,organizationalUnit")
-public class User
+public class User extends SerializableDef
 {
     
+    private static final long serialVersionUID = -7490271838098991229L;
+    
+    
+
     @Ldap(name="ou")
     private String name;
     

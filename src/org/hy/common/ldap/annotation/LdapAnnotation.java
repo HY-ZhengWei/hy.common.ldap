@@ -12,6 +12,7 @@ import org.hy.common.ClassReflect;
 import org.hy.common.Help;
 import org.hy.common.MethodReflect;
 import org.hy.common.PartitionMap;
+import org.hy.common.TablePartitionRID;
 import org.hy.common.xml.XJava;
 
 
@@ -37,6 +38,7 @@ public class LdapAnnotation
         PartitionMap<ElementType ,ClassInfo> v_Annotations     = ClassReflect.getAnnotations(Help.getClasses() ,Ldap.class);
         List<ClassInfo>                      v_ClassInfos      = null;
         ClassInfo                            v_ClassInfo       = null;
+        TablePartitionRID<String ,Method>    v_GetSetMethods   = null;
         Ldap                                 v_AnnoObjectClass = null;
         Map<Class<?> ,LdapEntry>             v_LdapEntrys      = new Hashtable<Class<?> ,LdapEntry>();
         LdapEntry                            v_LdapEntry       = null;
@@ -50,22 +52,22 @@ public class LdapAnnotation
                 for (int i=0; i<v_ClassInfos.size(); i++)
                 {
                     v_ClassInfo       = v_ClassInfos.get(i);
+                    v_GetSetMethods   = MethodReflect.getGetSetMethods(v_ClassInfo.getClassObj());
                     v_AnnoObjectClass = v_ClassInfo.getClassObj().getAnnotation(Ldap.class);
-                    v_LdapEntry       = new LdapEntry(Help.NVL(v_AnnoObjectClass.objectClass() ,v_AnnoObjectClass.value()));
+                    v_LdapEntry       = new LdapEntry(v_ClassInfo.getClassObj() ,Help.NVL(v_AnnoObjectClass.objectClass() ,v_AnnoObjectClass.value()));
                     
                     if ( !Help.isNull(v_ClassInfo.getFields()) )
                     {
                         // Java对象属性：Ldap.name  注解功能的实现
                         for (int x=0; x<v_ClassInfo.getFields().size(); x++)
                         {
-                            Field  v_Field    = v_ClassInfo.getFields().get(x);
-                            Method v_Method   = MethodReflect.getGetMethod(v_ClassInfo.getClassObj() ,v_Field.getName() ,true);
-                            Ldap   v_AnnoAttr = v_Field.getAnnotation(Ldap.class);
+                            Field  v_Field     = v_ClassInfo.getFields().get(x);
+                            String v_FieldName = v_Field.getName().substring(0 ,1).toUpperCase() + v_Field.getName().substring(1);
+                            Method v_GetMethod = v_GetSetMethods.getRow(MethodReflect.$Partition_GET ,v_FieldName);
+                            Method v_SetMethod = v_GetSetMethods.getRow(MethodReflect.$Partition_SET ,v_FieldName);
+                            Ldap   v_AnnoAttr  = v_Field.getAnnotation(Ldap.class);
                             
-                            if ( v_Method != null )
-                            {
-                                v_LdapEntry.putElement(Help.NVL(v_AnnoAttr.name() ,Help.NVL(v_AnnoAttr.value() ,v_Field.getName())) ,v_Method);
-                            }
+                            v_LdapEntry.putElement(Help.NVL(v_AnnoAttr.name() ,Help.NVL(v_AnnoAttr.value() ,v_Field.getName())) ,v_GetMethod ,v_SetMethod);
                         }
                     }
                     
@@ -91,16 +93,24 @@ public class LdapAnnotation
                                     v_Name = v_Name.substring(2);
                                 }
                             }
+                            else
+                            {
+                                v_Name = v_Name.substring(0 ,1).toUpperCase() + v_Name.substring(1);
+                            }
                             
-                            v_LdapEntry.putElement(v_Name ,v_Method);
+                            Method v_GetMethod = v_GetSetMethods.getRow(MethodReflect.$Partition_GET ,v_Name);
+                            Method v_SetMethod = v_GetSetMethods.getRow(MethodReflect.$Partition_SET ,v_Name);
+                            
+                            v_LdapEntry.putElement(v_Name ,v_GetMethod ,v_SetMethod);
                         }
                     }
                     
                     // 只保存有对象类和属性的LDAP条目信息
-                    if ( !Help.isNull(v_LdapEntry.getObjectClasses()) 
-                      && !Help.isNull(v_LdapEntry.getElements()) )
+                    if (  !Help.isNull(v_LdapEntry.getObjectClasses()) 
+                      && (!Help.isNull(v_LdapEntry.getElementsToLDAP())
+                       || !Help.isNull(v_LdapEntry.getElementsToObject())) )
                     {
-                        v_LdapEntrys.put(v_ClassInfo.getClassObj() ,v_LdapEntry);
+                        v_LdapEntrys.put(v_LdapEntry.getMetaClass() ,v_LdapEntry);
                     }
                 }
             }

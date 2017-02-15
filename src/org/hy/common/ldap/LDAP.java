@@ -3,6 +3,7 @@ package org.hy.common.ldap;
 import java.util.Map;
 
 import org.apache.directory.api.ldap.model.cursor.Cursor;
+import org.apache.directory.api.ldap.model.cursor.EntryCursor;
 import org.apache.directory.api.ldap.model.entry.DefaultEntry;
 import org.apache.directory.api.ldap.model.entry.Entry;
 import org.apache.directory.api.ldap.model.exception.LdapException;
@@ -13,10 +14,13 @@ import org.apache.directory.api.ldap.model.message.DeleteRequest;
 import org.apache.directory.api.ldap.model.message.DeleteRequestImpl;
 import org.apache.directory.api.ldap.model.message.DeleteResponse;
 import org.apache.directory.api.ldap.model.message.ResultCodeEnum;
+import org.apache.directory.api.ldap.model.message.SearchScope;
 import org.apache.directory.api.ldap.model.message.controls.ManageDsaITImpl;
+import org.apache.directory.api.ldap.model.message.controls.OpaqueControl;
 import org.apache.directory.api.ldap.model.name.Dn;
 import org.apache.directory.ldap.client.api.LdapConnection;
 import org.apache.directory.ldap.client.api.LdapConnectionPool;
+import org.apache.directory.ldap.client.api.LdapNetworkConnection;
 import org.hy.common.ldap.annotation.LdapAnnotation;
 import org.hy.common.ldap.annotation.LdapEntry;
 import org.hy.common.xml.XJava;
@@ -39,8 +43,10 @@ import org.hy.common.xml.XJava;
 public class LDAP
 {
     
+    public static final String $ControlOID = "1.2.840.113556.1.4.805";
+    
     /** LDAP的连接池 */
-    LdapConnectionPool connPool;
+    private LdapConnectionPool connPool;
     
     
     
@@ -59,7 +65,7 @@ public class LDAP
      * @createDate  2017-02-13
      * @version     v1.0
      *
-     * @return
+     * @return      返回对象的具体实现类是：org.apache.directory.ldap.client.api.LdapNetworkConnection
      * @throws LdapException
      */
     public LdapConnection getConnection() throws LdapException
@@ -143,6 +149,48 @@ public class LDAP
     public static LdapEntry getLdapEntry(Class<?> i_Class)
     {
         return ((Map<Class<?> ,LdapEntry>)XJava.getObject(LdapAnnotation.$LdapClassesXID)).get(i_Class);
+    }
+    
+    
+    
+    public Object getEntry(String i_DN ,Class<?> i_MetaClass)
+    {
+        LdapConnection v_Conn      = null;
+        LdapEntry      v_LdapEntry = getLdapEntry(i_MetaClass);
+        EntryCursor    v_Cursor    = null;
+        Object         v_Ret       = null;
+        
+        if ( v_LdapEntry == null )
+        {
+            return null;
+        }
+        
+        try
+        {
+            v_Conn   = this.getConnection();
+            v_Cursor = v_Conn.search(new Dn(i_DN) ,"(objectclass=*)" ,SearchScope.OBJECT);
+            
+            while ( v_Cursor.next() )
+            {
+                Entry v_Entry = v_Cursor.get();
+                if ( v_Entry != null )
+                {
+                    v_Ret = v_LdapEntry.toObject(v_Entry);
+                    break;
+                }
+            }
+        }
+        catch (Exception exce)
+        {
+            exce.printStackTrace();
+        }
+        finally
+        {
+            LDAP.closeCursor(    v_Cursor);
+            LDAP.closeConnection(v_Conn);
+        }
+        
+        return v_Ret;
     }
     
     
@@ -277,7 +325,7 @@ public class LDAP
      * @createDate  2017-02-15
      * @version     v1.0
      *
-     * @param i_DN
+     * @param i_DN  条目标识
      * @return
      */
     public boolean delEntry(String i_DN)
@@ -291,6 +339,57 @@ public class LDAP
             v_Request.setName(new Dn(i_DN));
             
             v_Conn = this.getConnection();
+            v_Response = v_Conn.delete(v_Request);
+        }
+        catch (Exception exce)
+        {
+            exce.printStackTrace();
+        }
+        finally
+        {
+            closeConnection(v_Conn);
+        }
+        
+        
+        if ( v_Response != null && ResultCodeEnum.SUCCESS.equals(v_Response.getLdapResult().getResultCode()) )
+        {
+            return true;
+        }
+        else
+        {
+            return false;
+        }
+    }
+    
+    
+    
+    /**
+     * 删除条目树（递归删除条目）
+     * 
+     * LdapNetworkConnection类中是一个deleteTree()方法的，但没有返回值，真不知道开发者是怎么考虑的。
+     * 看过它的源码，发现它是通过delete()方法实现的，只是添加一个控制对象。所以本方法实现思路相同，如下。
+     * 
+     * @see org.apache.directory.ldap.client.api.LdapNetworkConnection.deleteTree()
+     * 
+     * @author      ZhengWei(HY)
+     * @createDate  2017-02-15
+     * @version     v1.0
+     *
+     * @param i_DN  条目标识
+     * @return
+     */
+    public boolean delEntryTree(String i_DN)
+    {
+        LdapConnection v_Conn     = null;
+        DeleteRequest  v_Request  = new DeleteRequestImpl();
+        DeleteResponse v_Response = null;
+        
+        try
+        {
+            v_Request.setName(new Dn(i_DN));
+            
+            v_Request.addControl(new OpaqueControl($ControlOID));
+            v_Conn = (LdapNetworkConnection)this.getConnection();
             v_Response = v_Conn.delete(v_Request);
         }
         catch (Exception exce)
