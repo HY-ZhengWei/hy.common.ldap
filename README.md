@@ -203,7 +203,7 @@ __主导思想：__ 通过 @Ldap 注解十分方便的实现Java写入、读取L
 
 
 ### 查询所有子条目Entry的代码样例
-	LDAP         v_LDAP   = (LDAP)XJava.getObject("LDAP");
+	LDAP       v_LDAP   = (LDAP)XJava.getObject("LDAP");
 	List<User> v_Entrys = (List<User>)v_LDAP.queryEntryTrees("dc=maxcrc,dc=com");
 
 
