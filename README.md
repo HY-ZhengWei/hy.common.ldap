@@ -94,8 +94,9 @@ __主导思想：__ 通过 @Ldap 注解十分方便的实现Java写入、读取L
 		</xconfig>
 	
 	</config>
-	
-	
+
+
+
 ### 定义"条目翻译官"的代码样例
 条目翻译官有两种作用
 
@@ -104,7 +105,7 @@ __主导思想：__ 通过 @Ldap 注解十分方便的实现Java写入、读取L
   __作用2：__ 将LDAP条目翻译为Java值对象的实例
 
 
-	/** 定义ObjectClass */
+	/** 定义ObjectClass。多类名个用英文逗号分隔。 */
 	@Ldap("top ,organizationalUnit")
 	public class User
 	{
@@ -153,3 +154,36 @@ __主导思想：__ 通过 @Ldap 注解十分方便的实现Java写入、读取L
 	        this.password = password;
 	    }
 	}
+
+
+
+### 添加条目Entry的代码样例
+	LDAP v_LDAP = (LDAP)XJava.getObject("LDAP");
+	        
+	User v_User = new User();
+	v_User.setId(      "ou=ZhengWei,dc=maxcrc,dc=com");
+	v_User.setName(    "ZhengWei");
+	v_User.setPassword("1234567890");
+	
+	boolean v_Ret = v_LDAP.addEntry(v_User);
+	
+	
+	
+### 批量添加条目Entry的代码样例
+	LDAP         v_LDAP   = (LDAP)XJava.getObject("LDAP");
+	User         v_User01 = new User();
+	User         v_User02 = new User();
+	List<Object> v_Values = new ArrayList<Object>();
+	
+	v_User01.setId(      "ou=Batch01,dc=maxcrc,dc=com");
+	v_User01.setName(    "Batch01");
+	v_User01.setPassword("1234567890");
+	
+	v_User02.setId(      "ou=Batch02,dc=maxcrc,dc=com");
+	v_User02.setName(    "Batch02");
+	v_User02.setPassword("0987654321");
+	
+	v_Values.add(v_User01);
+	v_Values.add(v_User02);
+	
+	boolean v_Ret = v_LDAP.addEntrys(v_Values);

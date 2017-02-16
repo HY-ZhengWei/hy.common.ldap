@@ -1,5 +1,6 @@
 package org.hy.common.ldap.junit;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.hy.common.Date;
@@ -72,7 +73,40 @@ public class JU_LDAP
     
     
     @Test
-    public void test_002_QueryEntry()
+    public void test_002_Adds()
+    {
+        LDAP         v_LDAP   = (LDAP)XJava.getObject("LDAP");
+        User         v_User01 = new User();
+        User         v_User02 = new User();
+        List<Object> v_Values = new ArrayList<Object>();
+        
+        v_User01.setId(      "ou=Batch01,dc=maxcrc,dc=com");
+        v_User01.setName(    "Batch01");
+        v_User01.setPassword("1234567890");
+        
+        v_User02.setId(      "ou=Batch02,dc=maxcrc,dc=com");
+        v_User02.setName(    "Batch02");
+        v_User02.setPassword("0987654321");
+        
+        v_Values.add(v_User01);
+        v_Values.add(v_User02);
+        
+        boolean v_Ret = v_LDAP.addEntrys(v_Values);
+        
+        if ( v_Ret )
+        {
+            System.out.println(Date.getNowTime().getFullMilli() + "  添加成功.");
+        }
+        else
+        {
+            System.out.println(Date.getNowTime().getFullMilli() + "  添加异常.");
+        }
+    }
+    
+    
+    
+    @Test
+    public void test_003_QueryEntry()
     {
         LDAP v_LDAP = (LDAP)XJava.getObject("LDAP");
         User v_User = (User)v_LDAP.queryEntry("ou=ZhengWei,dc=maxcrc,dc=com");
@@ -90,7 +124,7 @@ public class JU_LDAP
     
     
     @Test
-    public void test_003_QueryEntryChilds()
+    public void test_004_QueryEntryChilds()
     {
         LDAP         v_LDAP   = (LDAP)XJava.getObject("LDAP");
         List<Object> v_Entrys = v_LDAP.queryEntryChilds("dc=maxcrc,dc=com");
@@ -109,7 +143,7 @@ public class JU_LDAP
     
     
     @Test
-    public void test_004_QueryEntryTrees()
+    public void test_005_QueryEntryTrees()
     {
         LDAP         v_LDAP   = (LDAP)XJava.getObject("LDAP");
         List<Object> v_Entrys = v_LDAP.queryEntryTrees("dc=maxcrc,dc=com");
