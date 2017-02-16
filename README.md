@@ -170,6 +170,9 @@ __主导思想：__ 通过 @Ldap 注解十分方便的实现Java写入、读取L
 	
 	
 ### 批量添加条目Entry的代码样例
+注1：有顺序的添加。可实现先添加父条目，再添加子条目的功能
+注2：集合中的每个元素可以是不同类型的，对应不同类型的条目。
+
 	LDAP         v_LDAP   = (LDAP)XJava.getObject("LDAP");
 	User         v_User01 = new User();
 	User         v_User02 = new User();
