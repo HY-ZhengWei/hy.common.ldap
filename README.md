@@ -18,7 +18,7 @@ __主导思想：__ 通过 @Ldap 注解十分方便的实现Java写入、读取L
 
 	<?xml version="1.0" encoding="UTF-8"?>
 
-		<config>
+	<config>
 	
 		<import name="xconfig"         class="java.util.ArrayList" />
 		<import name="connConfig"      class="org.apache.directory.ldap.client.api.LdapConnectionConfig" />
