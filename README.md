@@ -104,13 +104,13 @@ __主导思想：__ 通过 @Ldap 注解十分方便的实现Java写入、读取L
   
   __作用2：__ 将LDAP条目翻译为Java值对象的实例
 
-
+```java
 	/** 定义ObjectClass。多类名个用英文逗号分隔。 */
 	@Ldap("top ,organizationalUnit")
 	public class User
 	{
 	    
-	    <font color="green">/** 定义DN */</font>
+	    /** 定义DN */
 	    @Ldap(type=LdapType.DN)
 	    private String id;
 	
