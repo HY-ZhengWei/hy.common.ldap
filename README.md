@@ -16,6 +16,7 @@ __主导思想：__ 通过 @Ldap 注解十分方便的实现Java写入、读取L
   __特点3：__ 可用XML配置文件配置，如下（见LDAP.Config.Template.xml）
 
 
+```xml
 	<?xml version="1.0" encoding="UTF-8"?>
 
 	<config>
@@ -158,6 +159,8 @@ __主导思想：__ 通过 @Ldap 注解十分方便的实现Java写入、读取L
 
 
 ### 添加条目Entry的代码样例
+
+```java
 	LDAP v_LDAP = (LDAP)XJava.getObject("LDAP");
 	        
 	User v_User = new User();
@@ -173,6 +176,7 @@ __主导思想：__ 通过 @Ldap 注解十分方便的实现Java写入、读取L
 注1：有顺序的添加。可实现先添加父条目，再添加子条目的功能
 注2：集合中的每个元素可以是不同类型的，对应不同类型的LDAP类。
 
+```java
 	LDAP         v_LDAP   = (LDAP)XJava.getObject("LDAP");
 	User         v_User01 = new User();
 	User         v_User02 = new User();
@@ -194,29 +198,39 @@ __主导思想：__ 通过 @Ldap 注解十分方便的实现Java写入、读取L
 
 
 ### 查询具体条目Entry的代码样例
+
+```java
 	LDAP v_LDAP = (LDAP)XJava.getObject("LDAP");
 	User v_User = (User)v_LDAP.queryEntry("ou=ZhengWei,dc=maxcrc,dc=com");
 
 
 
 ### 查询子条目Entry(不包含子子条目)的代码样例
+
+```java
 	LDAP       v_LDAP   = (LDAP)XJava.getObject("LDAP");
 	List<User> v_Entrys = (List<User>)v_LDAP.queryEntryChilds("dc=maxcrc,dc=com");
 
 
 
 ### 查询所有子条目Entry的代码样例
+
+```java
 	LDAP       v_LDAP   = (LDAP)XJava.getObject("LDAP");
 	List<User> v_Entrys = (List<User>)v_LDAP.queryEntryTrees("dc=maxcrc,dc=com");
 
 
 
 ### 判定条目Entry是否存在的代码样例
+
+```java
 	LDAP    v_LDAP     = (LDAP)XJava.getObject("LDAP");
 	boolean v_IsExists = v_LDAP.isExists("ou=ZhengWei,dc=maxcrc,dc=com");
 
 
 
 ### 删除条目Entry的代码样例
+
+```java
 	LDAP    v_LDAP = (LDAP)XJava.getObject("LDAP");
 	boolean v_Ret  = v_LDAP.delEntry("ou=ZhengWei,dc=maxcrc,dc=com");
