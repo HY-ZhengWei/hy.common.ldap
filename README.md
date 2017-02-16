@@ -94,3 +94,52 @@ __主导思想：__ 通过 @Ldap 注解十分方便的实现Java写入、读取L
 		</xconfig>
 	
 	</config>
+	
+	
+### 构建"条目翻译官"代码样例
+
+	@Ldap("top ,organizationalUnit")
+	public class User
+	{
+	    
+	    @Ldap(type=LdapType.DN)
+	    private String id;
+	
+	    @Ldap(name="ou")
+	    private String name;
+	    
+	    @Ldap("userPassword")
+	    private String password;
+	
+	    
+	    
+	    public String getId()
+	    {
+	        return id;
+	    }
+	    
+	    public void setId(String id)
+	    {
+	        this.id = id;
+	    }
+	
+	    public String getName()
+	    {
+	        return name;
+	    }
+	    
+	    public void setName(String name)
+	    {
+	        this.name = name;
+	    }
+	
+	    public String getPassword()
+	    {
+	        return password;
+	    }
+	    
+	    public void setPassword(String password)
+	    {
+	        this.password = password;
+	    }
+	}
