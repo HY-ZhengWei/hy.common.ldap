@@ -155,6 +155,7 @@ __主导思想：__ 通过 @Ldap 注解十分方便的实现Java写入、读取L
 	        this.password = password;
 	    }
 	}
+```
 
 
 
@@ -169,7 +170,8 @@ __主导思想：__ 通过 @Ldap 注解十分方便的实现Java写入、读取L
 	v_User.setPassword("1234567890");
 	
 	boolean v_Ret = v_LDAP.addEntry(v_User);
-	
+```
+
 	
 	
 ### 批量添加条目Entry的代码样例
@@ -194,6 +196,7 @@ __主导思想：__ 通过 @Ldap 注解十分方便的实现Java写入、读取L
 	v_Values.add(v_User02);
 	
 	boolean v_Ret = v_LDAP.addEntrys(v_Values);
+```
 
 
 
@@ -202,6 +205,7 @@ __主导思想：__ 通过 @Ldap 注解十分方便的实现Java写入、读取L
 ```java
 	LDAP v_LDAP = (LDAP)XJava.getObject("LDAP");
 	User v_User = (User)v_LDAP.queryEntry("ou=ZhengWei,dc=maxcrc,dc=com");
+```
 
 
 
@@ -210,6 +214,7 @@ __主导思想：__ 通过 @Ldap 注解十分方便的实现Java写入、读取L
 ```java
 	LDAP       v_LDAP   = (LDAP)XJava.getObject("LDAP");
 	List<User> v_Entrys = (List<User>)v_LDAP.queryEntryChilds("dc=maxcrc,dc=com");
+```
 
 
 
@@ -218,6 +223,7 @@ __主导思想：__ 通过 @Ldap 注解十分方便的实现Java写入、读取L
 ```java
 	LDAP       v_LDAP   = (LDAP)XJava.getObject("LDAP");
 	List<User> v_Entrys = (List<User>)v_LDAP.queryEntryTrees("dc=maxcrc,dc=com");
+```
 
 
 
@@ -226,6 +232,7 @@ __主导思想：__ 通过 @Ldap 注解十分方便的实现Java写入、读取L
 ```java
 	LDAP    v_LDAP     = (LDAP)XJava.getObject("LDAP");
 	boolean v_IsExists = v_LDAP.isExists("ou=ZhengWei,dc=maxcrc,dc=com");
+```
 
 
 
@@ -234,3 +241,4 @@ __主导思想：__ 通过 @Ldap 注解十分方便的实现Java写入、读取L
 ```java
 	LDAP    v_LDAP = (LDAP)XJava.getObject("LDAP");
 	boolean v_Ret  = v_LDAP.delEntry("ou=ZhengWei,dc=maxcrc,dc=com");
+```
