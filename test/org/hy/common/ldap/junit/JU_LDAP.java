@@ -1,11 +1,9 @@
 package org.hy.common.ldap.junit;
 
-import org.apache.directory.api.ldap.model.cursor.EntryCursor;
-import org.apache.directory.api.ldap.model.entry.Entry;
-import org.apache.directory.api.ldap.model.message.SearchScope;
-import org.apache.directory.api.ldap.model.name.Dn;
-import org.apache.directory.ldap.client.api.LdapConnection;
+import java.util.List;
+
 import org.hy.common.Date;
+import org.hy.common.Help;
 import org.hy.common.ldap.LDAP;
 import org.hy.common.xml.XJava;
 import org.hy.common.xml.annotation.XType;
@@ -20,6 +18,11 @@ import org.junit.runners.MethodSorters;
 
 /**
  * 测试：LDAP目录服务的操作类
+ * 
+ * 当时的测试环境为：OpenLDAP 2.4.42
+ * 使用API为：Apache LDAP API 未使用OpenLDAP的 JLDAP 库。
+ * 
+ * API能通用的原因是：LDAP都是基于X.500标准，目前存在众多版本的LDAP，而最常见的则是V2和V3两个版本，它们分别于1995年和1997年首次发布。
  *
  * @author      ZhengWei(HY)
  * @createDate  2017-02-13
@@ -86,7 +89,63 @@ public class JU_LDAP
     
     
     @Test
-    public void test_003_Del()
+    public void test_003_QueryEntryChilds()
+    {
+        LDAP         v_LDAP   = (LDAP)XJava.getObject("LDAP");
+        List<Object> v_Entrys = v_LDAP.queryEntryChilds("dc=maxcrc,dc=com");
+        
+        if ( !Help.isNull(v_Entrys) )
+        {
+            System.out.println(Date.getNowTime().getFullMilli() + "  查询成功.");
+            Help.print(v_Entrys);
+        }
+        else
+        {
+            System.out.println(Date.getNowTime().getFullMilli() + "  查询异常.");
+        }
+    }
+    
+    
+    
+    @Test
+    public void test_004_QueryEntryTrees()
+    {
+        LDAP         v_LDAP   = (LDAP)XJava.getObject("LDAP");
+        List<Object> v_Entrys = v_LDAP.queryEntryTrees("dc=maxcrc,dc=com");
+        
+        if ( !Help.isNull(v_Entrys) )
+        {
+            System.out.println(Date.getNowTime().getFullMilli() + "  查询成功.");
+            Help.print(v_Entrys);
+        }
+        else
+        {
+            System.out.println(Date.getNowTime().getFullMilli() + "  查询异常.");
+        }
+    }
+    
+    
+    
+    @Test
+    public void test_011_IsExists()
+    {
+        LDAP    v_LDAP     = (LDAP)XJava.getObject("LDAP");
+        boolean v_IsExists = v_LDAP.isExists("ou=ZhengWei,dc=maxcrc,dc=com");
+        
+        if ( v_IsExists )
+        {
+            System.out.println(Date.getNowTime().getFullMilli() + "  DN存在.");
+        }
+        else
+        {
+            System.out.println(Date.getNowTime().getFullMilli() + "  DN不存在.");
+        }
+    }
+    
+    
+    
+    @Test
+    public void test_012_Del()
     {
         LDAP v_LDAP = (LDAP)XJava.getObject("LDAP");
         
@@ -99,41 +158,6 @@ public class JU_LDAP
         else
         {
             System.out.println(Date.getNowTime().getFullMilli() + "  删除异常.");
-        }
-    }
-    
-    
-    
-    
-    @Test
-    public void test_004_Query()
-    {
-        LDAP           v_LDAP   = (LDAP)XJava.getObject("LDAP");
-        LdapConnection v_Conn   = null;
-        EntryCursor    v_Cursor = null;
-        try
-        {
-            v_Conn   = v_LDAP.getConnection();
-            v_Cursor = v_Conn.search(new Dn("dc=maxcrc,dc=com") ,"(objectclass=*)" ,SearchScope.SUBTREE);
-            
-            while ( v_Cursor.next() )
-            {
-                Entry v_Entry = v_Cursor.get();
-                
-                if ( v_Entry != null )
-                {
-                    System.out.println(v_Entry);
-                }
-            }
-        }
-        catch (Exception exce)
-        {
-            exce.printStackTrace();
-        }
-        finally
-        {
-            LDAP.closeCursor(    v_Cursor);
-            LDAP.closeConnection(v_Conn);
         }
     }
     

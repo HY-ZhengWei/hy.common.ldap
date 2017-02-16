@@ -9,6 +9,7 @@ import java.util.Map;
 import org.apache.directory.api.ldap.model.entry.Attribute;
 import org.apache.directory.api.ldap.model.entry.DefaultEntry;
 import org.apache.directory.api.ldap.model.entry.Entry;
+import org.apache.directory.api.ldap.model.entry.Value;
 import org.apache.directory.api.ldap.model.exception.LdapException;
 import org.hy.common.Date;
 import org.hy.common.Help;
@@ -197,9 +198,16 @@ public class LdapEntry
         {
             try
             {
-                Attribute v_Attribute   = i_Entry.get(v_Item.getKey());
-                Object    v_MethodParam = Help.toObject(v_Item.getValue().getParameterTypes()[0] ,v_Attribute.get().getString());
-                v_Item.getValue().invoke(v_Ret ,v_MethodParam);
+                Attribute v_Attribute = i_Entry.get(v_Item.getKey());
+                if ( v_Attribute != null )
+                {
+                    Value<?> v_Value = v_Attribute.get();
+                    if ( v_Value != null )
+                    {
+                        Object v_MethodParam = Help.toObject(v_Item.getValue().getParameterTypes()[0] ,v_Value.getString());
+                        v_Item.getValue().invoke(v_Ret ,v_MethodParam);
+                    }
+                }
             }
             catch (Exception exce)
             {

@@ -224,6 +224,16 @@ public class LDAP
     
     
     
+    /**
+     * 查询条目。只返回条目本身。即只返回一条记录(树目录的一个节点)。
+     * 
+     * @author      ZhengWei(HY)
+     * @createDate  2017-02-16
+     * @version     v1.0
+     *
+     * @param i_DN           条目标识
+     * @return
+     */
     public Object queryEntry(String i_DN)
     {
         List<Object> v_Ret = this.queryEntrys(i_DN ,SearchScope.OBJECT);
@@ -240,20 +250,60 @@ public class LDAP
     
     
     
-    public Object queryEntryChilds(String i_DN)
+    /**
+     * 查询条目。返回直接隶属于i_DN的子条目，不返回子子条目。
+     * 
+     * @author      ZhengWei(HY)
+     * @createDate  2017-02-16
+     * @version     v1.0
+     *
+     * @param i_DN           条目标识
+     * @return
+     */
+    public List<Object> queryEntryChilds(String i_DN)
     {
         return this.queryEntrys(i_DN ,SearchScope.ONELEVEL);
     }
     
     
     
-    public Object queryEntryTrees(String i_DN)
+    /**
+     * 查询条目。返回直接或间接隶属于i_DN的子条目及子子条目。
+     * 
+     * 即将i_DN下面的树结构上的所有条目都返回。
+     * 
+     * 只用于用 @Ldap 注解的Java对象。
+     * 
+     * @author      ZhengWei(HY)
+     * @createDate  2017-02-16
+     * @version     v1.0
+     *
+     * @param i_DN           条目标识
+     * @return
+     */
+    public List<Object> queryEntryTrees(String i_DN)
     {
         return this.queryEntrys(i_DN ,SearchScope.SUBTREE);
     }
     
     
     
+    /**
+     * 查询条目。
+     * 
+     * 只用于用 @Ldap 注解的Java对象。
+     * 
+     * @author      ZhengWei(HY)
+     * @createDate  2017-02-16
+     * @version     v1.0
+     *
+     * @param i_DN           条目标识
+     * @param i_SearchScope  查询范围
+     *                       搜索范围01：SearchScope.OBJECT    返回输入给定DN，如果它存在的话。
+     *                       搜索范围02：SearchScope.ONELEVEL  返回低于目前DN的所有子元素，不包括当前DN，也不包括与当前DN无直接关系的DN，即树目录深度为1。
+     *                       搜索范围03：SearchScope.SUBTREE   返回所有元素从给出的DN，包括与DN相关的元素，无论树的深度。
+     * @return
+     */
     private List<Object> queryEntrys(String i_DN ,SearchScope i_SearchScope)
     {
         LdapConnection v_Conn   = null;
@@ -294,7 +344,7 @@ public class LDAP
     /**
      * 添加条目。
      * 
-     * 只针对用 @Ldap 注解的Java对象。
+     * 只用于用 @Ldap 注解的Java对象。
      * 
      * @author      ZhengWei(HY)
      * @createDate  2017-02-14
@@ -336,7 +386,7 @@ public class LDAP
     /**
      * 添加条目
      * 
-     * apache LDAP 主要提供三种添加条目的方法。当前用：同步的、服务器有返回响应的。
+     * Apache LDAP 主要提供三种添加条目的方法。当前用：同步的、服务器有返回响应的。
      * 
      * @author      ZhengWei(HY)
      * @createDate  2017-02-14
