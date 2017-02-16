@@ -49,7 +49,12 @@ import org.hy.common.xml.XJava;
 public class LDAP
 {
     
-    public static final String $ControlOID = "1.2.840.113556.1.4.805";
+    public static final String $ControlOID  = "1.2.840.113556.1.4.805";
+    
+    /** Entry.get(...) 方法的参数是不区分大小写的，但为了屏蔽歧义和方便固定义此常量 */
+    public static final String $ObjectClass = "objectClass";
+    
+    
     
     /** LDAP的连接池 */
     private LdapConnectionPool connPool;
@@ -200,7 +205,7 @@ public class LDAP
             return null;
         }
         
-        Attribute          v_Attribute = i_Entry.get("objectclass");
+        Attribute          v_Attribute = i_Entry.get(LDAP.$ObjectClass);
         Iterator<Value<?>> v_Iter      = v_Attribute.iterator();
         StringBuilder      v_Buffer    = new StringBuilder();
         
@@ -313,7 +318,7 @@ public class LDAP
         try
         {
             v_Conn   = this.getConnection();
-            v_Cursor = v_Conn.search(new Dn(i_DN) ,"(objectclass=*)" ,i_SearchScope);
+            v_Cursor = v_Conn.search(new Dn(i_DN) ,"(" + LDAP.$ObjectClass + "=*)" ,i_SearchScope);
             
             while ( v_Cursor.next() )
             {
@@ -351,12 +356,12 @@ public class LDAP
      * @version     v1.0
      *
      * @param i_DN
-     * @param i_Elements
+     * @param i_Values
      * @return
      */
-    public boolean addEntry(String i_DN ,Object i_Elements)
+    public boolean addEntry(Object i_Values)
     {
-        LdapEntry v_LdapEntry = getLdapEntry(i_Elements.getClass());
+        LdapEntry v_LdapEntry = getLdapEntry(i_Values.getClass());
         
         if ( v_LdapEntry == null )
         {
@@ -367,9 +372,7 @@ public class LDAP
         
         try
         {
-            v_Entry = v_LdapEntry.toEntry(i_Elements);
-            
-            v_Entry.setDn(i_DN);
+            v_Entry = v_LdapEntry.toEntry(i_Values);
             
             return this.addEntry(v_Entry);
         }

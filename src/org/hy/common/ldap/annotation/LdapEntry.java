@@ -14,6 +14,7 @@ import org.apache.directory.api.ldap.model.exception.LdapException;
 import org.hy.common.Date;
 import org.hy.common.Help;
 import org.hy.common.StringHelp;
+import org.hy.common.ldap.LDAP;
 
 
 
@@ -53,6 +54,12 @@ public class LdapEntry
      * 格式为：List.get(index) = "对象名称" 。如，top、person等。
      */
     private List<String>       objectClasses;
+    
+    /** 获取DN值的getter方法 */
+    private Method             dnGetMethod;
+    
+    /** 设置DN值的setter方法 */
+    private Method             dnSetMethod;
     
     /**
      * LDAP中的"属性Attribute"的名称 与对应的 Java对象的getter()方法
@@ -108,32 +115,6 @@ public class LdapEntry
     
     
     /**
-     * 添加元素
-     * 
-     * @author      ZhengWei(HY)
-     * @createDate  2017-02-14
-     * @version     v1.0
-     *
-     * @param i_Name
-     * @param i_GetMethod
-     * @param i_SetMethod
-     */
-    public void putElement(String i_Name ,Method i_GetMethod ,Method i_SetMethod)
-    {
-        if ( i_GetMethod != null )
-        {
-            this.elementsToLDAP  .put(i_Name ,i_GetMethod);
-        }
-        
-        if ( i_SetMethod != null )
-        {
-            this.elementsToObject.put(i_Name ,i_SetMethod);
-        }
-    }
-    
-    
-    
-    /**
      * 将Java值对象翻译为LDAP条目
      * 
      * @author      ZhengWei(HY)
@@ -148,11 +129,31 @@ public class LdapEntry
     {
         DefaultEntry v_Entry = new DefaultEntry();
         
+        // 设置LDAP的ObjectClass
         for (int v_Index=0; v_Index<this.objectClasses.size(); v_Index++)
         {
-            v_Entry.add("objectClass" ,this.objectClasses.get(v_Index));
+            v_Entry.add(LDAP.$ObjectClass ,this.objectClasses.get(v_Index));
         }
         
+        // 设置LDAP的DN
+        if ( this.dnGetMethod != null )
+        {
+            try
+            {
+                Object v_Value = this.dnGetMethod.invoke(i_Values);
+                if ( v_Value != null )
+                {
+                    v_Entry.setDn(v_Value.toString());
+                }
+            }
+            catch (Exception exce)
+            {
+                System.out.println(Date.getNowTime().getFull() + " LDAP DN get method(" + this.dnGetMethod.getName() + ") value is error.");
+                exce.printStackTrace();
+            }
+        }
+        
+        // 设置LDAP的属性
         for (Map.Entry<String ,Method> v_Item : this.elementsToLDAP.entrySet())
         {
             try
@@ -194,6 +195,20 @@ public class LdapEntry
             return v_Ret;
         }
         
+        if ( this.dnSetMethod != null )
+        {
+            try
+            {
+                Object v_MethodParam = Help.toObject(this.dnSetMethod.getParameterTypes()[0] ,i_Entry.getDn().toString());
+                this.dnSetMethod.invoke(v_Ret ,v_MethodParam);
+            }
+            catch (Exception exce)
+            {
+                System.out.println(Date.getNowTime().getFull() + " LDAP DN set method(" + this.dnSetMethod.getName() + ") value is error.");
+                exce.printStackTrace();
+            }
+        }
+        
         for (Map.Entry<String ,Method> v_Item : this.elementsToObject.entrySet())
         {
             try
@@ -217,6 +232,32 @@ public class LdapEntry
         }
         
         return v_Ret;
+    }
+    
+    
+    
+    /**
+     * 添加元素
+     * 
+     * @author      ZhengWei(HY)
+     * @createDate  2017-02-14
+     * @version     v1.0
+     *
+     * @param i_Name
+     * @param i_GetMethod
+     * @param i_SetMethod
+     */
+    public void putElement(String i_Name ,Method i_GetMethod ,Method i_SetMethod)
+    {
+        if ( i_GetMethod != null )
+        {
+            this.elementsToLDAP  .put(i_Name ,i_GetMethod);
+        }
+        
+        if ( i_SetMethod != null )
+        {
+            this.elementsToObject.put(i_Name ,i_SetMethod);
+        }
     }
     
     
@@ -318,8 +359,52 @@ public class LdapEntry
         this.objectClasses = objectClasses;
     }
 
+    
+    
+    /**
+     * 获取：获取DN值的getter方法
+     */
+    public Method getDnGetMethod()
+    {
+        return dnGetMethod;
+    }
+
 
     
+    /**
+     * 设置：获取DN值的getter方法
+     * 
+     * @param dnGetMethod 
+     */
+    public void setDnGetMethod(Method dnGetMethod)
+    {
+        this.dnGetMethod = dnGetMethod;
+    }
+
+
+    
+    /**
+     * 获取：设置DN值的setter方法
+     */
+    public Method getDnSetMethod()
+    {
+        return dnSetMethod;
+    }
+
+
+    
+    /**
+     * 设置：设置DN值的setter方法
+     * 
+     * @param dnSetMethod 
+     */
+    public void setDnSetMethod(Method dnSetMethod)
+    {
+        this.dnSetMethod = dnSetMethod;
+    }
+
+
+
     /**
      * 获取：LDAP中的"属性Attribute"的名称 与对应的 Java对象的getter()方法
      * 

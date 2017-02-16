@@ -42,6 +42,26 @@ public @interface Ldap
     
     
     /**
+     * LDAP中的属性的类型。
+     *   类型1. 普通属性（默认值）
+     *   类型2. DN标识。 @Ldap(type=LdapType.DN) 注解在Java类中只允许定义一次。
+     * 
+     * 使用在：Java类的属性上，或Java类的setter、getter方法上。
+     * 
+     * 编码形式如：@Ldap(type=LdapType.DN)
+     *           @Ldap(type=LdapType.Attribute)
+     * 
+     * @author      ZhengWei(HY)
+     * @createDate  2017-02-16
+     * @version     v1.0
+     *
+     * @return
+     */
+    public LdapType type() default LdapType.Attribute;
+    
+    
+    
+    /**
      * LDAP中的"属性Attribute"的名称。
      * 
      * 使用在：Java类的属性上，或Java类的setter、getter方法上。

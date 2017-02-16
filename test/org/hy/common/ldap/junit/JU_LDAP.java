@@ -53,10 +53,11 @@ public class JU_LDAP
         LDAP v_LDAP = (LDAP)XJava.getObject("LDAP");
         
         User v_User = new User();
+        v_User.setId(      "ou=ZhengWei,dc=maxcrc,dc=com");
         v_User.setName(    "ZhengWei");
         v_User.setPassword("1234567890");
         
-        boolean v_Ret = v_LDAP.addEntry("ou=ZhengWei,dc=maxcrc,dc=com" ,v_User);
+        boolean v_Ret = v_LDAP.addEntry(v_User);
         
         if ( v_Ret )
         {

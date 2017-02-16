@@ -70,7 +70,15 @@ public class LdapAnnotation
                             Method v_SetMethod = v_GetSetMethods.getRow(MethodReflect.$Partition_SET ,v_FieldName);
                             Ldap   v_AnnoAttr  = v_Field.getAnnotation(Ldap.class);
                             
-                            v_LdapEntry.putElement(Help.NVL(v_AnnoAttr.name() ,Help.NVL(v_AnnoAttr.value() ,v_Field.getName())) ,v_GetMethod ,v_SetMethod);
+                            if ( v_AnnoAttr.type() == LdapType.DN )
+                            {
+                                v_LdapEntry.setDnGetMethod(v_GetMethod);
+                                v_LdapEntry.setDnSetMethod(v_SetMethod);
+                            }
+                            else
+                            {
+                                v_LdapEntry.putElement(Help.NVL(v_AnnoAttr.name() ,Help.NVL(v_AnnoAttr.value() ,v_Field.getName())) ,v_GetMethod ,v_SetMethod);
+                            }
                         }
                     }
                     
@@ -104,7 +112,15 @@ public class LdapAnnotation
                             Method v_GetMethod = v_GetSetMethods.getRow(MethodReflect.$Partition_GET ,v_Name);
                             Method v_SetMethod = v_GetSetMethods.getRow(MethodReflect.$Partition_SET ,v_Name);
                             
-                            v_LdapEntry.putElement(v_Name ,v_GetMethod ,v_SetMethod);
+                            if ( v_AnnoAttr.type() == LdapType.DN )
+                            {
+                                v_LdapEntry.setDnGetMethod(v_GetMethod);
+                                v_LdapEntry.setDnSetMethod(v_SetMethod);
+                            }
+                            else
+                            {
+                                v_LdapEntry.putElement(v_Name ,v_GetMethod ,v_SetMethod);
+                            }
                         }
                     }
                     

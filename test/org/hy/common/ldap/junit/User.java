@@ -1,6 +1,7 @@
 package org.hy.common.ldap.junit;
 
 import org.hy.common.ldap.annotation.Ldap;
+import org.hy.common.ldap.annotation.LdapType;
 import org.hy.common.xml.SerializableDef;
 
 
@@ -23,6 +24,9 @@ public class User extends SerializableDef
     private static final long serialVersionUID = -7490271838098991229L;
     
     
+    
+    @Ldap(type=LdapType.DN)
+    private String id;
 
     @Ldap(name="ou")
     private String name;
@@ -32,6 +36,18 @@ public class User extends SerializableDef
 
     
     
+    public String getId()
+    {
+        return id;
+    }
+
+    
+    public void setId(String id)
+    {
+        this.id = id;
+    }
+
+
     public String getName()
     {
         return name;
