@@ -110,7 +110,7 @@ __主导思想：__ 通过 @Ldap 注解十分方便的实现Java写入、读取L
 	public class User
 	{
 	    
-	    /** 定义DN */
+	    <font color="green">/** 定义DN */</font>
 	    @Ldap(type=LdapType.DN)
 	    private String id;
 	
