@@ -29,19 +29,22 @@ import org.hy.common.xml.XJava;
 public class LdapAnnotation
 {
     
-    public static final String $LdapClassesXID = "LdapClasses";
+    public static final String $LdapEntryClasses  = "LdapEntryClasses";
+    
+    public static final String $LdapEntryClassIDs = "LdapEntryClassIDs";
     
     
     
     public static void parser()
     {
-        PartitionMap<ElementType ,ClassInfo> v_Annotations     = ClassReflect.getAnnotations(Help.getClasses() ,Ldap.class);
-        List<ClassInfo>                      v_ClassInfos      = null;
-        ClassInfo                            v_ClassInfo       = null;
-        TablePartitionRID<String ,Method>    v_GetSetMethods   = null;
-        Ldap                                 v_AnnoObjectClass = null;
-        Map<Class<?> ,LdapEntry>             v_LdapEntrys      = new Hashtable<Class<?> ,LdapEntry>();
-        LdapEntry                            v_LdapEntry       = null;
+        PartitionMap<ElementType ,ClassInfo> v_Annotations       = ClassReflect.getAnnotations(Help.getClasses() ,Ldap.class);
+        List<ClassInfo>                      v_ClassInfos        = null;
+        ClassInfo                            v_ClassInfo         = null;
+        TablePartitionRID<String ,Method>    v_GetSetMethods     = null;
+        Ldap                                 v_AnnoObjectClass   = null;
+        Map<Class<?> ,LdapEntry>             v_LdapEntryClasses  = new Hashtable<Class<?> ,LdapEntry>();
+        Map<String   ,LdapEntry>             v_LdapEntryClassIDs = new Hashtable<String   ,LdapEntry>();
+        LdapEntry                            v_LdapEntry         = null;
         
         if ( !Help.isNull(v_Annotations) )
         {
@@ -110,13 +113,15 @@ public class LdapAnnotation
                       && (!Help.isNull(v_LdapEntry.getElementsToLDAP())
                        || !Help.isNull(v_LdapEntry.getElementsToObject())) )
                     {
-                        v_LdapEntrys.put(v_LdapEntry.getMetaClass() ,v_LdapEntry);
+                        v_LdapEntryClasses .put(v_LdapEntry.getMetaClass()       ,v_LdapEntry);
+                        v_LdapEntryClassIDs.put(v_LdapEntry.getObjectClassesID() ,v_LdapEntry);
                     }
                 }
             }
         }
         
-        XJava.putObject($LdapClassesXID ,v_LdapEntrys);
+        XJava.putObject($LdapEntryClasses  ,v_LdapEntryClasses);
+        XJava.putObject($LdapEntryClassIDs ,v_LdapEntryClassIDs);
     }
     
 }

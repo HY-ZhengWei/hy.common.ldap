@@ -38,9 +38,16 @@ public class LdapEntry
     
     /** Java值对象类的元类型。即有 @Ldap 注解的类 */
     private Class<?>          metaClass;
+    
+    /** 
+     * LDAP中的"对象类ObjectClass"的名称组合成的ID。有先后顺序
+     * 
+     * 格式为："对象名称1,对象名称2,...对象名称n"。如，"top,person"。 
+     */
+    private String            objectClassesID;
 
     /** 
-     * LDAP中的"对象类ObjectClass"的名称。
+     * LDAP中的"对象类ObjectClass"的名称。有先后顺序
      * 
      * 格式为：List.get(index) = "对象名称" 。如，top、person等。
      */
@@ -87,8 +94,9 @@ public class LdapEntry
     {
         this();
         
-        this.metaClass = i_MetaClass;
-        String [] v_ObjectClasses = StringHelp.replaceAll(i_ObjectClasses ,new String[]{" " ,"\r" ,"\t"} ,new String[]{""}).split(",");
+        this.metaClass            = i_MetaClass;
+        this.objectClassesID      = StringHelp.replaceAll(i_ObjectClasses ,new String[]{" " ,"\r" ,"\n" ,"\t"} ,new String[]{""});
+        String [] v_ObjectClasses = this.objectClassesID.split(",");
         
         for (int i=0; i<v_ObjectClasses.length; i++)
         {
@@ -248,6 +256,32 @@ public class LdapEntry
     public void setMetaClass(Class<?> metaClass)
     {
         this.metaClass = metaClass;
+    }
+
+
+    
+    /**
+     * 获取：LDAP中的"对象类ObjectClass"的名称组合成的ID。
+     * 
+     * 格式为："对象名称1,对象名称2,...对象名称n"。如，"top,person"。
+     */
+    public String getObjectClassesID()
+    {
+        return objectClassesID;
+    }
+
+
+
+    /**
+     * 设置：LDAP中的"对象类ObjectClass"的名称组合成的ID。
+     * 
+     * 格式为："对象名称1,对象名称2,...对象名称n"。如，"top,person"。
+     * 
+     * @param objectClassesID 
+     */
+    public void setObjectClassesID(String objectClassesID)
+    {
+        this.objectClassesID = objectClassesID;
     }
 
 

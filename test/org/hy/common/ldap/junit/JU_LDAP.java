@@ -68,10 +68,10 @@ public class JU_LDAP
     
     
     @Test
-    public void test_002_Get()
+    public void test_002_QueryEntry()
     {
         LDAP v_LDAP = (LDAP)XJava.getObject("LDAP");
-        User v_User = (User)v_LDAP.getEntry("ou=ZhengWei,dc=maxcrc,dc=com" ,User.class);
+        User v_User = (User)v_LDAP.queryEntry("ou=ZhengWei,dc=maxcrc,dc=com");
         
         if ( v_User != null )
         {
