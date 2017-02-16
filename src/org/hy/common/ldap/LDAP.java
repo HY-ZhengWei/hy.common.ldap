@@ -19,6 +19,7 @@ import org.apache.directory.api.ldap.model.message.DeleteRequest;
 import org.apache.directory.api.ldap.model.message.DeleteRequestImpl;
 import org.apache.directory.api.ldap.model.message.DeleteResponse;
 import org.apache.directory.api.ldap.model.message.ResultCodeEnum;
+import org.apache.directory.api.ldap.model.message.ResultResponse;
 import org.apache.directory.api.ldap.model.message.SearchScope;
 import org.apache.directory.api.ldap.model.message.controls.ManageDsaITImpl;
 import org.apache.directory.api.ldap.model.message.controls.OpaqueControl;
@@ -141,6 +142,30 @@ public class LDAP
                 // Nothing.
             }
             i_Cursor = null;
+        }
+    }
+    
+    
+    
+    /**
+     * 判定LDAP操作是否成功
+     * 
+     * @author      ZhengWei(HY)
+     * @createDate  2017-02-16
+     * @version     v1.0
+     *
+     * @param i_Response
+     * @return
+     */
+    public static boolean isSuccess(ResultResponse i_Response)
+    {
+        if ( i_Response != null && ResultCodeEnum.SUCCESS.equals(i_Response.getLdapResult().getResultCode()) )
+        {
+            return true;
+        }
+        else
+        {
+            return false;
         }
     }
     
@@ -347,6 +372,100 @@ public class LDAP
     
     
     /**
+     * 批量添加条目。i_ValuesMap集合中的每个元素可以是不同类型的，对应不同类型的条目。
+     * 
+     * 注1：有有顺序的添加。这样可以实现先添加父条目，其后添加子条目。
+     * 注2：没有事务机构，这不是LDAP的长项。不要指望LDAP可以作到。
+     * 注3：批量添加只占用一个连接。
+     * 
+     * 只用于用 @Ldap 注解的Java对象。
+     * 
+     * @author      ZhengWei(HY)
+     * @createDate  2017-02-16
+     * @version     v1.0
+     *
+     * @param i_ValuesMap
+     * @return
+     */
+    public boolean addEntrys(List<Object> i_ValuesMap)
+    {
+        if ( Help.isNull(i_ValuesMap) )
+        {
+            return false;
+        }
+        
+        boolean     v_Ret    = false;
+        List<Entry> v_Entrys = new ArrayList<Entry>();
+        
+        try
+        {
+            for (Object v_Values : i_ValuesMap)
+            {
+                if ( v_Values == null )
+                {
+                    continue;
+                }
+                
+                LdapEntry v_LdapEntry = getLdapEntry(v_Values.getClass());
+                if ( v_LdapEntry == null )
+                {
+                    return v_Ret;
+                }
+                
+                Entry v_Entry = v_LdapEntry.toEntry(v_Values);
+                if ( v_Entry == null )
+                {
+                    return v_Ret;
+                }
+                v_Entrys.add(v_Entry);
+            }
+        }
+        catch (Exception exce)
+        {
+            exce.printStackTrace();
+        }
+        
+        
+        LdapConnection v_Conn = null;
+        
+        try
+        {
+            v_Ret  = true;
+            v_Conn = this.getConnection();
+            
+            for (Entry v_Entry : v_Entrys)
+            {
+                AddRequest  v_AddRequest = new AddRequestImpl();
+                AddResponse v_Response   = null;
+                
+                v_AddRequest.setEntry(  v_Entry);
+                v_AddRequest.addControl(new ManageDsaITImpl());
+                
+                v_Response = v_Conn.add(v_AddRequest);
+                
+                if ( !LDAP.isSuccess(v_Response) )
+                {
+                    v_Ret = false;
+                    break;
+                }
+            }
+        }
+        catch (Exception exce)
+        {
+            v_Ret = false;
+            exce.printStackTrace();
+        }
+        finally
+        {
+            LDAP.closeConnection(v_Conn);
+        }
+        
+        return v_Ret;
+    }
+    
+    
+    
+    /**
      * 添加条目。
      * 
      * 只用于用 @Ldap 注解的Java对象。
@@ -355,7 +474,6 @@ public class LDAP
      * @createDate  2017-02-14
      * @version     v1.0
      *
-     * @param i_DN
      * @param i_Values
      * @return
      */
@@ -439,7 +557,7 @@ public class LDAP
         
         try
         {
-            v_AddRequest.setEntry( i_Entry);
+            v_AddRequest.setEntry(  i_Entry);
             v_AddRequest.addControl(new ManageDsaITImpl());
             
             v_Conn = this.getConnection();
@@ -451,18 +569,10 @@ public class LDAP
         }
         finally
         {
-            closeConnection(v_Conn);
+            LDAP.closeConnection(v_Conn);
         }
         
-        
-        if ( v_Response != null && ResultCodeEnum.SUCCESS.equals(v_Response.getLdapResult().getResultCode()) )
-        {
-            return true;
-        }
-        else
-        {
-            return false;
-        }
+        return LDAP.isSuccess(v_Response);
     }
     
     
@@ -493,7 +603,7 @@ public class LDAP
         }
         finally
         {
-            closeConnection(v_Conn);
+            LDAP.closeConnection(v_Conn);
         }
         
         return v_Ret;
@@ -530,18 +640,10 @@ public class LDAP
         }
         finally
         {
-            closeConnection(v_Conn);
+            LDAP.closeConnection(v_Conn);
         }
         
-        
-        if ( v_Response != null && ResultCodeEnum.SUCCESS.equals(v_Response.getLdapResult().getResultCode()) )
-        {
-            return true;
-        }
-        else
-        {
-            return false;
-        }
+        return LDAP.isSuccess(v_Response);
     }
     
     
@@ -584,15 +686,7 @@ public class LDAP
             closeConnection(v_Conn);
         }
         
-        
-        if ( v_Response != null && ResultCodeEnum.SUCCESS.equals(v_Response.getLdapResult().getResultCode()) )
-        {
-            return true;
-        }
-        else
-        {
-            return false;
-        }
+        return LDAP.isSuccess(v_Response);
     }
     
 }
