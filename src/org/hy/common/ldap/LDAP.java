@@ -46,7 +46,8 @@ import org.hy.common.xml.XJava;
  * 
  * 主导思想：通过 @Ldap 注解十分方便的实现Java写入、读取LDAP目录服务中的数据，同时不破坏、不改造Java程序原有的数据结构。
  * 
- * 内部使用LDAP连接池操作LDAP目录服务。
+ *   特点1：使用LDAP连接池操作LDAP目录服务。
+ *   特点2：内部自动获取连接，自动释放连接，无须外界干预。
  *
  * @author      ZhengWei(HY)
  * @createDate  2017-02-13
