@@ -48,6 +48,7 @@ import org.hy.common.xml.XJava;
  * 
  *   特点1：使用LDAP连接池操作LDAP目录服务。
  *   特点2：内部自动获取连接，自动释放连接，无须外界干预。
+ *   特点3：可用XML配置文件配置
  *
  * @author      ZhengWei(HY)
  * @createDate  2017-02-13
