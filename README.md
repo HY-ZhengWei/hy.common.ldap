@@ -98,8 +98,11 @@ __主导思想：__ 通过 @Ldap 注解十分方便的实现Java写入、读取L
 	
 ### 定义"条目翻译官"的代码样例
 条目翻译官有两种作用
+
   __作用1：__ 将Java值对象翻译为LDAP条目
+  
   __作用2：__ 将LDAP条目翻译为Java值对象的实例
+
 
 	/** 定义ObjectClass */
 	@Ldap("top ,organizationalUnit")
