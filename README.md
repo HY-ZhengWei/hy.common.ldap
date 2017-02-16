@@ -96,18 +96,25 @@ __主导思想：__ 通过 @Ldap 注解十分方便的实现Java写入、读取L
 	</config>
 	
 	
-### 构建"条目翻译官"代码样例
+### 定义"条目翻译官"的代码样例
+条目翻译官有两种作用
+  __作用1：__ 将Java值对象翻译为LDAP条目
+  __作用2：__ 将LDAP条目翻译为Java值对象的实例
 
+	/** 定义ObjectClass */
 	@Ldap("top ,organizationalUnit")
 	public class User
 	{
 	    
+	    /** 定义DN */
 	    @Ldap(type=LdapType.DN)
 	    private String id;
 	
+		/** 定义属性ou */
 	    @Ldap(name="ou")
 	    private String name;
 	    
+	    /** 定义属性userPassword */
 	    @Ldap("userPassword")
 	    private String password;
 	
