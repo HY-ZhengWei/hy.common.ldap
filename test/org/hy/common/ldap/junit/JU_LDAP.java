@@ -123,11 +123,12 @@ public class JU_LDAP
     
     
     
+    @SuppressWarnings("unchecked")
     @Test
     public void test_004_QueryEntryChilds()
     {
-        LDAP         v_LDAP   = (LDAP)XJava.getObject("LDAP");
-        List<Object> v_Entrys = v_LDAP.queryEntryChilds("dc=maxcrc,dc=com");
+        LDAP       v_LDAP   = (LDAP)XJava.getObject("LDAP");
+        List<User> v_Entrys = (List<User>)v_LDAP.queryEntryChilds("dc=maxcrc,dc=com");
         
         if ( !Help.isNull(v_Entrys) )
         {
@@ -142,11 +143,12 @@ public class JU_LDAP
     
     
     
+    @SuppressWarnings("unchecked")
     @Test
     public void test_005_QueryEntryTrees()
     {
-        LDAP         v_LDAP   = (LDAP)XJava.getObject("LDAP");
-        List<Object> v_Entrys = v_LDAP.queryEntryTrees("dc=maxcrc,dc=com");
+        LDAP       v_LDAP   = (LDAP)XJava.getObject("LDAP");
+        List<User> v_Entrys = (List<User>)v_LDAP.queryEntryTrees("dc=maxcrc,dc=com");
         
         if ( !Help.isNull(v_Entrys) )
         {

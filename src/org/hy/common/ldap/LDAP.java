@@ -273,7 +273,7 @@ public class LDAP
      */
     public Object queryEntry(String i_DN)
     {
-        List<Object> v_Ret = this.queryEntrys(i_DN ,SearchScope.OBJECT);
+        List<?> v_Ret = this.queryEntrys(i_DN ,SearchScope.OBJECT);
         
         if ( Help.isNull(v_Ret) )
         {
@@ -297,7 +297,7 @@ public class LDAP
      * @param i_DN           条目标识
      * @return
      */
-    public List<Object> queryEntryChilds(String i_DN)
+    public List<?> queryEntryChilds(String i_DN)
     {
         return this.queryEntrys(i_DN ,SearchScope.ONELEVEL);
     }
@@ -305,7 +305,7 @@ public class LDAP
     
     
     /**
-     * 查询条目。返回直接或间接隶属于i_DN的子条目及子子条目。
+     * 查询所有子条目。返回直接或间接隶属于i_DN的子条目及子子条目。
      * 
      * 即将i_DN下面的树结构上的所有条目都返回。
      * 
@@ -318,7 +318,7 @@ public class LDAP
      * @param i_DN           条目标识
      * @return
      */
-    public List<Object> queryEntryTrees(String i_DN)
+    public List<?> queryEntryTrees(String i_DN)
     {
         return this.queryEntrys(i_DN ,SearchScope.SUBTREE);
     }
@@ -341,7 +341,7 @@ public class LDAP
      *                       搜索范围03：SearchScope.SUBTREE   返回所有元素从给出的DN，包括与DN相关的元素，无论树的深度。
      * @return
      */
-    private List<Object> queryEntrys(String i_DN ,SearchScope i_SearchScope)
+    private List<?> queryEntrys(String i_DN ,SearchScope i_SearchScope)
     {
         LdapConnection v_Conn   = null;
         EntryCursor    v_Cursor = null;

@@ -187,3 +187,33 @@ __主导思想：__ 通过 @Ldap 注解十分方便的实现Java写入、读取L
 	v_Values.add(v_User02);
 	
 	boolean v_Ret = v_LDAP.addEntrys(v_Values);
+
+
+
+### 查询具体的条目Entry的代码样例
+	LDAP v_LDAP = (LDAP)XJava.getObject("LDAP");
+	User v_User = (User)v_LDAP.queryEntry("ou=ZhengWei,dc=maxcrc,dc=com");
+
+
+
+### 查询条目Entry的子条目(不包含子子条目)的代码样例
+	LDAP       v_LDAP   = (LDAP)XJava.getObject("LDAP");
+	List<User> v_Entrys = (List<User>)v_LDAP.queryEntryChilds("dc=maxcrc,dc=com");
+
+
+
+### 查询所有子条目Entry的代码样例
+	LDAP         v_LDAP   = (LDAP)XJava.getObject("LDAP");
+	List<User> v_Entrys = (List<User>)v_LDAP.queryEntryTrees("dc=maxcrc,dc=com");
+
+
+
+### 判定条目Entry是否存在的代码样例
+	LDAP    v_LDAP     = (LDAP)XJava.getObject("LDAP");
+	boolean v_IsExists = v_LDAP.isExists("ou=ZhengWei,dc=maxcrc,dc=com");
+
+
+
+### 删除条目Entry的代码样例
+	LDAP    v_LDAP = (LDAP)XJava.getObject("LDAP");
+	boolean v_Ret  = v_LDAP.delEntry("ou=ZhengWei,dc=maxcrc,dc=com");
