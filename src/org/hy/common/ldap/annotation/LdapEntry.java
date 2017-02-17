@@ -285,10 +285,15 @@ public class LdapEntry
      *
      * @param i_OldEntry   LDAP服务中的旧值
      * @param i_NewValues  Java对象中的新值
-     * @param i_DelByNull  当Java属性值为null时，是否删除LDAP中对应的属性
+     * @param i_IsAdd      当LDAP中没有时，是否新增LDAP属性
+     * @param i_IsUpdate   当新旧不同时，是否修改LDAP中对应的属性
+     * @param i_IsDel      当Java属性值为null时，是否删除LDAP中对应的属性
      * @return
      */
-    public ModifyRequest toModify(Entry i_OldEntry ,Object i_NewValues ,boolean i_DelByNull)
+    public ModifyRequest toModify(Entry i_OldEntry ,Object i_NewValues 
+                                 ,boolean i_IsAdd
+                                 ,boolean i_IsUpdate
+                                 ,boolean i_IsDel)
     {
         ModifyRequest v_Request = new ModifyRequestImpl();
         String        v_DN      = null;
@@ -318,40 +323,46 @@ public class LdapEntry
                 Object v_NewValue = v_Item.getValue().invoke(i_NewValues);
                 if ( v_NewValue != null )
                 {
-                    Attribute v_Attribute = i_OldEntry.get(v_Item.getKey());
-                    if ( v_Attribute != null )
+                    if ( i_IsAdd || i_IsUpdate )
                     {
-                        Value<?> v_OldValue = v_Attribute.get();
-                        if ( v_OldValue != null )
+                        Attribute v_Attribute = i_OldEntry.get(v_Item.getKey());
+                        if ( v_Attribute != null )
                         {
-                            if ( !v_NewValue.toString().equals(v_OldValue.getString()) )
+                            if ( i_IsUpdate )
                             {
-                                // 修改属性值
-                                v_Request.addModification(new DefaultModification(ModificationOperation.REPLACE_ATTRIBUTE ,v_Item.getKey() ,v_NewValue.toString()));
-                                v_MCount++;
+                                Value<?> v_OldValue = v_Attribute.get();
+                                if ( v_OldValue != null )
+                                {
+                                    if ( !v_NewValue.toString().equals(v_OldValue.getString()) )
+                                    {
+                                        // 修改属性值
+                                        v_Request.addModification(new DefaultModification(ModificationOperation.REPLACE_ATTRIBUTE ,v_Item.getKey() ,v_NewValue.toString()));
+                                        v_MCount++;
+                                    }
+                                }
+                                else
+                                {
+                                    // 修改属性值
+                                    v_Request.addModification(new DefaultModification(ModificationOperation.REPLACE_ATTRIBUTE ,v_Item.getKey() ,v_NewValue.toString()));
+                                    v_MCount++;
+                                }
                             }
                         }
-                        else
+                        else if ( i_IsAdd )
                         {
-                            // 修改属性值
-                            v_Request.addModification(new DefaultModification(ModificationOperation.REPLACE_ATTRIBUTE ,v_Item.getKey() ,v_NewValue.toString()));
+                            // 添加属性
+                            v_Request.addModification(new DefaultModification(ModificationOperation.ADD_ATTRIBUTE ,v_Item.getKey() ,v_NewValue.toString()));
                             v_MCount++;
                         }
                     }
-                    else
-                    {
-                        // 添加属性
-                        v_Request.addModification(new DefaultModification(ModificationOperation.ADD_ATTRIBUTE ,v_Item.getKey() ,v_NewValue.toString()));
-                        v_MCount++;
-                    }
                 }
                 // 当Java属性值为null时，删除LDAP中对应的属性
-                else if ( i_DelByNull )
+                else if ( i_IsDel )
                 {
                     Attribute v_Attribute = i_OldEntry.get(v_Item.getKey());
                     if ( v_Attribute != null )
                     {
-                        // 添加属性
+                        // 删除属性
                         v_Request.addModification(new DefaultModification(ModificationOperation.REMOVE_ATTRIBUTE ,v_Item.getKey()));
                         v_MCount++;
                     }
@@ -382,10 +393,15 @@ public class LdapEntry
      *
      * @param i_OldValues  LDAP服务中的旧值
      * @param i_NewValues  Java对象中的新值
-     * @param i_DelByNull  当Java属性值为null时，是否删除LDAP中对应的属性
+     * @param i_IsAdd      当LDAP中没有时，是否新增LDAP属性
+     * @param i_IsUpdate   当新旧不同时，是否修改LDAP中对应的属性
+     * @param i_IsDel      当Java属性值为null时，是否删除LDAP中对应的属性
      * @return
      */
-    public ModifyRequest toModify(Object i_OldValues ,Object i_NewValues ,boolean i_DelByNull)
+    public ModifyRequest toModify(Object i_OldValues ,Object i_NewValues 
+                                 ,boolean i_IsAdd
+                                 ,boolean i_IsUpdate
+                                 ,boolean i_IsDel)
     {
         ModifyRequest v_Request = new ModifyRequestImpl();
         String        v_DN      = null;
@@ -415,30 +431,33 @@ public class LdapEntry
                 Object v_NewValue = v_Item.getValue().invoke(i_NewValues);
                 if ( v_NewValue != null )
                 {
-                    Object v_OldValue = v_Item.getValue().invoke(i_OldValues);
-                    if ( v_OldValue != null )
+                    if ( i_IsAdd || i_IsUpdate )
                     {
-                        if ( !v_NewValue.equals(v_OldValue) )
+                        Object v_OldValue = v_Item.getValue().invoke(i_OldValues);
+                        if ( v_OldValue != null )
                         {
-                            // 修改属性值
-                            v_Request.addModification(new DefaultModification(ModificationOperation.REPLACE_ATTRIBUTE ,v_Item.getKey() ,v_NewValue.toString()));
+                            if ( i_IsUpdate && !v_NewValue.equals(v_OldValue) )
+                            {
+                                // 修改属性值
+                                v_Request.addModification(new DefaultModification(ModificationOperation.REPLACE_ATTRIBUTE ,v_Item.getKey() ,v_NewValue.toString()));
+                                v_MCount++;
+                            }
+                        }
+                        else if ( i_IsAdd )
+                        {
+                            // 添加属性
+                            v_Request.addModification(new DefaultModification(ModificationOperation.ADD_ATTRIBUTE ,v_Item.getKey() ,v_NewValue.toString()));
                             v_MCount++;
                         }
                     }
-                    else
-                    {
-                        // 添加属性
-                        v_Request.addModification(new DefaultModification(ModificationOperation.ADD_ATTRIBUTE ,v_Item.getKey() ,v_NewValue.toString()));
-                        v_MCount++;
-                    }
                 }
                 // 当Java属性值为null时，删除LDAP中对应的属性
-                else if ( i_DelByNull )
+                else if ( i_IsDel )
                 {
                     Object v_OldValue = v_Item.getValue().invoke(i_OldValues);
                     if ( v_OldValue != null )
                     {
-                        // 添加属性
+                        // 删除属性
                         v_Request.addModification(new DefaultModification(ModificationOperation.REMOVE_ATTRIBUTE ,v_Item.getKey()));
                         v_MCount++;
                     }

@@ -182,7 +182,56 @@ public class JU_LDAP
     
     
     @Test
-    public void test_012_Del()
+    public void test_012_modifyAttribute()
+    {
+        LDAP    v_LDAP = (LDAP)XJava.getObject("LDAP");
+        User    v_User = new User();
+        boolean v_Ret  = false;
+        
+        v_User.setId(      "ou=ZhengWei,dc=maxcrc,dc=com");
+        v_User.setName(    "ZhengWei");
+        v_User.setPassword("改密码：ABC");
+        v_User.setAddress( "新属性：西安");
+        
+        
+        v_Ret = v_LDAP.addAttributes(v_User);
+        if ( v_Ret )
+        {
+            System.out.println(Date.getNowTime().getFullMilli() + "  添加属性成功.");
+        }
+        else
+        {
+            System.out.println(Date.getNowTime().getFullMilli() + "  添加属性异常.");
+        }
+        
+        
+        v_Ret = v_LDAP.modifyAttributes(v_User);
+        if ( v_Ret )
+        {
+            System.out.println(Date.getNowTime().getFullMilli() + "  修改属性成功.");
+        }
+        else
+        {
+            System.out.println(Date.getNowTime().getFullMilli() + "  修改属性异常.");
+        }
+        
+        
+        v_User.setAddress(null);  // 置Null即为删除
+        v_Ret = v_LDAP.delAttributes(v_User);
+        if ( v_Ret )
+        {
+            System.out.println(Date.getNowTime().getFullMilli() + "  删除属性成功.");
+        }
+        else
+        {
+            System.out.println(Date.getNowTime().getFullMilli() + "  删除属性异常.");
+        }
+    }
+    
+    
+    
+    @Test
+    public void test_091_Del()
     {
         LDAP v_LDAP = (LDAP)XJava.getObject("LDAP");
         
@@ -201,7 +250,7 @@ public class JU_LDAP
     
     
     @Test
-    public void test_013_Dels()
+    public void test_092_Dels()
     {
         LDAP         v_LDAP = (LDAP)XJava.getObject("LDAP");
         List<String> v_DNs  = new ArrayList<String>();  

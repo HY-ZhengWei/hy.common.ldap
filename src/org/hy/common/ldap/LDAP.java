@@ -108,16 +108,13 @@ public class LDAP
      *
      * @param i_Conn
      */
-    public static void closeConnection(LdapConnection i_Conn)
+    public void closeConnection(LdapConnection i_Conn)
     {
         if ( i_Conn != null )
         {
             try
             {
-                if ( !i_Conn.isConnected() )
-                {
-                    i_Conn.close();
-                }
+                this.connPool.releaseConnection(i_Conn);
             }
             catch (Exception exce)
             {
@@ -478,7 +475,7 @@ public class LDAP
         finally
         {
             LDAP.closeCursor(    v_Cursor);
-            LDAP.closeConnection(v_Conn);
+            this.closeConnection(v_Conn);
         }
         
         return v_Ret;
@@ -574,7 +571,7 @@ public class LDAP
         }
         finally
         {
-            LDAP.closeConnection(v_Conn);
+            this.closeConnection(v_Conn);
         }
         
         return v_Ret;
@@ -686,7 +683,7 @@ public class LDAP
         }
         finally
         {
-            LDAP.closeConnection(v_Conn);
+            this.closeConnection(v_Conn);
         }
         
         return LDAP.isSuccess(v_Response);
@@ -720,7 +717,7 @@ public class LDAP
         }
         finally
         {
-            LDAP.closeConnection(v_Conn);
+            this.closeConnection(v_Conn);
         }
         
         return v_Ret;
@@ -786,7 +783,7 @@ public class LDAP
         }
         finally
         {
-            LDAP.closeConnection(v_Conn);
+            this.closeConnection(v_Conn);
         }
         
         return v_Ret;
@@ -823,7 +820,7 @@ public class LDAP
         }
         finally
         {
-            LDAP.closeConnection(v_Conn);
+            this.closeConnection(v_Conn);
         }
         
         return LDAP.isSuccess(v_Response);
@@ -875,7 +872,7 @@ public class LDAP
     
     
     /**
-     * 修改条目的多个属性。
+     * 对条目的添加多个属性。
      * 
      * 只用于用 @Ldap 注解的Java对象。
      * 
@@ -884,43 +881,11 @@ public class LDAP
      * @version     v1.0
      *
      * @param i_NewValues
-     * @param i_DelByNull  当Java属性值为null时，是否删除LDAP中对应的属性
      * @return
      */
-    public boolean modifyEntry(Object i_NewValues ,boolean i_DelByNull)
+    public boolean addAttributes(Object i_NewValues)
     {
-        LdapEntry v_LdapEntry = getLdapEntry(i_NewValues.getClass());
-        
-        if ( v_LdapEntry == null )
-        {
-            return false;
-        }
-        
-        LdapConnection v_Conn     = null;
-        ModifyRequest  v_Request  = null;
-        ModifyResponse v_Response = null;
-        
-        try
-        {
-            v_Request = v_LdapEntry.toModify(this.queryEntry(v_LdapEntry.getDNValue(i_NewValues)) ,i_NewValues ,i_DelByNull);
-            if ( v_Request == null )
-            {
-                return false;
-            }
-            
-            v_Conn     = this.getConnection();
-            v_Response = v_Conn.modify(v_Request);
-        }
-        catch (Exception exce)
-        {
-            exce.printStackTrace();
-        }
-        finally
-        {
-            LDAP.closeConnection(v_Conn);
-        }
-        
-        return LDAP.isSuccess(v_Response);
+        return modifyEntry(i_NewValues ,true ,false ,false);
     }
     
     
@@ -945,6 +910,25 @@ public class LDAP
     
     
     /**
+     * 修改条目的多个属性值。
+     * 
+     * 只用于用 @Ldap 注解的Java对象。
+     * 
+     * @author      ZhengWei(HY)
+     * @createDate  2017-02-17
+     * @version     v1.0
+     *
+     * @param i_NewValues
+     * @return
+     */
+    public boolean modifyAttributes(Object i_NewValues)
+    {
+        return modifyEntry(i_NewValues ,false ,true ,false);
+    }
+    
+    
+    
+    /**
      * 修改条目的属性值
      * 
      * @author      ZhengWei(HY)
@@ -964,6 +948,25 @@ public class LDAP
     
     
     /**
+     * 删除条目的多个属性。
+     * 
+     * 只用于用 @Ldap 注解的Java对象。
+     * 
+     * @author      ZhengWei(HY)
+     * @createDate  2017-02-17
+     * @version     v1.0
+     *
+     * @param i_NewValues
+     * @return
+     */
+    public boolean delAttributes(Object i_NewValues)
+    {
+        return modifyEntry(i_NewValues ,false ,false ,true);
+    }
+    
+    
+    
+    /**
      * 删除条目的属性
      * 
      * @author      ZhengWei(HY)
@@ -977,6 +980,59 @@ public class LDAP
     public boolean delAttribute(String i_DN ,String i_AttributeName)
     {
         return this.modifyEntry(ModificationOperation.REMOVE_ATTRIBUTE ,i_DN ,i_AttributeName ,"");
+    }
+    
+    
+    
+    /**
+     * 修改条目的多个属性。
+     * 
+     * 只用于用 @Ldap 注解的Java对象。
+     * 
+     * @author      ZhengWei(HY)
+     * @createDate  2017-02-17
+     * @version     v1.0
+     *
+     * @param i_NewValues
+     * @param i_IsAdd      当LDAP中没有时，是否新增LDAP属性
+     * @param i_IsUpdate   当新旧不同时，是否修改LDAP中对应的属性
+     * @param i_IsDel      当Java属性值为null时，是否删除LDAP中对应的属性
+     * @return
+     */
+    public boolean modifyEntry(Object i_NewValues ,boolean i_IsAdd ,boolean i_IsUpdate ,boolean i_IsDel)
+    {
+        LdapEntry v_LdapEntry = getLdapEntry(i_NewValues.getClass());
+        
+        if ( v_LdapEntry == null )
+        {
+            return false;
+        }
+        
+        LdapConnection v_Conn     = null;
+        ModifyRequest  v_Request  = null;
+        ModifyResponse v_Response = null;
+        
+        try
+        {
+            v_Request = v_LdapEntry.toModify(this.queryEntry(v_LdapEntry.getDNValue(i_NewValues)) ,i_NewValues ,i_IsAdd ,i_IsUpdate ,i_IsDel);
+            if ( v_Request == null )
+            {
+                return false;
+            }
+            
+            v_Conn     = this.getConnection();
+            v_Response = v_Conn.modify(v_Request);
+        }
+        catch (Exception exce)
+        {
+            exce.printStackTrace();
+        }
+        finally
+        {
+            this.closeConnection(v_Conn);
+        }
+        
+        return LDAP.isSuccess(v_Response);
     }
 
     
@@ -1017,7 +1073,7 @@ public class LDAP
         }
         finally
         {
-            LDAP.closeConnection(v_Conn);
+            this.closeConnection(v_Conn);
         }
         
         return LDAP.isSuccess(v_Response);

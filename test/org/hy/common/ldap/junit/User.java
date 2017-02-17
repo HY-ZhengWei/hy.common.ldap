@@ -17,6 +17,7 @@ import org.hy.common.xml.SerializableDef;
  * @createDate  2017-02-14
  * @version     v1.0
  */
+/** 定义ObjectClass。多类名个用英文逗号分隔。 */
 @Ldap("top ,organizationalUnit")
 public class User extends SerializableDef
 {
@@ -25,14 +26,21 @@ public class User extends SerializableDef
     
     
     
+    /** 定义DN */
     @Ldap(type=LdapType.DN)
     private String id;
 
+    /** 定义属性ou */
     @Ldap(name="ou")
     private String name;
     
+    /** 定义属性userPassword */
     @Ldap("userPassword")
     private String password;
+    
+    /** 定义属性street */
+    @Ldap("street")
+    private String address;
 
     
     
@@ -40,35 +48,40 @@ public class User extends SerializableDef
     {
         return id;
     }
-
     
     public void setId(String id)
     {
         this.id = id;
     }
 
-
     public String getName()
     {
         return name;
     }
-
     
     public void setName(String name)
     {
         this.name = name;
     }
-
     
     public String getPassword()
     {
         return password;
     }
-
     
     public void setPassword(String password)
     {
         this.password = password;
+    }
+    
+    public String getAddress()
+    {
+        return address;
+    }
+
+    public void setAddress(String address)
+    {
+        this.address = address;
     }
     
 }

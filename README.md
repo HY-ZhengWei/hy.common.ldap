@@ -123,6 +123,10 @@ __主导思想：__ 通过 @Ldap 注解十分方便的实现Java写入、读取L
 	    /** 定义属性userPassword */
 	    @Ldap("userPassword")
 	    private String password;
+	    
+		/** 定义属性street */
+	    @Ldap("street")
+	    private String address;
 	
 	    
 	    
@@ -145,7 +149,7 @@ __主导思想：__ 通过 @Ldap 注解十分方便的实现Java写入、读取L
 	    {
 	        this.name = name;
 	    }
-	
+	    
 	    public String getPassword()
 	    {
 	        return password;
@@ -154,6 +158,16 @@ __主导思想：__ 通过 @Ldap 注解十分方便的实现Java写入、读取L
 	    public void setPassword(String password)
 	    {
 	        this.password = password;
+	    }
+	    
+	    public String getAddress()
+	    {
+	        return address;
+	    }
+	
+	    public void setAddress(String address)
+	    {
+	        this.address = address;
 	    }
 	}
 ```
@@ -267,4 +281,13 @@ __主导思想：__ 通过 @Ldap 注解十分方便的实现Java写入、读取L
 ```java
 	LDAP    v_LDAP = (LDAP)XJava.getObject("LDAP");
 	boolean v_Ret  = v_LDAP.delEntryTree("ou=ZhengWei,dc=maxcrc,dc=com");
+```
+
+
+
+### 对条目Entry的属性进行修改(添加属性、删除属性、修改属性值)的代码样例
+
+```java
+	LDAP    v_LDAP = (LDAP)XJava.getObject("LDAP");
+	boolean v_Ret  = v_LDAP.addAttributes("ou=ZhengWei,dc=maxcrc,dc=com");
 ```
