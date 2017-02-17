@@ -289,5 +289,17 @@ __主导思想：__ 通过 @Ldap 注解十分方便的实现Java写入、读取L
 
 ```java
 	LDAP    v_LDAP = (LDAP)XJava.getObject("LDAP");
-	boolean v_Ret  = v_LDAP.addAttributes("ou=ZhengWei,dc=maxcrc,dc=com");
+    User    v_User = new User();
+    boolean v_Ret  = false;
+    
+    v_User.setId(      "ou=ZhengWei,dc=maxcrc,dc=com");
+    v_User.setName(    "ZhengWei");
+    v_User.setPassword("改密码：ABC");
+    v_User.setAddress( "新属性：西安");
+    
+    v_Ret = v_LDAP.addAttributes(v_User);     // 添加多个属性
+    v_Ret = v_LDAP.modifyAttributes(v_User);  // 修改多个属性的值
+    
+    v_User.setAddress(null);                  // 置Null即为删除
+	v_Ret = v_LDAP.delAttributes(v_User);     // 删除多个属性
 ```
