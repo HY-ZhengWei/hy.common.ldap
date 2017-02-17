@@ -95,11 +95,11 @@ public class JU_LDAP
         
         if ( v_Ret )
         {
-            System.out.println(Date.getNowTime().getFullMilli() + "  添加成功.");
+            System.out.println(Date.getNowTime().getFullMilli() + "  批量添加成功.");
         }
         else
         {
-            System.out.println(Date.getNowTime().getFullMilli() + "  添加异常.");
+            System.out.println(Date.getNowTime().getFullMilli() + "  批量添加异常.");
         }
     }
     
@@ -195,6 +195,29 @@ public class JU_LDAP
         else
         {
             System.out.println(Date.getNowTime().getFullMilli() + "  删除异常.");
+        }
+    }
+    
+    
+    
+    @Test
+    public void test_013_Dels()
+    {
+        LDAP         v_LDAP = (LDAP)XJava.getObject("LDAP");
+        List<String> v_DNs  = new ArrayList<String>();  
+        
+        v_DNs.add("ou=Batch01,dc=maxcrc,dc=com");
+        v_DNs.add("ou=Batch02,dc=maxcrc,dc=com");
+        
+        boolean v_Ret = v_LDAP.delEntrys(v_DNs);
+        
+        if ( v_Ret )
+        {
+            System.out.println(Date.getNowTime().getFullMilli() + "  批量删除成功.");
+        }
+        else
+        {
+            System.out.println(Date.getNowTime().getFullMilli() + "  批量删除异常.");
         }
     }
     

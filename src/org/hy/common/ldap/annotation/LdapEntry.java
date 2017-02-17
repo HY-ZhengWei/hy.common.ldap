@@ -1,5 +1,6 @@
 package org.hy.common.ldap.annotation;
 
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
@@ -8,9 +9,14 @@ import java.util.Map;
 
 import org.apache.directory.api.ldap.model.entry.Attribute;
 import org.apache.directory.api.ldap.model.entry.DefaultEntry;
+import org.apache.directory.api.ldap.model.entry.DefaultModification;
 import org.apache.directory.api.ldap.model.entry.Entry;
+import org.apache.directory.api.ldap.model.entry.ModificationOperation;
 import org.apache.directory.api.ldap.model.entry.Value;
 import org.apache.directory.api.ldap.model.exception.LdapException;
+import org.apache.directory.api.ldap.model.message.ModifyRequest;
+import org.apache.directory.api.ldap.model.message.ModifyRequestImpl;
+import org.apache.directory.api.ldap.model.name.Dn;
 import org.hy.common.Date;
 import org.hy.common.Help;
 import org.hy.common.StringHelp;
@@ -115,6 +121,35 @@ public class LdapEntry
     
     
     /**
+     * 获取DN值
+     * 
+     * @author      ZhengWei(HY)
+     * @createDate  2017-02-17
+     * @version     v1.0
+     *
+     * @param i_Values
+     * @return
+     * @throws InvocationTargetException 
+     * @throws IllegalArgumentException 
+     * @throws IllegalAccessException 
+     */
+    public String getDNValue(Object i_Values) throws IllegalAccessException, IllegalArgumentException, InvocationTargetException
+    {
+        if ( this.dnGetMethod != null )
+        {
+            Object v_Value = this.dnGetMethod.invoke(i_Values);
+            if ( v_Value != null )
+            {
+                return v_Value.toString();
+            }
+        }
+        
+        return null;
+    }
+    
+    
+    
+    /**
      * 将Java值对象翻译为LDAP条目
      * 
      * @author      ZhengWei(HY)
@@ -128,6 +163,7 @@ public class LdapEntry
     public Entry toEntry(Object i_Values) throws LdapException
     {
         DefaultEntry v_Entry = new DefaultEntry();
+        String       v_DN    = null;
         
         // 设置LDAP的ObjectClass
         for (int v_Index=0; v_Index<this.objectClasses.size(); v_Index++)
@@ -136,21 +172,19 @@ public class LdapEntry
         }
         
         // 设置LDAP的DN
-        if ( this.dnGetMethod != null )
+        try
         {
-            try
+            v_DN = this.getDNValue(i_Values);
+            if ( !Help.isNull(v_DN) )
             {
-                Object v_Value = this.dnGetMethod.invoke(i_Values);
-                if ( v_Value != null )
-                {
-                    v_Entry.setDn(v_Value.toString());
-                }
+                v_Entry.setDn(v_DN);
             }
-            catch (Exception exce)
-            {
-                System.out.println(Date.getNowTime().getFull() + " LDAP DN get method(" + this.dnGetMethod.getName() + ") value is error.");
-                exce.printStackTrace();
-            }
+        }
+        catch (Exception exce)
+        {
+            System.out.println(Date.getNowTime().getFull() + " LDAP DN get method(" + this.dnGetMethod.getName() + ") value is error.");
+            exce.printStackTrace();
+            // 不返回，允许DN未设置的情况出现
         }
         
         // 设置LDAP的属性
@@ -195,6 +229,7 @@ public class LdapEntry
             return v_Ret;
         }
         
+        // 设置Java的DN
         if ( this.dnSetMethod != null )
         {
             try
@@ -209,6 +244,7 @@ public class LdapEntry
             }
         }
         
+        // 设置Java的属性
         for (Map.Entry<String ,Method> v_Item : this.elementsToObject.entrySet())
         {
             try
@@ -232,6 +268,190 @@ public class LdapEntry
         }
         
         return v_Ret;
+    }
+    
+    
+    
+    /**
+     * 用于修改条目属性前，先查询LDAP服务中的条目。再与Java新值对比后得出要执行修改动作。
+     * 
+     * 可自动对比出，哪些是要添加的属性；
+     * 可自动对比出，哪些是要修改的属性；
+     * 可自动对比出，哪些是要删除的属性；
+     * 
+     * @author      ZhengWei(HY)
+     * @createDate  2017-02-17
+     * @version     v1.0
+     *
+     * @param i_OldEntry   LDAP服务中的旧值
+     * @param i_NewValues  Java对象中的新值
+     * @param i_DelByNull  当Java属性值为null时，是否删除LDAP中对应的属性
+     * @return
+     */
+    public ModifyRequest toModify(Entry i_OldEntry ,Object i_NewValues ,boolean i_DelByNull)
+    {
+        ModifyRequest v_Request = new ModifyRequestImpl();
+        String        v_DN      = null;
+        int           v_MCount  = 0;
+        
+        // 设置LDAP的DN
+        try
+        {
+            v_DN = this.getDNValue(i_NewValues);
+            if ( !Help.isNull(v_DN) )
+            {
+                v_Request.setName(new Dn(v_DN));
+            }
+        }
+        catch (Exception exce)
+        {
+            System.out.println(Date.getNowTime().getFull() + " LDAP DN get method(" + this.dnGetMethod.getName() + ") value is error.");
+            exce.printStackTrace();
+            // 不返回，允许DN未设置的情况出现
+        }
+        
+        // 设置LDAP的属性
+        for (Map.Entry<String ,Method> v_Item : this.elementsToLDAP.entrySet())
+        {
+            try
+            {
+                Object v_NewValue = v_Item.getValue().invoke(i_NewValues);
+                if ( v_NewValue != null )
+                {
+                    Attribute v_Attribute = i_OldEntry.get(v_Item.getKey());
+                    if ( v_Attribute != null )
+                    {
+                        Value<?> v_OldValue = v_Attribute.get();
+                        if ( v_OldValue != null )
+                        {
+                            if ( !v_NewValue.toString().equals(v_OldValue.getString()) )
+                            {
+                                // 修改属性值
+                                v_Request.addModification(new DefaultModification(ModificationOperation.REPLACE_ATTRIBUTE ,v_Item.getKey() ,v_NewValue.toString()));
+                                v_MCount++;
+                            }
+                        }
+                        else
+                        {
+                            // 修改属性值
+                            v_Request.addModification(new DefaultModification(ModificationOperation.REPLACE_ATTRIBUTE ,v_Item.getKey() ,v_NewValue.toString()));
+                            v_MCount++;
+                        }
+                    }
+                    else
+                    {
+                        // 添加属性
+                        v_Request.addModification(new DefaultModification(ModificationOperation.ADD_ATTRIBUTE ,v_Item.getKey() ,v_NewValue.toString()));
+                        v_MCount++;
+                    }
+                }
+                // 当Java属性值为null时，删除LDAP中对应的属性
+                else if ( i_DelByNull )
+                {
+                    Attribute v_Attribute = i_OldEntry.get(v_Item.getKey());
+                    if ( v_Attribute != null )
+                    {
+                        // 添加属性
+                        v_Request.addModification(new DefaultModification(ModificationOperation.REMOVE_ATTRIBUTE ,v_Item.getKey()));
+                        v_MCount++;
+                    }
+                }
+            }
+            catch (Exception exce)
+            {
+                System.out.println(Date.getNowTime().getFull() + " LDAP Attribute name(" + v_Item.getKey() + ") get method(" + v_Item.getValue().getName() + ") value is error.");
+                exce.printStackTrace();
+            }
+        }
+        
+        return v_MCount >= 1 ? v_Request : null;
+    }
+    
+    
+    
+    /**
+     * 用于修改条目属性前，先查询LDAP服务中的条目。再与Java新值对比后得出要执行修改动作。
+     * 
+     * 可自动对比出，哪些是要添加的属性；
+     * 可自动对比出，哪些是要修改的属性；
+     * 可自动对比出，哪些是要删除的属性；
+     * 
+     * @author      ZhengWei(HY)
+     * @createDate  2017-02-17
+     * @version     v1.0
+     *
+     * @param i_OldValues  LDAP服务中的旧值
+     * @param i_NewValues  Java对象中的新值
+     * @param i_DelByNull  当Java属性值为null时，是否删除LDAP中对应的属性
+     * @return
+     */
+    public ModifyRequest toModify(Object i_OldValues ,Object i_NewValues ,boolean i_DelByNull)
+    {
+        ModifyRequest v_Request = new ModifyRequestImpl();
+        String        v_DN      = null;
+        int           v_MCount  = 0;
+        
+        // 设置LDAP的DN
+        try
+        {
+            v_DN = this.getDNValue(i_NewValues);
+            if ( !Help.isNull(v_DN) )
+            {
+                v_Request.setName(new Dn(v_DN));
+            }
+        }
+        catch (Exception exce)
+        {
+            System.out.println(Date.getNowTime().getFull() + " LDAP DN get method(" + this.dnGetMethod.getName() + ") value is error.");
+            exce.printStackTrace();
+            // 不返回，允许DN未设置的情况出现
+        }
+        
+        // 设置LDAP的属性
+        for (Map.Entry<String ,Method> v_Item : this.elementsToLDAP.entrySet())
+        {
+            try
+            {
+                Object v_NewValue = v_Item.getValue().invoke(i_NewValues);
+                if ( v_NewValue != null )
+                {
+                    Object v_OldValue = v_Item.getValue().invoke(i_OldValues);
+                    if ( v_OldValue != null )
+                    {
+                        if ( !v_NewValue.equals(v_OldValue) )
+                        {
+                            // 修改属性值
+                            v_Request.addModification(new DefaultModification(ModificationOperation.REPLACE_ATTRIBUTE ,v_Item.getKey() ,v_NewValue.toString()));
+                            v_MCount++;
+                        }
+                    }
+                    else
+                    {
+                        // 添加属性
+                        v_Request.addModification(new DefaultModification(ModificationOperation.ADD_ATTRIBUTE ,v_Item.getKey() ,v_NewValue.toString()));
+                        v_MCount++;
+                    }
+                }
+                // 当Java属性值为null时，删除LDAP中对应的属性
+                else if ( i_DelByNull )
+                {
+                    Object v_OldValue = v_Item.getValue().invoke(i_OldValues);
+                    if ( v_OldValue != null )
+                    {
+                        // 添加属性
+                        v_Request.addModification(new DefaultModification(ModificationOperation.REMOVE_ATTRIBUTE ,v_Item.getKey()));
+                        v_MCount++;
+                    }
+                }
+            }
+            catch (Exception exce)
+            {
+                System.out.println(Date.getNowTime().getFull() + " LDAP Attribute name(" + v_Item.getKey() + ") get method(" + v_Item.getValue().getName() + ") value is error.");
+                exce.printStackTrace();
+            }
+        }
+        
+        return v_MCount >= 1 ? v_Request : null;
     }
     
     

@@ -176,8 +176,10 @@ __主导思想：__ 通过 @Ldap 注解十分方便的实现Java写入、读取L
 	
 	
 ### 批量添加条目Entry的代码样例
-注1：有顺序的添加。可实现先添加父条目，再添加子条目的功能
-注2：集合中的每个元素可以是不同类型的，对应不同类型的LDAP类。
+
+  注1：有顺序的添加。可实现先添加父条目，再添加子条目的功能
+
+  注2：集合中的每个元素可以是不同类型的，对应不同类型的LDAP类。
 
 ```java
 	LDAP         v_LDAP   = (LDAP)XJava.getObject("LDAP");
@@ -205,7 +207,7 @@ __主导思想：__ 通过 @Ldap 注解十分方便的实现Java写入、读取L
 
 ```java
 	LDAP v_LDAP = (LDAP)XJava.getObject("LDAP");
-	User v_User = (User)v_LDAP.queryEntry("ou=ZhengWei,dc=maxcrc,dc=com");
+	User v_User = (User)v_LDAP.queryEntry("ou=ZhengWei,dc=maxcrc,dc=com");          // 参数也可为User对象
 ```
 
 
@@ -214,7 +216,7 @@ __主导思想：__ 通过 @Ldap 注解十分方便的实现Java写入、读取L
 
 ```java
 	LDAP       v_LDAP   = (LDAP)XJava.getObject("LDAP");
-	List<User> v_Entrys = (List<User>)v_LDAP.queryEntryChilds("dc=maxcrc,dc=com");
+	List<User> v_Entrys = (List<User>)v_LDAP.queryEntryChilds("dc=maxcrc,dc=com");  // 参数也可为User对象
 ```
 
 
@@ -223,7 +225,7 @@ __主导思想：__ 通过 @Ldap 注解十分方便的实现Java写入、读取L
 
 ```java
 	LDAP       v_LDAP   = (LDAP)XJava.getObject("LDAP");
-	List<User> v_Entrys = (List<User>)v_LDAP.queryEntryTrees("dc=maxcrc,dc=com");
+	List<User> v_Entrys = (List<User>)v_LDAP.queryEntryTrees("dc=maxcrc,dc=com");   // 参数也可为User对象
 ```
 
 
@@ -242,4 +244,27 @@ __主导思想：__ 通过 @Ldap 注解十分方便的实现Java写入、读取L
 ```java
 	LDAP    v_LDAP = (LDAP)XJava.getObject("LDAP");
 	boolean v_Ret  = v_LDAP.delEntry("ou=ZhengWei,dc=maxcrc,dc=com");
+```
+
+
+
+### 批量删除条目Entry的代码样例
+
+```java
+	LDAP         v_LDAP = (LDAP)XJava.getObject("LDAP");
+    List<String> v_DNs  = new ArrayList<String>();  
+    
+    v_DNs.add("ou=Batch01,dc=maxcrc,dc=com");
+    v_DNs.add("ou=Batch02,dc=maxcrc,dc=com");
+    
+    boolean v_Ret = v_LDAP.delEntrys(v_DNs);
+```
+
+
+
+### 删除条目Entry树(递归删除条目)的代码样例
+
+```java
+	LDAP    v_LDAP = (LDAP)XJava.getObject("LDAP");
+	boolean v_Ret  = v_LDAP.delEntryTree("ou=ZhengWei,dc=maxcrc,dc=com");
 ```

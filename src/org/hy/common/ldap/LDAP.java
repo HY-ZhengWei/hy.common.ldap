@@ -9,7 +9,9 @@ import org.apache.directory.api.ldap.model.cursor.Cursor;
 import org.apache.directory.api.ldap.model.cursor.EntryCursor;
 import org.apache.directory.api.ldap.model.entry.Attribute;
 import org.apache.directory.api.ldap.model.entry.DefaultEntry;
+import org.apache.directory.api.ldap.model.entry.DefaultModification;
 import org.apache.directory.api.ldap.model.entry.Entry;
+import org.apache.directory.api.ldap.model.entry.ModificationOperation;
 import org.apache.directory.api.ldap.model.entry.Value;
 import org.apache.directory.api.ldap.model.exception.LdapException;
 import org.apache.directory.api.ldap.model.message.AddRequest;
@@ -18,6 +20,9 @@ import org.apache.directory.api.ldap.model.message.AddResponse;
 import org.apache.directory.api.ldap.model.message.DeleteRequest;
 import org.apache.directory.api.ldap.model.message.DeleteRequestImpl;
 import org.apache.directory.api.ldap.model.message.DeleteResponse;
+import org.apache.directory.api.ldap.model.message.ModifyRequest;
+import org.apache.directory.api.ldap.model.message.ModifyRequestImpl;
+import org.apache.directory.api.ldap.model.message.ModifyResponse;
 import org.apache.directory.api.ldap.model.message.ResultCodeEnum;
 import org.apache.directory.api.ldap.model.message.ResultResponse;
 import org.apache.directory.api.ldap.model.message.SearchScope;
@@ -264,6 +269,34 @@ public class LDAP
     /**
      * 查询条目。只返回条目本身。即只返回一条记录(树目录的一个节点)。
      * 
+     * 只用于用 @Ldap 注解的Java对象。
+     * 
+     * @author      ZhengWei(HY)
+     * @createDate  2017-02-17
+     * @version     v1.0
+     *
+     * @param i_Values
+     * @return
+     */
+    public Object queryEntry(Object i_Values)
+    {
+        List<?> v_Ret = this.queryEntrys(i_Values ,SearchScope.OBJECT);
+        
+        if ( Help.isNull(v_Ret) )
+        {
+            return null;
+        }
+        else
+        {
+            return v_Ret.get(0);
+        }
+    }
+    
+    
+    
+    /**
+     * 查询条目。只返回条目本身。即只返回一条记录(树目录的一个节点)。
+     * 
      * @author      ZhengWei(HY)
      * @createDate  2017-02-16
      * @version     v1.0
@@ -283,6 +316,25 @@ public class LDAP
         {
             return v_Ret.get(0);
         }
+    }
+    
+    
+    
+    /**
+     * 查询条目。返回直接隶属于i_DN的子条目，不返回子子条目。
+     * 
+     * 只用于用 @Ldap 注解的Java对象。
+     * 
+     * @author      ZhengWei(HY)
+     * @createDate  2017-02-17
+     * @version     v1.0
+     *
+     * @param i_Values
+     * @return
+     */
+    public List<?> queryEntryChilds(Object i_Values)
+    {
+        return this.queryEntrys(i_Values ,SearchScope.ONELEVEL);
     }
     
     
@@ -315,6 +367,25 @@ public class LDAP
      * @createDate  2017-02-16
      * @version     v1.0
      *
+     * @param i_Values
+     * @return
+     */
+    public List<?> queryEntryTrees(Object i_Values)
+    {
+        return this.queryEntrys(i_Values ,SearchScope.SUBTREE);
+    }
+    
+    
+    
+    /**
+     * 查询所有子条目。返回直接或间接隶属于i_DN的子条目及子子条目。
+     * 
+     * 即将i_DN下面的树结构上的所有条目都返回。
+     * 
+     * @author      ZhengWei(HY)
+     * @createDate  2017-02-16
+     * @version     v1.0
+     *
      * @param i_DN           条目标识
      * @return
      */
@@ -329,6 +400,43 @@ public class LDAP
      * 查询条目。
      * 
      * 只用于用 @Ldap 注解的Java对象。
+     * 
+     * @author      ZhengWei(HY)
+     * @createDate  2017-02-17
+     * @version     v1.0
+     *
+     * @param i_DN           条目标识
+     * @param i_SearchScope  查询范围
+     *                       搜索范围01：SearchScope.OBJECT    返回输入给定DN，如果它存在的话。
+     *                       搜索范围02：SearchScope.ONELEVEL  返回低于目前DN的所有子元素，不包括当前DN，也不包括与当前DN无直接关系的DN，即树目录深度为1。
+     *                       搜索范围03：SearchScope.SUBTREE   返回所有元素从给出的DN，包括与DN相关的元素，无论树的深度。
+     * @return
+     */
+    private List<?> queryEntrys(Object i_Values ,SearchScope i_SearchScope)
+    {
+        LdapEntry v_LdapEntry = getLdapEntry(i_Values.getClass());
+        
+        if ( v_LdapEntry == null )
+        {
+            return new ArrayList<Object>();
+        }
+        
+        try
+        {
+            return this.queryEntrys(v_LdapEntry.getDNValue(i_Values) ,i_SearchScope);
+        }
+        catch (Exception exce)
+        {
+            exce.printStackTrace();
+        }
+        
+        return new ArrayList<Object>();
+    }
+    
+    
+    
+    /**
+     * 查询条目。
      * 
      * @author      ZhengWei(HY)
      * @createDate  2017-02-16
@@ -383,6 +491,7 @@ public class LDAP
      * 
      * 注1：有顺序的添加。这样可以实现先添加父条目，再添加子条目的功能。
      * 注2：没有事务机构，这不是LDAP的长项。不要指望LDAP可以作到。
+     *      某个元素执行异常后，前面的不回滚，其后的不再执行添加。
      * 注3：批量添加时只占用一个连接。
      * 
      * 只用于用 @Ldap 注解的Java对象。
@@ -430,6 +539,7 @@ public class LDAP
         catch (Exception exce)
         {
             exce.printStackTrace();
+            return v_Ret;
         }
         
         
@@ -619,6 +729,72 @@ public class LDAP
     
     
     /**
+     * 批量删除条目。i_DNs集合中的每个元素可对应不同类型的LDAP类。
+     * 
+     * 注1：有顺序的删除。这样可以实现先删除子条目，再添加父条目的功能。
+     * 注2：没有事务机构，这不是LDAP的长项。不要指望LDAP可以作到。
+     *      某个元素执行异常后，前面的不回滚，其后的不再执行删除。
+     * 注3：批量删除时只占用一个连接。
+     * 
+     * @author      ZhengWei(HY)
+     * @createDate  2017-02-16
+     * @version     v1.0
+     *
+     * @param i_DNs
+     * @return
+     */
+    public boolean delEntrys(List<String> i_DNs)
+    {
+        boolean        v_Ret  = false;
+        LdapConnection v_Conn = null;
+        
+        if ( Help.isNull(i_DNs) )
+        {
+            return v_Ret;
+        }
+        
+        try
+        {
+            v_Ret = true;
+            v_Conn = this.getConnection();
+            
+            for (String v_DN : i_DNs)
+            {
+                if ( Help.isNull(v_DN) )
+                {
+                    continue;
+                }
+                
+                DeleteRequest  v_Request  = new DeleteRequestImpl();
+                DeleteResponse v_Response = null;
+                
+                v_Request.setName(new Dn(v_DN));
+                
+                v_Response = v_Conn.delete(v_Request);
+                
+                if ( !LDAP.isSuccess(v_Response) )
+                {
+                    v_Ret = false;
+                    break;
+                }
+            }
+        }
+        catch (Exception exce)
+        {
+            v_Ret = false;
+            exce.printStackTrace();
+        }
+        finally
+        {
+            LDAP.closeConnection(v_Conn);
+        }
+        
+        return v_Ret;
+    }
+    
+    
+    
+    /**
      * 删除条目
      * 
      * @author      ZhengWei(HY)
@@ -691,6 +867,157 @@ public class LDAP
         finally
         {
             closeConnection(v_Conn);
+        }
+        
+        return LDAP.isSuccess(v_Response);
+    }
+    
+    
+    
+    /**
+     * 修改条目的多个属性。
+     * 
+     * 只用于用 @Ldap 注解的Java对象。
+     * 
+     * @author      ZhengWei(HY)
+     * @createDate  2017-02-17
+     * @version     v1.0
+     *
+     * @param i_NewValues
+     * @param i_DelByNull  当Java属性值为null时，是否删除LDAP中对应的属性
+     * @return
+     */
+    public boolean modifyEntry(Object i_NewValues ,boolean i_DelByNull)
+    {
+        LdapEntry v_LdapEntry = getLdapEntry(i_NewValues.getClass());
+        
+        if ( v_LdapEntry == null )
+        {
+            return false;
+        }
+        
+        LdapConnection v_Conn     = null;
+        ModifyRequest  v_Request  = null;
+        ModifyResponse v_Response = null;
+        
+        try
+        {
+            v_Request = v_LdapEntry.toModify(this.queryEntry(v_LdapEntry.getDNValue(i_NewValues)) ,i_NewValues ,i_DelByNull);
+            if ( v_Request == null )
+            {
+                return false;
+            }
+            
+            v_Conn     = this.getConnection();
+            v_Response = v_Conn.modify(v_Request);
+        }
+        catch (Exception exce)
+        {
+            exce.printStackTrace();
+        }
+        finally
+        {
+            LDAP.closeConnection(v_Conn);
+        }
+        
+        return LDAP.isSuccess(v_Response);
+    }
+    
+    
+    
+    /**
+     * 条目添加属性
+     * 
+     * @author      ZhengWei(HY)
+     * @createDate  2017-02-16
+     * @version     v1.0
+     *
+     * @param i_DN              DN标识
+     * @param i_AttributeName   属性名称
+     * @param i_AttributeValue  属性值(可为多个)
+     * @return
+     */
+    public boolean addAttribute(String i_DN ,String i_AttributeName ,String ... i_AttributeValue)
+    {
+        return this.modifyEntry(ModificationOperation.ADD_ATTRIBUTE ,i_DN ,i_AttributeName ,i_AttributeValue);
+    }
+    
+    
+    
+    /**
+     * 修改条目的属性值
+     * 
+     * @author      ZhengWei(HY)
+     * @createDate  2017-02-16
+     * @version     v1.0
+     *
+     * @param i_DN              DN标识
+     * @param i_AttributeName   属性名称
+     * @param i_AttributeValue  属性值(可为多个)
+     * @return
+     */
+    public boolean modifyAttribute(String i_DN ,String i_AttributeName ,String ... i_AttributeValue)
+    {
+        return this.modifyEntry(ModificationOperation.REPLACE_ATTRIBUTE ,i_DN ,i_AttributeName ,i_AttributeValue);
+    }
+    
+    
+    
+    /**
+     * 删除条目的属性
+     * 
+     * @author      ZhengWei(HY)
+     * @createDate  2017-02-16
+     * @version     v1.0
+     *
+     * @param i_DN              DN标识
+     * @param i_AttributeName   属性名称
+     * @return
+     */
+    public boolean delAttribute(String i_DN ,String i_AttributeName)
+    {
+        return this.modifyEntry(ModificationOperation.REMOVE_ATTRIBUTE ,i_DN ,i_AttributeName ,"");
+    }
+
+    
+    
+    /**
+     * 修改条目(准确是修改条目的属性)。可包括如下操作。
+     *   1. ModificationOperation.ADD_ATTRIBUTE：    添加属性  
+     *   2. ModificationOperation.REMOVE_ATTRIBUTE： 删除属性
+     *   3. ModificationOperation.REPLACE_ATTRIBUTE：替换属性值
+     * 
+     * @author      ZhengWei(HY)
+     * @createDate  2017-02-16
+     * @version     v1.0
+     *
+     * @param i_Operation       操作类型
+     * @param i_DN              DN标识
+     * @param i_AttributeName   属性名称
+     * @param i_AttributeValue  属性值(可为多个)
+     * @return
+     */
+    private boolean modifyEntry(ModificationOperation i_Operation ,String i_DN ,String i_AttributeName ,String ... i_AttributeValue)
+    {
+        LdapConnection v_Conn     = null;
+        ModifyRequest  v_Request  = new ModifyRequestImpl();
+        ModifyResponse v_Response = null;
+        
+        try
+        {
+            v_Request.setName(new Dn(i_DN));
+            v_Request.addModification(new DefaultModification(i_Operation ,i_AttributeName ,i_AttributeValue));
+            
+            v_Conn = this.getConnection();
+            v_Response = v_Conn.modify(v_Request);
+        }
+        catch (Exception exce)
+        {
+            exce.printStackTrace();
+        }
+        finally
+        {
+            LDAP.closeConnection(v_Conn);
         }
         
         return LDAP.isSuccess(v_Response);
