@@ -26,7 +26,7 @@ __主导思想：__ 通过 @Ldap 注解十分方便的实现Java写入、读取L
 		<import name="connFactory"     class="org.apache.directory.ldap.client.api.DefaultLdapConnectionFactory" />
 		<import name="poolConfig"      class="org.hy.common.ldap.LDAPPoolConfig" />
 		<import name="connPool"        class="org.apache.directory.ldap.client.api.LdapConnectionPool" />
-		<import name="connPoolFactory" class="org.apache.directory.ldap.client.api.DefaultPoolableLdapConnectionFactory" />
+		<import name="connPoolFactory" class="org.apache.directory.ldap.client.api.ValidatingPoolableLdapConnectionFactory" />
 		<import name="ldap"            class="org.hy.common.ldap.LDAP" />
 		
 		
