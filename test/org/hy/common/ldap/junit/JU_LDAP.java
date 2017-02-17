@@ -194,7 +194,7 @@ public class JU_LDAP
         v_User.setAddress( "新属性：西安");
         
         
-        v_Ret = v_LDAP.addAttributes(v_User);
+        v_Ret = v_LDAP.addAttributes(v_User);     // 自动识别要添加的多个属性
         if ( v_Ret )
         {
             System.out.println(Date.getNowTime().getFullMilli() + "  添加属性成功.");
@@ -205,7 +205,7 @@ public class JU_LDAP
         }
         
         
-        v_Ret = v_LDAP.modifyAttributes(v_User);
+        v_Ret = v_LDAP.modifyAttributes(v_User);  // 自动识别要修改的多个属性
         if ( v_Ret )
         {
             System.out.println(Date.getNowTime().getFullMilli() + "  修改属性成功.");
@@ -216,8 +216,8 @@ public class JU_LDAP
         }
         
         
-        v_User.setAddress(null);  // 置Null即为删除
-        v_Ret = v_LDAP.delAttributes(v_User);
+        v_User.setAddress(null);                  // 置Null即为删除
+        v_Ret = v_LDAP.delAttributes(v_User);     // 自动识别要删除的多个属性
         if ( v_Ret )
         {
             System.out.println(Date.getNowTime().getFullMilli() + "  删除属性成功.");
