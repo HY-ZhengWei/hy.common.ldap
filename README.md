@@ -303,3 +303,8 @@ __主导思想：__ 通过 @Ldap 注解十分方便的实现Java写入、读取L
     v_User.setAddress(null);                  // 置Null即为删除
 	v_Ret = v_LDAP.delAttributes(v_User);     // 自动识别要删除的多个属性
 ```
+
+
+
+引用 https://github.com/HY-ZhengWei/hy.common.base 类库
+引用 https://github.com/HY-ZhengWei/hy.common.file 类库
