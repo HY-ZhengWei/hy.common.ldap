@@ -256,7 +256,7 @@ __主导思想：__ 通过 @Ldap 注解十分方便的实现Java写入、读取L
 ### 删除条目Entry的代码样例
 
 ```java
-	LDAP    v_LDAP = (LDAP)XJava.getObject("LDAP");
+    LDAP    v_LDAP = (LDAP)XJava.getObject("LDAP");
 	boolean v_Ret  = v_LDAP.delEntry("ou=ZhengWei,dc=maxcrc,dc=com");
 ```
 
@@ -265,7 +265,7 @@ __主导思想：__ 通过 @Ldap 注解十分方便的实现Java写入、读取L
 ### 批量删除条目Entry的代码样例
 
 ```java
-	LDAP         v_LDAP = (LDAP)XJava.getObject("LDAP");
+    LDAP         v_LDAP = (LDAP)XJava.getObject("LDAP");
     List<String> v_DNs  = new ArrayList<String>();  
     
     v_DNs.add("ou=Batch01,dc=maxcrc,dc=com");
@@ -288,7 +288,7 @@ __主导思想：__ 通过 @Ldap 注解十分方便的实现Java写入、读取L
 ### 对条目Entry的属性进行修改(添加属性、删除属性、修改属性值)的代码样例
 
 ```java
-	LDAP    v_LDAP = (LDAP)XJava.getObject("LDAP");
+    LDAP    v_LDAP = (LDAP)XJava.getObject("LDAP");
     User    v_User = new User();
     boolean v_Ret  = false;
     
@@ -301,7 +301,7 @@ __主导思想：__ 通过 @Ldap 注解十分方便的实现Java写入、读取L
     v_Ret = v_LDAP.modifyAttributes(v_User);  // 自动识别要修改的多个属性
     
     v_User.setAddress(null);                  // 置Null即为删除
-	v_Ret = v_LDAP.delAttributes(v_User);     // 自动识别要删除的多个属性
+    v_Ret = v_LDAP.delAttributes(v_User);     // 自动识别要删除的多个属性
 ```
 
 
