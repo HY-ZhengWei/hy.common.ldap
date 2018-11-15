@@ -33,6 +33,6 @@
 	<classpathentry combineaccessrules="false" kind="src" path="/hy.common.base"/>
 	<classpathentry kind="lib" path="lib/junit-4.11.jar"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/hy.common.file"/>
-	<classpathentry combineaccessrules="false" kind="src" path="/XJava"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/hy.common.xjava"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
