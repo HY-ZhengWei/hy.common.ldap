@@ -1,0 +1,55 @@
+Manifest-Version: 1.0
+Bnd-LastModified: 1535495254724
+Build-Jdk: 1.8.0_171
+Built-By: elecharny
+Bundle-Description: Jar bundled LDIF files containing schema data using 
+ the Apache Directory    specific meta schema for describing schema info
+ rmation using LDAP.  This    jar can be used by clients as well as by A
+ pacheDS' schema partition.
+Bundle-DocURL: https://www.apache.org/
+Bundle-License: https://www.apache.org/licenses/LICENSE-2.0.txt
+Bundle-ManifestVersion: 2
+Bundle-Name: Apache Directory LDAP API Schema Data
+Bundle-SymbolicName: org.apache.directory.api.ldap.schema
+Bundle-Vendor: The Apache Software Foundation
+Bundle-Version: 2.0.0.AM2
+Created-By: Apache Maven Bundle Plugin
+Export-Package: org.apache.directory.api.ldap.schema.extractor;version="
+ 2.0.0.AM2",org.apache.directory.api.ldap.schema.extractor.impl;version=
+ "2.0.0.AM2";uses:="org.apache.directory.api.ldap.schema.extractor",org.
+ apache.directory.api.ldap.schema.loader;version="2.0.0.AM2";uses:="org.
+ apache.directory.api.ldap.model.entry,org.apache.directory.api.ldap.mod
+ el.exception,org.apache.directory.api.ldap.model.schema,org.apache.dire
+ ctory.api.ldap.model.schema.parsers,org.apache.directory.api.ldap.model
+ .schema.registries",org.apache.directory.api.ldap.schema.manager.impl;v
+ ersion="2.0.0.AM2";uses:="org.apache.directory.api.ldap.model.exception
+ ,org.apache.directory.api.ldap.model.name,org.apache.directory.api.ldap
+ .model.schema,org.apache.directory.api.ldap.model.schema.normalizers,or
+ g.apache.directory.api.ldap.model.schema.registries"
+Implementation-Title: Apache Directory LDAP API Schema Data
+Implementation-URL: http://directory.apache.org/api-parent/api-ldap-pare
+ nt/api-ldap-schema-parent/api-ldap-schema-data/
+Implementation-Vendor: The Apache Software Foundation
+Implementation-Vendor-Id: org.apache.directory.api
+Implementation-Version: 2.0.0.AM2
+Import-Package: org.apache.directory.api.asn1.util;version="2.0.0.AM2",o
+ rg.apache.directory.api.i18n;version="2.0.0.AM2",org.apache.directory.a
+ pi.ldap.model.entry;version="2.0.0.AM2",org.apache.directory.api.ldap.m
+ odel.exception;version="2.0.0.AM2",org.apache.directory.api.ldap.model.
+ ldif;version="2.0.0.AM2",org.apache.directory.api.ldap.model.message;ve
+ rsion="2.0.0.AM2",org.apache.directory.api.ldap.model.name;version="2.0
+ .0.AM2",org.apache.directory.api.ldap.model.schema;version="2.0.0.AM2",
+ org.apache.directory.api.ldap.model.schema.normalizers;version="2.0.0.A
+ M2",org.apache.directory.api.ldap.model.schema.parsers;version="2.0.0.A
+ M2",org.apache.directory.api.ldap.model.schema.registries;version="2.0.
+ 0.AM2",org.apache.directory.api.util;version="2.0.0.AM2",org.slf4j;vers
+ ion="[1.7,1.8)",org.apache.directory.api.ldap.aci;version="2.0.0.AM2",o
+ rg.apache.directory.api.ldap.model.constants;version="2.0.0.AM2",org.ap
+ ache.directory.api.ldap.model.schema.comparators;version="2.0.0.AM2",or
+ g.apache.directory.api.ldap.model.schema.syntaxCheckers;version="2.0.0.
+ AM2"
+Require-Capability: osgi.ee;filter:="(&(osgi.ee=JavaSE)(version=1.7))"
+Specification-Title: Apache Directory LDAP API Schema Data
+Specification-Vendor: The Apache Software Foundation
+Specification-Version: 2.0.0.AM2
+Tool: Bnd-3.5.0.201709291849

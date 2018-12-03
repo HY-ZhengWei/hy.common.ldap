@@ -1,0 +1,24 @@
+Manifest-Version: 1.0
+Bnd-LastModified: 1535495386327
+Build-Jdk: 1.8.0_171
+Built-By: elecharny
+Bundle-Description: Extras LDAP API stored procedure packages used by cl
+ ients and servers
+Bundle-DocURL: https://www.apache.org/
+Bundle-License: https://www.apache.org/licenses/LICENSE-2.0.txt
+Bundle-ManifestVersion: 2
+Bundle-Name: Apache Directory LDAP API Extras Stored Procedures
+Bundle-SymbolicName: org.apache.directory.api.ldap.extras.sp
+Bundle-Vendor: The Apache Software Foundation
+Bundle-Version: 2.0.0.AM2
+Created-By: Apache Maven Bundle Plugin
+Export-Package: org.apache.directory.api.ldap.sp;version="2.0.0.AM2";use
+ s:="javax.naming,javax.naming.ldap"
+Import-Package: org.apache.commons.lang;version="2.6",org.apache.directo
+ ry.api.ldap.codec.api;version="2.0.0.AM2",org.apache.directory.api.ldap
+ .extras.extended.storedProcedure;version="2.0.0.AM2",org.apache.directo
+ ry.api.ldap.model.message;version="2.0.0.AM2",javax.naming,javax.naming
+ .directory,javax.naming.ldap,org.apache.directory.api.ldap.model.consta
+ nts;version="2.0.0.AM2"
+Require-Capability: osgi.ee;filter:="(&(osgi.ee=JavaSE)(version=1.7))"
+Tool: Bnd-3.5.0.201709291849

@@ -1,0 +1,38 @@
+Manifest-Version: 1.0
+Bnd-LastModified: 1535494842394
+Build-Jdk: 1.8.0_171
+Built-By: elecharny
+Bundle-Description: A BER Codec Implementation for ASN.1
+Bundle-DocURL: https://www.apache.org/
+Bundle-License: https://www.apache.org/licenses/LICENSE-2.0.txt
+Bundle-ManifestVersion: 2
+Bundle-Name: Apache Directory API ASN.1 BER
+Bundle-SymbolicName: org.apache.directory.api.asn1.ber
+Bundle-Vendor: The Apache Software Foundation
+Bundle-Version: 2.0.0.AM2
+Created-By: Apache Maven Bundle Plugin
+Export-Package: org.apache.directory.api.asn1.actions;version="2.0.0.AM2
+ ";uses:="org.apache.directory.api.asn1,org.apache.directory.api.asn1.be
+ r,org.apache.directory.api.asn1.ber.grammar",org.apache.directory.api.a
+ sn1.ber;version="2.0.0.AM2";uses:="org.apache.directory.api.asn1,org.ap
+ ache.directory.api.asn1.ber.grammar,org.apache.directory.api.asn1.ber.t
+ lv",org.apache.directory.api.asn1.ber.grammar;version="2.0.0.AM2";uses:
+ ="org.apache.directory.api.asn1,org.apache.directory.api.asn1.ber,org.a
+ pache.directory.api.asn1.ber.tlv",org.apache.directory.api.asn1.ber.tlv
+ ;version="2.0.0.AM2";uses:="org.apache.directory.api.asn1,org.apache.di
+ rectory.api.asn1.util"
+Implementation-Title: Apache Directory API ASN.1 BER
+Implementation-URL: http://directory.apache.org/api-parent/api-asn1-pare
+ nt/api-asn1-ber/
+Implementation-Vendor: The Apache Software Foundation
+Implementation-Vendor-Id: org.apache.directory.api
+Implementation-Version: 2.0.0.AM2
+Import-Package: org.apache.directory.api.asn1;version="2.0.0.AM2",org.ap
+ ache.directory.api.asn1.util;version="2.0.0.AM2",org.apache.directory.a
+ pi.i18n;version="2.0.0.AM2",org.apache.directory.api.util;version="2.0.
+ 0.AM2",org.slf4j;version="[1.7,1.8)"
+Require-Capability: osgi.ee;filter:="(&(osgi.ee=JavaSE)(version=1.7))"
+Specification-Title: Apache Directory API ASN.1 BER
+Specification-Vendor: The Apache Software Foundation
+Specification-Version: 2.0.0.AM2
+Tool: Bnd-3.5.0.201709291849

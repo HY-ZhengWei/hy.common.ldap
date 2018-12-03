@@ -252,10 +252,11 @@ public class LdapEntry
                 Attribute v_Attribute = i_Entry.get(v_Item.getKey());
                 if ( v_Attribute != null )
                 {
-                    Value<?> v_Value = v_Attribute.get();
+                    Value v_Value = v_Attribute.get();
                     if ( v_Value != null )
                     {
-                        Object v_MethodParam = Help.toObject(v_Item.getValue().getParameterTypes()[0] ,v_Value.getString());
+                        // 1.0.0版本中用的v_Value.getString()
+                        Object v_MethodParam = Help.toObject(v_Item.getValue().getParameterTypes()[0] ,v_Value.getValue());
                         v_Item.getValue().invoke(v_Ret ,v_MethodParam);
                     }
                 }
@@ -330,10 +331,11 @@ public class LdapEntry
                         {
                             if ( i_IsUpdate )
                             {
-                                Value<?> v_OldValue = v_Attribute.get();
+                                Value v_OldValue = v_Attribute.get();
                                 if ( v_OldValue != null )
                                 {
-                                    if ( !v_NewValue.toString().equals(v_OldValue.getString()) )
+                                    // 1.0.0 用的是 v_OldValue.getString();
+                                    if ( !v_NewValue.toString().equals(v_OldValue.getValue()) )
                                     {
                                         // 修改属性值
                                         v_Request.addModification(new DefaultModification(ModificationOperation.REPLACE_ATTRIBUTE ,v_Item.getKey() ,v_NewValue.toString()));

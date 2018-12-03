@@ -174,6 +174,7 @@ public class LDAP
         }
         else
         {
+            System.out.println(i_Response);
             return false;
         }
     }
@@ -239,15 +240,16 @@ public class LDAP
             return null;
         }
         
-        Attribute          v_Attribute = i_Entry.get(LDAP.$ObjectClass);
-        Iterator<Value<?>> v_Iter      = v_Attribute.iterator();
-        StringBuilder      v_Buffer    = new StringBuilder();
+        Attribute       v_Attribute = i_Entry.get(LDAP.$ObjectClass);
+        Iterator<Value> v_Iter      = v_Attribute.iterator();
+        StringBuilder   v_Buffer    = new StringBuilder();
         
         while (v_Iter.hasNext())
         {
-            Value<?> v_Value = v_Iter.next();
+            Value v_Value = v_Iter.next();
             
-            v_Buffer.append(",").append(v_Value.getString());
+            // 1.0.0版本中用的是v_Value.getString()
+            v_Buffer.append(",").append(v_Value.getValue());
         }
         
         String v_ObjectClassesID = v_Buffer.toString();

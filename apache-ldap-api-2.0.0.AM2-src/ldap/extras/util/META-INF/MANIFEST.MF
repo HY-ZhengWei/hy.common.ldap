@@ -1,0 +1,28 @@
+Manifest-Version: 1.0
+Bnd-LastModified: 1535495366897
+Build-Jdk: 1.8.0_171
+Built-By: elecharny
+Bundle-Description: LDAP API Extra utility packages used by clients and 
+ servers
+Bundle-DocURL: https://www.apache.org/
+Bundle-License: https://www.apache.org/licenses/LICENSE-2.0.txt
+Bundle-ManifestVersion: 2
+Bundle-Name: Apache Directory LDAP API Extras Util
+Bundle-SymbolicName: org.apache.directory.api.ldap.extras.util
+Bundle-Vendor: The Apache Software Foundation
+Bundle-Version: 2.0.0.AM2
+Created-By: Apache Maven Bundle Plugin
+Export-Package: org.apache.directory.api.ldap.util;version="2.0.0.AM2";u
+ ses:="javax.naming,javax.naming.ldap,org.apache.directory.api.asn1,org.
+ apache.directory.api.ldap.codec.api,org.apache.directory.api.ldap.model
+ .message,org.apache.directory.api.ldap.model.name",org.apache.directory
+ .api.ldap.util.tree;version="2.0.0.AM2";uses:="org.apache.directory.api
+ .ldap.model.exception,org.apache.directory.api.ldap.model.name"
+Import-Package: org.apache.directory.api.asn1;version="2.0.0.AM2",org.ap
+ ache.directory.api.ldap.codec.api;version="2.0.0.AM2",org.apache.direct
+ ory.api.ldap.model.exception;version="2.0.0.AM2",org.apache.directory.a
+ pi.ldap.model.message;version="2.0.0.AM2",org.apache.directory.api.ldap
+ .model.name;version="2.0.0.AM2",org.slf4j;version="[1.7,1.8)",javax.nam
+ ing,javax.naming.directory,javax.naming.ldap
+Require-Capability: osgi.ee;filter:="(&(osgi.ee=JavaSE)(version=1.7))"
+Tool: Bnd-3.5.0.201709291849

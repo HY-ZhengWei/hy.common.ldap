@@ -1,0 +1,154 @@
+package org.hy.common.ldap;
+
+import org.apache.commons.pool.impl.GenericObjectPool.Config;
+
+
+
+
+
+/**
+ * 因Apache使用内部静态类的方便来初始配置参数，造成所有属性都public的，没有对应的setter、getter方法。
+ * 
+ * 而XJava使用更好的XML灵活配置，固实现此类。
+ *
+ * @author      ZhengWei(HY)
+ * @createDate  2017-02-13
+ * @version     v1.0
+ *              v2.0  2018-12-03  删除：在Pool2的版本(LDAP API 2.0.0)中已将GenericObjectPool.Config独立成 GenericObjectPoolConfig类，
+ *                                     org.apache.commons.pool2.impl.GenericObjectPoolConfig有setter、getter方法，
+ *                                     所以，本类废除。
+ */
+public class LDAPPoolConfig extends Config
+{
+    
+    public int getMaxIdle()
+    {
+        return maxIdle;
+    }
+    
+    public void setMaxIdle(int maxIdle)
+    {
+        this.maxIdle = maxIdle;
+    }
+    
+    public int getMinIdle()
+    {
+        return minIdle;
+    }
+    
+    public void setMinIdle(int minIdle)
+    {
+        this.minIdle = minIdle;
+    }
+    
+    public int getMaxActive()
+    {
+        return maxActive;
+    }
+    
+    public void setMaxActive(int maxActive)
+    {
+        this.maxActive = maxActive;
+    }
+    
+    public long getMaxWait()
+    {
+        return maxWait;
+    }
+    
+    public void setMaxWait(long maxWait)
+    {
+        this.maxWait = maxWait;
+    }
+    
+    public byte getWhenExhaustedAction()
+    {
+        return whenExhaustedAction;
+    }
+    
+    public void setWhenExhaustedAction(byte whenExhaustedAction)
+    {
+        this.whenExhaustedAction = whenExhaustedAction;
+    }
+    
+    public boolean isTestOnBorrow()
+    {
+        return testOnBorrow;
+    }
+    
+    public void setTestOnBorrow(boolean testOnBorrow)
+    {
+        this.testOnBorrow = testOnBorrow;
+    }
+    
+    public boolean isTestOnReturn()
+    {
+        return testOnReturn;
+    }
+    
+    public void setTestOnReturn(boolean testOnReturn)
+    {
+        this.testOnReturn = testOnReturn;
+    }
+    
+    public boolean isTestWhileIdle()
+    {
+        return testWhileIdle;
+    }
+    
+    public void setTestWhileIdle(boolean testWhileIdle)
+    {
+        this.testWhileIdle = testWhileIdle;
+    }
+    
+    public long getTimeBetweenEvictionRunsMillis()
+    {
+        return timeBetweenEvictionRunsMillis;
+    }
+    
+    public void setTimeBetweenEvictionRunsMillis(long timeBetweenEvictionRunsMillis)
+    {
+        this.timeBetweenEvictionRunsMillis = timeBetweenEvictionRunsMillis;
+    }
+    
+    public int getNumTestsPerEvictionRun()
+    {
+        return numTestsPerEvictionRun;
+    }
+    
+    public void setNumTestsPerEvictionRun(int numTestsPerEvictionRun)
+    {
+        this.numTestsPerEvictionRun = numTestsPerEvictionRun;
+    }
+    
+    public long getMinEvictableIdleTimeMillis()
+    {
+        return minEvictableIdleTimeMillis;
+    }
+    
+    public void setMinEvictableIdleTimeMillis(long minEvictableIdleTimeMillis)
+    {
+        this.minEvictableIdleTimeMillis = minEvictableIdleTimeMillis;
+    }
+    
+    public long getSoftMinEvictableIdleTimeMillis()
+    {
+        return softMinEvictableIdleTimeMillis;
+    }
+    
+    public void setSoftMinEvictableIdleTimeMillis(long softMinEvictableIdleTimeMillis)
+    {
+        this.softMinEvictableIdleTimeMillis = softMinEvictableIdleTimeMillis;
+    }
+    
+    public boolean isLifo()
+    {
+        return lifo;
+    }
+    
+    public void setLifo(boolean lifo)
+    {
+        this.lifo = lifo;
+    }
+    
+}

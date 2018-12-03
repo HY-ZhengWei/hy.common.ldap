@@ -1,0 +1,33 @@
+Manifest-Version: 1.0
+Bnd-LastModified: 1535495051705
+Build-Jdk: 1.8.0_171
+Built-By: elecharny
+Bundle-Activator: org.apache.directory.api.ldap.codec.protocol.mina.Ldap
+ ProtocolCodecActivator
+Bundle-Description: LDAP ProtocolCodecFactory implementation based on MI
+ NA
+Bundle-DocURL: https://www.apache.org/
+Bundle-License: https://www.apache.org/licenses/LICENSE-2.0.txt
+Bundle-ManifestVersion: 2
+Bundle-Name: Apache Directory LDAP API Network MINA
+Bundle-SymbolicName: org.apache.directory.api.ldap.net.mina
+Bundle-Vendor: The Apache Software Foundation
+Bundle-Version: 2.0.0.AM2
+Created-By: Apache Maven Bundle Plugin
+Export-Package: org.apache.directory.api.ldap.codec.protocol.mina;versio
+ n="2.0.0.AM2";uses:="org.apache.directory.api.ldap.codec.api,org.apache
+ .mina.core.buffer,org.apache.mina.core.session,org.apache.mina.filter.c
+ odec,org.osgi.framework"
+Import-Package: org.apache.directory.api.asn1;version="2.0.0.AM2",org.ap
+ ache.directory.api.asn1.ber;version="2.0.0.AM2",org.apache.directory.ap
+ i.asn1.ber.tlv;version="2.0.0.AM2",org.apache.directory.api.ldap.codec.
+ api;version="2.0.0.AM2",org.apache.directory.api.ldap.model.constants;v
+ ersion="2.0.0.AM2",org.apache.directory.api.ldap.model.exception;versio
+ n="2.0.0.AM2",org.apache.directory.api.ldap.model.message;version="2.0.
+ 0.AM2",org.apache.directory.api.util;version="2.0.0.AM2",org.apache.min
+ a.core.buffer;version="2.0.18",org.apache.mina.core.session;version="2.
+ 0.18",org.apache.mina.filter.codec;version="2.0.18",org.slf4j;version="
+ [1.7,1.8)",org.osgi.framework;version="[1.0.0,2.0.0)",org.osgi.util.tra
+ cker;version="[1.0.0,2.0.0)"
+Require-Capability: osgi.ee;filter:="(&(osgi.ee=JavaSE)(version=1.7))"
+Tool: Bnd-3.5.0.201709291849

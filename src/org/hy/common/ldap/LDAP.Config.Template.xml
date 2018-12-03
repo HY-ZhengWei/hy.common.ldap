@@ -5,7 +5,7 @@
 	<import name="xconfig"         class="java.util.ArrayList" />
 	<import name="connConfig"      class="org.apache.directory.ldap.client.api.LdapConnectionConfig" />
 	<import name="connFactory"     class="org.apache.directory.ldap.client.api.DefaultLdapConnectionFactory" />
-	<import name="poolConfig"      class="org.hy.common.ldap.LDAPPoolConfig" />
+	<import name="poolConfig"      class="org.apache.commons.pool2.impl.GenericObjectPoolConfig" />
 	<import name="connPool"        class="org.apache.directory.ldap.client.api.LdapConnectionPool" />
 	<import name="connPoolFactory" class="org.apache.directory.ldap.client.api.ValidatingPoolableLdapConnectionFactory" />
 	<import name="ldap"            class="org.hy.common.ldap.LDAP" />

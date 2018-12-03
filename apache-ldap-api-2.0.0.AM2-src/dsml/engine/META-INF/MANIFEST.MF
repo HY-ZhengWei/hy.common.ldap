@@ -1,0 +1,43 @@
+Manifest-Version: 1.0
+Bnd-LastModified: 1535495346454
+Build-Jdk: 1.8.0_171
+Built-By: elecharny
+Bundle-Description: The Apache Directory Project provides directory solu
+ tions entirely written in Java. These include a directory server, which
+  has been certified as LDAP v3 compliant     by the Open Group (Apache 
+ Directory Server), and Eclipse-based directory tools (Apache Directory 
+ Studio).
+Bundle-DocURL: https://www.apache.org/
+Bundle-License: https://www.apache.org/licenses/LICENSE-2.0.txt
+Bundle-ManifestVersion: 2
+Bundle-Name: Apache Directory LDAP API DSML Engine
+Bundle-SymbolicName: org.apache.directory.api.dsmlv2.engine
+Bundle-Vendor: The Apache Software Foundation
+Bundle-Version: 2.0.0.AM2
+Created-By: Apache Maven Bundle Plugin
+Export-Package: org.apache.directory.api.dsmlv2.engine;version="2.0.0.AM
+ 2";uses:="org.apache.directory.api.dsmlv2,org.apache.directory.api.dsml
+ v2.request,org.apache.directory.api.dsmlv2.response,org.apache.director
+ y.api.ldap.model.exception,org.apache.directory.api.ldap.model.message,
+ org.apache.directory.ldap.client.api,org.xmlpull.v1"
+Implementation-Title: Apache Directory LDAP API DSML Engine
+Implementation-URL: http://directory.apache.org/api-parent/api-dsml-pare
+ nt/api-dsml-engine/
+Implementation-Vendor: The Apache Software Foundation
+Implementation-Vendor-Id: org.apache.directory.api
+Implementation-Version: 2.0.0.AM2
+Import-Package: org.apache.directory.api.dsmlv2;version="2.0.0.AM2",org.
+ apache.directory.api.dsmlv2.response;version="2.0.0.AM2",org.apache.dir
+ ectory.api.dsmlv2.request;version="2.0.0.AM2",org.apache.directory.api.
+ i18n;version="2.0.0.AM2",org.apache.directory.api.ldap.model.cursor;ver
+ sion="2.0.0.AM2",org.apache.directory.api.ldap.model.exception;version=
+ "2.0.0.AM2",org.apache.directory.api.ldap.model.message;version="2.0.0.
+ AM2",org.apache.directory.api.util;version="2.0.0.AM2",org.apache.direc
+ tory.ldap.client.api;version="2.0.0.AM2",org.dom4j;version="1.6.1",org.
+ slf4j;version="[1.7,1.8)",org.xmlpull.v1;version="1.1.0.4c",org.apache.
+ directory.api.asn1;version="2.0.0.AM2"
+Require-Capability: osgi.ee;filter:="(&(osgi.ee=JavaSE)(version=1.7))"
+Specification-Title: Apache Directory LDAP API DSML Engine
+Specification-Vendor: The Apache Software Foundation
+Specification-Version: 2.0.0.AM2
+Tool: Bnd-3.5.0.201709291849
