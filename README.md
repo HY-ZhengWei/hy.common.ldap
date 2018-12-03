@@ -13,7 +13,9 @@ __主导思想：__ 通过 @Ldap 注解十分方便的实现Java写入、读取L
 
   __特点2：__ 内部自动获取连接，自动释放连接，无须外界干预。
 
-  __特点3：__ 可用XML配置文件配置，如下（见LDAP.Config.Template.xml）
+  __特点3：__ 可用XML配置文件配置，如下（见LDAP.Config.Template.xml 基于：Apache LDAP API 2.0.0.AM2）
+  
+（基于：Apache LDAP API 1.0.0-RC2的见 JU_LDAP_V1.xml ）
 
 
 ```xml
@@ -24,7 +26,7 @@ __主导思想：__ 通过 @Ldap 注解十分方便的实现Java写入、读取L
 		<import name="xconfig"         class="java.util.ArrayList" />
 		<import name="connConfig"      class="org.apache.directory.ldap.client.api.LdapConnectionConfig" />
 		<import name="connFactory"     class="org.apache.directory.ldap.client.api.DefaultLdapConnectionFactory" />
-		<import name="poolConfig"      class="org.hy.common.ldap.LDAPPoolConfig" />
+		<import name="poolConfig"      class="org.apache.commons.pool2.impl.GenericObjectPoolConfig" />
 		<import name="connPool"        class="org.apache.directory.ldap.client.api.LdapConnectionPool" />
 		<import name="connPoolFactory" class="org.apache.directory.ldap.client.api.ValidatingPoolableLdapConnectionFactory" />
 		<import name="ldap"            class="org.hy.common.ldap.LDAP" />
