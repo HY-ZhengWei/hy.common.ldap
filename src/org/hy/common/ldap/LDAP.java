@@ -512,7 +512,7 @@ public class LDAP
      * @param i_ValuesMap
      * @return
      */
-    public boolean addEntrys(List<Object> i_ValuesMap)
+    public boolean addEntrys(List<?> i_ValuesMap)
     {
         if ( Help.isNull(i_ValuesMap) )
         {

@@ -213,71 +213,83 @@ public class LdapEntry
                 {
                     if ( v_Value instanceof List )
                     {
-                        List<?>   v_VList    = (List<?>)v_Value;
-                        int       v_Size     = v_VList.size();
-                        String [] v_ValueArr = new String[v_Size];
-                        
-                        for (int i=0; i<v_Size; i++)
+                        List<?>  v_VList = (List<?>)v_Value;
+                        if ( !Help.isNull(v_VList) )
                         {
-                            Object v_VLItem = v_VList.get(i);
-                            if ( v_VLItem == null )
+                            int       v_Size     = v_VList.size();
+                            String [] v_ValueArr = new String[v_Size];
+                            
+                            for (int i=0; i<v_Size; i++)
                             {
-                                v_ValueArr[i] = "";
+                                Object v_VLItem = v_VList.get(i);
+                                if ( v_VLItem == null )
+                                {
+                                    v_ValueArr[i] = "";
+                                }
+                                else
+                                {
+                                    v_ValueArr[i] = v_VLItem.toString();
+                                }
                             }
-                            else
-                            {
-                                v_ValueArr[i] = v_VLItem.toString();
-                            }
-                        }
                         
-                        v_Entry.add(v_Item.getKey() ,v_ValueArr);
+                            v_Entry.add(v_Item.getKey() ,v_ValueArr);
+                        }
                     }
                     else if ( v_Value instanceof Set )
                     {
-                        Set<?>      v_VSet     = (Set<?>)v_Value; 
-                        int         v_Size     = v_VSet.size();
-                        String []   v_ValueArr = new String[v_Size];
-                        Iterator<?> v_Iter     = v_VSet.iterator();
-                        
-                        for (int i=0; i<v_Size && v_Iter.hasNext(); i++)
+                        Set<?> v_VSet = (Set<?>)v_Value; 
+                        if ( !Help.isNull(v_VSet) )
                         {
-                            Object v_VLItem = v_Iter.next();
-                            if ( v_VLItem == null )
+                            int         v_Size     = v_VSet.size();
+                            String []   v_ValueArr = new String[v_Size];
+                            Iterator<?> v_Iter     = v_VSet.iterator();
+                            
+                            for (int i=0; i<v_Size && v_Iter.hasNext(); i++)
                             {
-                                v_ValueArr[i] = "";
+                                Object v_VLItem = v_Iter.next();
+                                if ( v_VLItem == null )
+                                {
+                                    v_ValueArr[i] = "";
+                                }
+                                else
+                                {
+                                    v_ValueArr[i] = v_VLItem.toString();
+                                }
                             }
-                            else
-                            {
-                                v_ValueArr[i] = v_VLItem.toString();
-                            }
+                            
+                            v_Entry.add(v_Item.getKey() ,v_ValueArr);
                         }
-                        
-                        v_Entry.add(v_Item.getKey() ,v_ValueArr);
                     }
                     else if ( v_Value instanceof Object [] )
                     {
-                        Object [] v_VArray   = (Object [])v_Value;
-                        int       v_Size     = v_VArray.length;
-                        String [] v_ValueArr = new String[v_Size];
-                        
-                        for (int i=0; i<v_Size; i++)
+                        Object [] v_VArray = (Object [])v_Value;
+                        if ( !Help.isNull(v_VArray) )
                         {
-                            Object v_VLItem = v_VArray[i];
-                            if ( v_VLItem == null )
+                            int       v_Size     = v_VArray.length;
+                            String [] v_ValueArr = new String[v_Size];
+                            
+                            for (int i=0; i<v_Size; i++)
                             {
-                                v_ValueArr[i] = "";
+                                Object v_VLItem = v_VArray[i];
+                                if ( v_VLItem == null )
+                                {
+                                    v_ValueArr[i] = "";
+                                }
+                                else
+                                {
+                                    v_ValueArr[i] = v_VLItem.toString();
+                                }
                             }
-                            else
-                            {
-                                v_ValueArr[i] = v_VLItem.toString();
-                            }
+                            
+                            v_Entry.add(v_Item.getKey() ,v_ValueArr);
                         }
-                        
-                        v_Entry.add(v_Item.getKey() ,v_ValueArr);
                     }
                     else
                     {
-                        v_Entry.add(v_Item.getKey() ,v_Value.toString());
+                        if ( !Help.isNull(v_Value.toString()) )
+                        {
+                            v_Entry.add(v_Item.getKey() ,v_Value.toString());
+                        }
                     }
                 }
             }

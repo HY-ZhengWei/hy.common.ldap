@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<config>
+
+	<import name="sqls"            class="java.util.ArrayList" />
+	<import name="sqlGroup"        class="org.hy.common.xml.plugins.XSQLGroup" />
+	<import name="sql"             class="org.hy.common.xml.XSQL" />
+
+
+
+    <!-- 工作流活动组件(节点)信息表模块的相关SQL -->
+	<sqls>
+	
+		<sql id="XSQL_LDAP_User_QueryAll"> 
+		
+			<dataSourceGroup ref="DSG_XLDAP" />
+			
+			<content>
+				<![CDATA[
+				SELECT  'uid=' + A.Base_PerNo + ',ou=users,dc=wzyb,dc=com'     AS userID
+				       ,A.Base_PerNo                                           AS userNo
+				       ,A.Base_Pername                                         AS userName
+				       ,LEFT(A.Base_Pername ,1)                                AS surname
+				       ,A.Base_GroupID                                         AS groupNo
+				       ,B.Base_GroupName                                       AS groupName
+				       ,A.Base_CardNo                                          AS cardNo
+				       ,A.Base_Modify_DateTime                                 AS lastTime
+				       ,A.Base_IsDel
+				  FROM  General_Personnel  A
+				       ,General_Group      B
+				 WHERE  A.Base_GroupID = B.Base_GroupID
+				   AND  A.Base_IsDel   = 0
+				   AND  B.Base_IsDel   = 0
+				 ORDER  BY 1
+				]]>
+			</content>
+			
+			<result>
+				<row>org.hy.common.ldap.junit.dbtoldap.UserInfo</row>
+				<cfill>setter(colValue)</cfill>
+			</result>
+			
+		</sql>
+		
+	</sqls>
+	
+</config>
