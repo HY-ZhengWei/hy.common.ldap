@@ -451,12 +451,12 @@ public class User
 * [案例代码](test/org/hy/common/ldap/junit/dbtoldap)
 * 案例代码说明
 
-	* JU_DBToLDAP.java    启动测试类
-	* UserInfo.java       值对象及条目翻译官
-	* IUserDAO.java       关系型数据库的操作类DAO，如查询用户信息。
-	* db.sql.xml          查询SQL语句的配置文件
-	* sys.DB.Config.xml   关系型数据库的连接配置。
-	* sys.LDAP.Cnfig.xml  ApacheDS服务器的连接配置。
+	1. JU_DBToLDAP.java    启动测试类
+	2. UserInfo.java       值对象及条目翻译官
+	3. IUserDAO.java       关系型数据库的操作类DAO，如查询用户信息。
+	4. db.sql.xml          查询SQL语句的配置文件
+	5. sys.DB.Config.xml   关系型数据库的连接配置。
+	6. sys.LDAP.Cnfig.xml  ApacheDS服务器的连接配置。
 
 
 
