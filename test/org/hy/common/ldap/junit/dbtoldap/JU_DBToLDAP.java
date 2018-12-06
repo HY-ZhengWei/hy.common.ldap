@@ -5,6 +5,7 @@ import java.util.List;
 import org.hy.common.Date;
 import org.hy.common.Help;
 import org.hy.common.ldap.LDAP;
+import org.hy.common.ldap.bean.LDAPNode;
 import org.hy.common.xml.XJava;
 import org.hy.common.xml.plugins.AppInitConfig;
 import org.junit.Test;
@@ -45,6 +46,7 @@ public class JU_DBToLDAP extends AppInitConfig
                 this.init("sys.DB.Config.xml");
                 this.init("sys.LDAP.Config.xml");
                 this.init("db.SQL.xml");
+                this.init("org.hy.common.ldap.bean");
                 this.init("org.hy.common.ldap.junit.dbtoldap");
             }
             catch (Exception exce)
@@ -69,10 +71,30 @@ public class JU_DBToLDAP extends AppInitConfig
             return;
         }
         
+        
+        LDAP     v_LDAP          = (LDAP)XJava.getObject("LDAP");
+        String   v_LDAPNodeDN    = "ou=users,dc=wzyb,dc=com";
+        LDAPNode v_UsersLDAPNode = (LDAPNode)v_LDAP.queryEntry(v_LDAPNodeDN);
+        
+        // 如果父节点不存在，先创建父节点，之后再在父节点下创建用户数据。
+        if ( v_UsersLDAPNode == null )
+        {
+            v_UsersLDAPNode = new LDAPNode();
+            
+            v_UsersLDAPNode.setId(v_LDAPNodeDN);
+            
+            boolean v_Ret = v_LDAP.addEntry(v_UsersLDAPNode);
+            if ( !v_Ret )
+            {
+                System.err.println("在LDAP服务上创建父节点异常，请查检并确保分区Partition是存在的。");
+                return;
+            }
+        }
+        
+        
         Date v_BeginTime = new Date();
         System.out.println(v_BeginTime.getFullMilli() + "  从关系型数据库中查询到 " + v_Users.size() + " 位用户信息。");
         
-        LDAP    v_LDAP    = (LDAP)XJava.getObject("LDAP");
         boolean v_Ret     = v_LDAP.addEntrys(v_Users);
         Date    v_EndTime = new Date();
         
