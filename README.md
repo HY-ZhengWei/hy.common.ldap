@@ -317,7 +317,7 @@ public class User
 ### 添加条目Entry的代码样例
 
 ```java
-	LDAP v_LDAP = (LDAP)XJava.getObject("LDAP");
+	LDAP v_LDAP = (LDAP)XJava.getObject("LDAP");    // 获取LDAP访问的操作类（带连接池功能的）
 	        
 	User v_User = new User();
 	v_User.setId(      "ou=ZhengWei,dc=maxcrc,dc=com");
