@@ -459,6 +459,9 @@ public class User
 	| db.sql.xml         | 查询SQL语句的配置文件                 |
 	| sys.DB.Config.xml  | 关系型数据库的连接配置。               |
 	| sys.LDAP.Cnfig.xml | ApacheDS服务器的连接配置。            |
+	
+* 案例结果
+![image](images/DBToLDAP.png)
 
 
 
