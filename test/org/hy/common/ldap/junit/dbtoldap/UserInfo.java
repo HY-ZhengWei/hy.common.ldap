@@ -1,5 +1,6 @@
 package org.hy.common.ldap.junit.dbtoldap;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.hy.common.Date;
@@ -36,17 +37,21 @@ public class UserInfo extends SerializableDef
     
     /** 用户名称 */
     @Ldap("cn")
-    private String       userName;
+    private List<String> userNames;
     
     /** 用户姓氏 */
     @Ldap("sn")
     private String       surname;
     
     /** 登陆名称 */
-    private List<String> loginName;
+    private List<String> loginNames;
     
     /** 登陆密码 */
-    private List<String> loginPwd;
+    @Ldap("carLicense")
+    private List<String> loginPwds;
+    
+    /** 联系电话 */
+    private List<String> tels;
     
     /** 组织编号 */
     @Ldap("o")
@@ -109,20 +114,36 @@ public class UserInfo extends SerializableDef
     /**
      * 获取：用户名称
      */
-    public String getUserName()
+    public List<String> getUserNames()
     {
-        return userName;
+        return userNames;
     }
 
     
     /**
      * 设置：用户名称
      * 
-     * @param userName 
+     * @param userNames 
      */
-    public void setUserName(String userName)
+    public void setUserNames(List<String> userNames)
     {
-        this.userName = userName;
+        this.userNames = userNames;
+    }
+    
+    
+    /**
+     * 设置：用户名称
+     * 
+     * @param i_UserName 
+     */
+    public synchronized void setUserName(String i_UserName)
+    {
+        if ( this.userNames == null )
+        {
+            this.userNames = new ArrayList<String>();
+        }
+        
+        this.userNames.add(i_UserName);
     }
 
     
@@ -149,43 +170,111 @@ public class UserInfo extends SerializableDef
     /**
      * 获取：登陆名称
      */
-    public List<String> getLoginName()
+    public List<String> getLoginNames()
     {
-        return loginName;
+        return loginNames;
     }
 
     
     /**
      * 设置：登陆名称
      * 
-     * @param loginName 
+     * @param loginNames
      */
-    public void setLoginName(List<String> loginName)
+    public void setLoginNames(List<String> loginNames)
     {
-        this.loginName = loginName;
+        this.loginNames = loginNames;
+    }
+    
+    
+    /**
+     * 设置：登陆名称
+     * 
+     * @param i_LoginName 
+     */
+    public synchronized void setLoginName(String i_LoginName)
+    {
+        if ( this.loginNames == null )
+        {
+            this.loginNames = new ArrayList<String>();
+        }
+        
+        this.loginNames.add(i_LoginName);
     }
 
     
     /**
      * 获取：登陆密码
      */
-    public List<String> getLoginPwd()
+    public List<String> getLoginPwds()
     {
-        return loginPwd;
+        return loginPwds;
     }
 
     
     /**
      * 设置：登陆密码
      * 
-     * @param loginPwd 
+     * @param loginPwds 
      */
-    public void setLoginPwd(List<String> loginPwd)
+    public void setLoginPwds(List<String> loginPwds)
     {
-        this.loginPwd = loginPwd;
+        this.loginPwds = loginPwds;
+    }
+    
+    
+    /**
+     * 设置：登陆密码
+     * 
+     * @param i_LoginPwd 
+     */
+    public synchronized void setLoginPwd(String i_LoginPwd)
+    {
+        if ( this.loginPwds == null )
+        {
+            this.loginPwds = new ArrayList<String>();
+        }
+        
+        this.loginPwds.add(i_LoginPwd);
+    }
+    
+    
+    /**
+     * 获取：联系电话
+     */
+    public List<String> getTels()
+    {
+        return tels;
     }
 
     
+    /**
+     * 设置：联系电话
+     * 
+     * @param tels
+     */
+    public void setTels(List<String> tels)
+    {
+        this.tels = tels;
+    }
+    
+    
+    /**
+     * 设置：联系电话
+     * 
+     * @param i_Tel 
+     */
+    public synchronized void setTel(String i_Tel)
+    {
+        if ( this.tels == null )
+        {
+            this.tels = new ArrayList<String>();
+        }
+        
+        this.tels.add(i_Tel);
+    }
+
+
     /**
      * 获取：组织编号
      */

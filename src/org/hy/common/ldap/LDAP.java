@@ -33,6 +33,7 @@ import org.apache.directory.ldap.client.api.LdapConnection;
 import org.apache.directory.ldap.client.api.LdapConnectionPool;
 import org.apache.directory.ldap.client.api.LdapNetworkConnection;
 import org.hy.common.Help;
+import org.hy.common.Return;
 import org.hy.common.StringHelp;
 import org.hy.common.ldap.annotation.LdapAnnotation;
 import org.hy.common.ldap.annotation.LdapEntry;
@@ -895,9 +896,9 @@ public class LDAP
      * @version     v1.0
      *
      * @param i_NewValues
-     * @return
+     * @return   返回添加的属性个数。小于0表示异常
      */
-    public boolean addAttributes(Object i_NewValues)
+    public int addAttributes(Object i_NewValues)
     {
         return modifyEntry(i_NewValues ,true ,false ,false);
     }
@@ -935,9 +936,9 @@ public class LDAP
      * @version     v1.0
      *
      * @param i_NewValues
-     * @return
+     * @return  修改的属性个数。小于0表示异常
      */
-    public boolean modifyAttributes(Object i_NewValues)
+    public int modifyAttributes(Object i_NewValues)
     {
         return modifyEntry(i_NewValues ,false ,true ,false);
     }
@@ -975,9 +976,9 @@ public class LDAP
      * @version     v1.0
      *
      * @param i_NewValues
-     * @return
+     * @return   删除的属性个数。小于0表示异常
      */
-    public boolean delAttributes(Object i_NewValues)
+    public int delAttributes(Object i_NewValues)
     {
         return modifyEntry(i_NewValues ,false ,false ,true);
     }
@@ -1003,6 +1004,75 @@ public class LDAP
     
     
     /**
+     * 批量修改条目的多个属性。i_ValuesMap集合中的每个元素可以是不同类型的，对应不同类型的LDAP类。
+     * 
+     * 注1：有顺序的修改。这样可以实现先添加父条目，再添加子条目的功能。
+     * 注2：没有事务机构，这不是LDAP的长项。不要指望LDAP可以作到。
+     *      某个元素执行异常后，前面的不回滚，其后的不再执行添加。
+     * 注3：批量修改时占用多个连接。
+     * 
+     * 只用于用 @Ldap 注解的Java对象。
+     * 
+     *   1. 自动识别要添加的多个属性
+     *   2. 自动识别要修改的多个属性
+     *   3. 自动识别要删除的多个属性
+     * 
+     * 只用于用 @Ldap 注解的Java对象。
+     * 
+     * @author      ZhengWei(HY)
+     * @createDate  2018-12-06
+     * @version     v1.0
+     *
+     * @param i_ValuesMap
+     * @param i_IsAdd      当LDAP中没有时，是否新增LDAP属性
+     * @param i_IsUpdate   当新旧不同时，是否修改LDAP中对应的属性
+     * @param i_IsDel      当Java属性值为null时，是否删除LDAP中对应的属性
+     * @return             修改的条目的个数。小于0表示异常
+     */
+    public int modifyEntrys(List<?> i_ValuesMap ,boolean i_IsAdd ,boolean i_IsUpdate ,boolean i_IsDel)
+    {
+        if ( Help.isNull(i_ValuesMap) )
+        {
+            return -1;
+        }
+        
+        int v_ModEntryCount = 0;
+        int v_ModAttrCount  = 0;
+        
+        try
+        {
+            for (Object v_Values : i_ValuesMap)
+            {
+                if ( v_Values == null )
+                {
+                    continue;
+                }
+                
+                v_ModAttrCount = this.modifyEntry(v_Values ,i_IsAdd ,i_IsUpdate ,i_IsDel);
+                
+                if ( v_ModAttrCount < 0 )
+                {
+                    System.err.println("LDAP.modifyEntrys() is error.\n" + v_Values.toString());
+                    return -1;
+                }
+                else if ( v_ModAttrCount > 0 )
+                {
+                    v_ModEntryCount++;
+                }
+            }
+        }
+        catch (Exception exce)
+        {
+            exce.printStackTrace();
+            return -1;
+        }
+        
+        return v_ModEntryCount;
+    }
+    
+    
+    
+    /**
      * 修改条目的多个属性。
      * 
      *   1. 自动识别要添加的多个属性
@@ -1019,31 +1089,38 @@ public class LDAP
      * @param i_IsAdd      当LDAP中没有时，是否新增LDAP属性
      * @param i_IsUpdate   当新旧不同时，是否修改LDAP中对应的属性
      * @param i_IsDel      当Java属性值为null时，是否删除LDAP中对应的属性
-     * @return
+     * @return             修改的属性个数。小于0表示异常
      */
-    public boolean modifyEntry(Object i_NewValues ,boolean i_IsAdd ,boolean i_IsUpdate ,boolean i_IsDel)
+    public int modifyEntry(Object i_NewValues ,boolean i_IsAdd ,boolean i_IsUpdate ,boolean i_IsDel)
     {
         LdapEntry v_LdapEntry = getLdapEntry(i_NewValues.getClass());
         
         if ( v_LdapEntry == null )
         {
-            return false;
+            return -1;
         }
         
-        LdapConnection v_Conn     = null;
-        ModifyRequest  v_Request  = null;
-        ModifyResponse v_Response = null;
+        LdapConnection        v_Conn     = null;
+        Return<ModifyRequest> v_Request  = null;
+        ModifyResponse        v_Response = null;
         
         try
         {
-            v_Request = v_LdapEntry.toModify(this.queryEntry(v_LdapEntry.getDNValue(i_NewValues)) ,i_NewValues ,i_IsAdd ,i_IsUpdate ,i_IsDel);
-            if ( v_Request == null )
+            Object v_OldValues = this.queryEntry(v_LdapEntry.getDNValue(i_NewValues));
+            if ( v_OldValues == null )
             {
-                return false;
+                // 没有旧对象，也算是修改成功
+                return 0;
+            }
+            
+            v_Request = v_LdapEntry.toModify(v_OldValues ,i_NewValues ,i_IsAdd ,i_IsUpdate ,i_IsDel);
+            if ( !v_Request.booleanValue() )
+            {
+                return v_Request.paramInt <= 0 ? 0 : -1;
             }
             
             v_Conn     = this.getConnection();
-            v_Response = v_Conn.modify(v_Request);
+            v_Response = v_Conn.modify(v_Request.getParamObj());
         }
         catch (Exception exce)
         {
@@ -1054,7 +1131,7 @@ public class LDAP
             this.closeConnection(v_Conn);
         }
         
-        return LDAP.isSuccess(v_Response);
+        return LDAP.isSuccess(v_Response) ? v_Request.paramInt : -1;
     }
 
     

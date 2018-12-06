@@ -20,10 +20,12 @@ import org.apache.directory.api.ldap.model.entry.Value;
 import org.apache.directory.api.ldap.model.exception.LdapException;
 import org.apache.directory.api.ldap.model.message.ModifyRequest;
 import org.apache.directory.api.ldap.model.message.ModifyRequestImpl;
+import org.apache.directory.api.ldap.model.message.ResultCodeEnum;
 import org.apache.directory.api.ldap.model.name.Dn;
 import org.hy.common.Date;
 import org.hy.common.Help;
 import org.hy.common.MethodReflect;
+import org.hy.common.Return;
 import org.hy.common.StringHelp;
 import org.hy.common.ldap.LDAP;
 
@@ -556,14 +558,24 @@ public class LdapEntry
      * @param i_IsDel      当Java属性值为null时，是否删除LDAP中对应的属性
      * @return
      */
-    public ModifyRequest toModify(Object i_OldValues ,Object i_NewValues 
+    public Return<ModifyRequest> toModify(Object i_OldValues ,Object i_NewValues 
                                  ,boolean i_IsAdd
                                  ,boolean i_IsUpdate
                                  ,boolean i_IsDel)
     {
+        Return<ModifyRequest> v_Ret = new Return<ModifyRequest>();
+        v_Ret.set(true).setParamInt(0);
+        
+        if ( i_OldValues == null )
+        {
+            return v_Ret;
+        }
+        
         ModifyRequest v_Request = new ModifyRequestImpl();
         String        v_DN      = null;
         int           v_MCount  = 0;
+        
+        v_Request.getResultResponse().getLdapResult().setResultCode(ResultCodeEnum.SUCCESS);
         
         // 设置LDAP的DN
         try
@@ -628,7 +640,11 @@ public class LdapEntry
             }
         }
         
-        return v_MCount >= 1 ? v_Request : null;
+        v_Ret.setParamObj(v_Request);
+        v_Ret.setParamInt(v_MCount);
+        v_Ret.set(v_MCount >= 1);
+        
+        return v_Ret;
     }
     
     

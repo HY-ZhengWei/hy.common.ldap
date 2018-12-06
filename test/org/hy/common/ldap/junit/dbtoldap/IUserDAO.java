@@ -33,4 +33,18 @@ public interface IUserDAO
     @Xsql("XSQL_LDAP_User_QueryAll")
     public List<UserInfo> queryAll();
     
+    
+    
+    /**
+     * 从关系型数据库中查询所有用户信息（第二个数据库中的用户信息）
+     * 
+     * @author      ZhengWei(HY)
+     * @createDate  2018-12-06
+     * @version     v1.0
+     *
+     * @return
+     */
+    @Xsql("XSQL_LDAP_UnionA_User_QueryAll")
+    public List<UserInfo> queryUnionA();
+    
 }

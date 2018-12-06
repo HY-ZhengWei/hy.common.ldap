@@ -110,4 +110,49 @@ public class JU_DBToLDAP extends AppInitConfig
         }
     }
     
+    
+    
+    /**
+     * 用另一个数据库的用户信息，将LDAP中更新
+     * 
+     * @author      ZhengWei(HY)
+     * @createDate  2018-12-06
+     * @version     v1.0
+     *
+     */
+    @Test
+    public void test_UnionToLDAP()
+    {
+        IUserDAO       v_UserDAO = (IUserDAO)XJava.getObject("UserDAO");
+        List<UserInfo> v_Users   = v_UserDAO.queryUnionA();
+        
+        if ( Help.isNull(v_Users) )
+        {
+            System.err.println("未从关系型数据库中查询到用户");
+            return;
+        }
+        
+        LDAP v_LDAP      = (LDAP)XJava.getObject("LDAP");
+        Date v_BeginTime = new Date();
+        System.out.println(v_BeginTime.getFullMilli() + "  从关系型数据库中查询到 " + v_Users.size() + " 位用户信息。");
+        
+        int  v_ModEntryCount = v_LDAP.modifyEntrys(v_Users ,true ,false ,false);
+        Date v_EndTime       = new Date();
+        
+        if ( v_ModEntryCount > 0 )
+        {
+            System.out.println(Date.getNowTime().getFullMilli() + "  合并成功。");
+            System.out.println(Date.getNowTime().getFullMilli() + "  共合并 " + v_ModEntryCount + " 位用户信息。");
+            System.out.println(Date.getNowTime().getFullMilli() + "  共用时 " + Date.toTimeLen(v_EndTime.differ(v_BeginTime)));
+        }
+        else if ( v_ModEntryCount == 0 )
+        {
+            System.err.println(Date.getNowTime().getFullMilli() + "  未合并任何数据.");
+        }
+        else
+        {
+            System.err.println(Date.getNowTime().getFullMilli() + "  合并异常.");
+        }
+    }
+    
 }

@@ -8,7 +8,7 @@
 
 
 
-    <!-- 工作流活动组件(节点)信息表模块的相关SQL -->
+    <!-- 数据库操作SQL模块的相关SQL -->
 	<sqls>
 	
 		<sql id="XSQL_LDAP_User_QueryAll"> 
@@ -31,6 +31,34 @@
 				 WHERE  A.Base_GroupID = B.Base_GroupID
 				   AND  A.Base_IsDel   = 0
 				   AND  B.Base_IsDel   = 0
+				 ORDER  BY 1
+				]]>
+			</content>
+			
+			<result>
+				<row>org.hy.common.ldap.junit.dbtoldap.UserInfo</row>
+				<cfill>setter(colValue)</cfill>
+			</result>
+			
+		</sql>
+		
+		
+		
+		<sql id="XSQL_LDAP_UnionA_User_QueryAll"> 
+		
+			<dataSourceGroup ref="DSG_XLDAP_UnionA" />
+			
+			<content>
+				<![CDATA[
+				SELECT  'uid=' + A.job_Number + ',ou=users,dc=wzyb,dc=com'  AS userID 
+				       ,A.nickName                                          AS userName
+				       ,A.uname                                             AS loginName
+				       ,A.pwd                                               AS loginPwd
+				       ,A.phone                                             AS tel
+				  FROM  Sys_User  A
+				 WHERE  A.job_Number IS NOT NULL
+				   AND  A.job_Number != ''
+				   AND  A.deleted     = 0
 				 ORDER  BY 1
 				]]>
 			</content>

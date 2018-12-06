@@ -184,9 +184,9 @@ public class JU_LDAP_V1
     @Test
     public void test_012_modifyAttribute()
     {
-        LDAP    v_LDAP = (LDAP)XJava.getObject("LDAP");
-        User    v_User = new User();
-        boolean v_Ret  = false;
+        LDAP v_LDAP         = (LDAP)XJava.getObject("LDAP");
+        User v_User         = new User();
+        int  v_ModAttrCount = 0;
         
         v_User.setId(      "ou=ZhengWei,dc=maxcrc,dc=com");
         v_User.setName(    "ZhengWei");
@@ -194,33 +194,45 @@ public class JU_LDAP_V1
         v_User.setAddress( "新属性：西安");
         
         
-        v_Ret = v_LDAP.addAttributes(v_User);     // 自动识别要添加的多个属性
-        if ( v_Ret )
+        v_ModAttrCount = v_LDAP.addAttributes(v_User);     // 自动识别要添加的多个属性
+        if ( v_ModAttrCount > 0 )
         {
             System.out.println(Date.getNowTime().getFullMilli() + "  添加属性成功.");
         }
-        else
+        else if ( v_ModAttrCount == 0 )
         {
-            System.out.println(Date.getNowTime().getFullMilli() + "  添加属性异常.");
-        }
-        
-        
-        v_Ret = v_LDAP.modifyAttributes(v_User);  // 自动识别要修改的多个属性
-        if ( v_Ret )
-        {
-            System.out.println(Date.getNowTime().getFullMilli() + "  修改属性成功.");
+            System.out.println(Date.getNowTime().getFullMilli() + "  未添加任何属性.");
         }
         else
         {
-            System.out.println(Date.getNowTime().getFullMilli() + "  修改属性异常.");
+            System.err.println(Date.getNowTime().getFullMilli() + "  添加属性异常.");
+        }
+        
+        
+        v_ModAttrCount = v_LDAP.modifyAttributes(v_User);  // 自动识别要修改的多个属性
+        if ( v_ModAttrCount > 0 )
+        {
+            System.out.println(Date.getNowTime().getFullMilli() + "  修改属性成功，共修改 " + v_ModAttrCount + " 个属性.");
+        }
+        else if ( v_ModAttrCount == 0 )
+        {
+            System.out.println(Date.getNowTime().getFullMilli() + "  未修改任何属性.");
+        }
+        else
+        {
+            System.err.println(Date.getNowTime().getFullMilli() + "  修改属性异常.");
         }
         
         
         v_User.setAddress(null);                  // 置Null即为删除
-        v_Ret = v_LDAP.delAttributes(v_User);     // 自动识别要删除的多个属性
-        if ( v_Ret )
+        v_ModAttrCount = v_LDAP.delAttributes(v_User);     // 自动识别要删除的多个属性
+        if ( v_ModAttrCount > 0 )
         {
-            System.out.println(Date.getNowTime().getFullMilli() + "  删除属性成功.");
+            System.out.println(Date.getNowTime().getFullMilli() + "  删除属性成功，共删除 " + v_ModAttrCount + " 个属性.");
+        }
+        else if ( v_ModAttrCount == 0 )
+        {
+            System.out.println(Date.getNowTime().getFullMilli() + "  未删除任何属性.");
         }
         else
         {
