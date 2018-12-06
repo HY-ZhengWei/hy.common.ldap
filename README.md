@@ -21,6 +21,8 @@ __特点4：__ 支持同一属性多个属性值的LDAP特性的转换。
   
   Java对象用List<Object>或Set<Object>或数组Object[]定义成员变量的类型，来支持多属性值的LDAP特性
 
+### 配置LDAP连接池的XML样例
+
 
 ```xml
 	<?xml version="1.0" encoding="UTF-8"?>
