@@ -448,6 +448,7 @@ public class User
 
 ### 实战案例：从关系型数据库"拉"数据，并"推"到ApacheDS服务上。
 [案例代码](test/org/hy/common/ldap/junit/dbtoldap)
+
 	* [JU_DBToLDAP 启动测试类]
 	* [UserInfo  值对象及条目翻译官]
 	* [IUserDAO  关系型数据库的操作类DAO，如查询用户信息。]
