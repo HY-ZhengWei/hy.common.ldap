@@ -461,6 +461,7 @@ public class User
 	| sys.LDAP.Cnfig.xml | ApacheDS服务器的连接配置。            |
 	
 * 案例结果
+
 ![image](images/DBToLDAP.png)
 
 
