@@ -1,6 +1,6 @@
 Manifest-Version: 1.0.2
 Created-By: HY.ZhengWei@qq.com  2017
-Specification-Version: 1.0.2  2018-12-03
+Specification-Version: 1.0.2  2018-12-06
 SourceCode: https://github.com/HY-ZhengWei/hy.common.ldap
 Build-JDK: 1.6
 LDAP-API: 2.0.0.AM2

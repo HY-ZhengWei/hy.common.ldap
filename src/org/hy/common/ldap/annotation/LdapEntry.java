@@ -1,11 +1,15 @@
 package org.hy.common.ldap.annotation;
 
+import java.lang.reflect.Array;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.apache.directory.api.ldap.model.entry.Attribute;
 import org.apache.directory.api.ldap.model.entry.DefaultEntry;
@@ -19,6 +23,7 @@ import org.apache.directory.api.ldap.model.message.ModifyRequestImpl;
 import org.apache.directory.api.ldap.model.name.Dn;
 import org.hy.common.Date;
 import org.hy.common.Help;
+import org.hy.common.MethodReflect;
 import org.hy.common.StringHelp;
 import org.hy.common.ldap.LDAP;
 
@@ -40,6 +45,11 @@ import org.hy.common.ldap.LDAP;
  * @author      ZhengWei(HY)
  * @createDate  2017-02-14
  * @version     v1.0
+ *              v2.0  2018-12-06  添加：支持同一属性多个属性值的LDAP特性。
+ *                                     Java对象用List<Object>或Set<Object>或数组Object[]定义成员变量的类型，来支持多属性值的LDAP特性。
+ *                                     当Java成员变量为String这样的简单时，LDAP中同一属性有多个属性值时，随机取一个给Java成员变量赋值。
+ *                                     
+ *                                     LDAP中的属性类型一般都是字符，而此类可以翻译为"条目配置翻译官"类指定的成员类型。
  */
 public class LdapEntry
 {
@@ -48,14 +58,14 @@ public class LdapEntry
     private Class<?>          metaClass;
     
     /** 
-     * LDAP中的"对象类ObjectClass"的名称组合成的ID。有先后顺序
+     * LDAP中的"对象类ObjectClass"的名称组合成的ID。内部有自动排序过。区分大小写。
      * 
      * 格式为："对象名称1,对象名称2,...对象名称n"。如，"top,person"。 
      */
     private String            objectClassesID;
 
     /** 
-     * LDAP中的"对象类ObjectClass"的名称。有先后顺序
+     * LDAP中的"对象类ObjectClass"的名称。内部有自动排序过。
      * 
      * 格式为：List.get(index) = "对象名称" 。如，top、person等。
      */
@@ -102,20 +112,23 @@ public class LdapEntry
      * @version     v1.0
      *
      * @param i_MetaClass      Java值对象类的元类型。即有 @Ldap 注解的类
-     * @param i_ObjectClasses  LDAP中的"对象类ObjectClass"的名称。多个有逗号分隔。有先后有顺序。
+     * @param i_ObjectClasses  LDAP中的"对象类ObjectClass"的名称。多个有逗号分隔。内部有自动排序过。
      */
     public LdapEntry(Class<?> i_MetaClass ,String i_ObjectClasses)
     {
         this();
         
-        this.metaClass            = i_MetaClass;
-        this.objectClassesID      = StringHelp.replaceAll(i_ObjectClasses ,new String[]{" " ,"\r" ,"\n" ,"\t"} ,new String[]{""});
+        this.metaClass       = i_MetaClass;
+        this.objectClassesID = StringHelp.replaceAll(i_ObjectClasses ,new String[]{" " ,"\r" ,"\n" ,"\t"} ,new String[]{""});
         String [] v_ObjectClasses = this.objectClassesID.split(",");
         
         for (int i=0; i<v_ObjectClasses.length; i++)
         {
             this.objectClasses.add(v_ObjectClasses[i]);
         }
+        
+        // 重新排序，生成对象ID
+        this.objectClassesID = StringHelp.toString(Help.toSort(this.objectClasses) ,"" ,",");
     }
     
     
@@ -155,6 +168,9 @@ public class LdapEntry
      * @author      ZhengWei(HY)
      * @createDate  2017-02-14
      * @version     v1.0
+     *              v2.0  2018-12-06  添加：支持同一属性多个属性值的LDAP特性。
+     *                                     Java对象用List<Object>或Set<Object>或数组Object[]定义成员变量的类型，来支持多属性值的LDAP特性。
+     *                                     当Java成员变量为String这样的简单类型时，LDAP中同一属性有多个属性值时，随机取一个给Java成员变量赋值。
      *
      * @param i_Values  Java值对象
      * @return
@@ -195,7 +211,74 @@ public class LdapEntry
                 Object v_Value = v_Item.getValue().invoke(i_Values);
                 if ( v_Value != null )
                 {
-                    v_Entry.add(v_Item.getKey() ,v_Value.toString());
+                    if ( v_Value instanceof List )
+                    {
+                        List<?>   v_VList    = (List<?>)v_Value;
+                        int       v_Size     = v_VList.size();
+                        String [] v_ValueArr = new String[v_Size];
+                        
+                        for (int i=0; i<v_Size; i++)
+                        {
+                            Object v_VLItem = v_VList.get(i);
+                            if ( v_VLItem == null )
+                            {
+                                v_ValueArr[i] = "";
+                            }
+                            else
+                            {
+                                v_ValueArr[i] = v_VLItem.toString();
+                            }
+                        }
+                        
+                        v_Entry.add(v_Item.getKey() ,v_ValueArr);
+                    }
+                    else if ( v_Value instanceof Set )
+                    {
+                        Set<?>      v_VSet     = (Set<?>)v_Value; 
+                        int         v_Size     = v_VSet.size();
+                        String []   v_ValueArr = new String[v_Size];
+                        Iterator<?> v_Iter     = v_VSet.iterator();
+                        
+                        for (int i=0; i<v_Size && v_Iter.hasNext(); i++)
+                        {
+                            Object v_VLItem = v_Iter.next();
+                            if ( v_VLItem == null )
+                            {
+                                v_ValueArr[i] = "";
+                            }
+                            else
+                            {
+                                v_ValueArr[i] = v_VLItem.toString();
+                            }
+                        }
+                        
+                        v_Entry.add(v_Item.getKey() ,v_ValueArr);
+                    }
+                    else if ( v_Value instanceof Object [] )
+                    {
+                        Object [] v_VArray   = (Object [])v_Value;
+                        int       v_Size     = v_VArray.length;
+                        String [] v_ValueArr = new String[v_Size];
+                        
+                        for (int i=0; i<v_Size; i++)
+                        {
+                            Object v_VLItem = v_VArray[i];
+                            if ( v_VLItem == null )
+                            {
+                                v_ValueArr[i] = "";
+                            }
+                            else
+                            {
+                                v_ValueArr[i] = v_VLItem.toString();
+                            }
+                        }
+                        
+                        v_Entry.add(v_Item.getKey() ,v_ValueArr);
+                    }
+                    else
+                    {
+                        v_Entry.add(v_Item.getKey() ,v_Value.toString());
+                    }
                 }
             }
             catch (Exception exce)
@@ -216,6 +299,9 @@ public class LdapEntry
      * @author      ZhengWei(HY)
      * @createDate  2017-02-15
      * @version     v1.0
+     *              v2.0  2018-12-06  添加：支持同一属性多个属性值的LDAP特性。
+     *                                     Java对象用List<Object>或Set<Object>或数组Object[]定义成员变量的类型，来支持多属性值的LDAP特性。
+     *                                     当Java成员变量为String这样的简单时，LDAP中同一属性有多个属性值时，随机取一个给Java成员变量赋值。
      *
      * @param i_Entry   条目对象
      * @return
@@ -252,13 +338,71 @@ public class LdapEntry
                 Attribute v_Attribute = i_Entry.get(v_Item.getKey());
                 if ( v_Attribute != null )
                 {
-                    Value v_Value = v_Attribute.get();
-                    if ( v_Value != null )
+                    Object v_MPValue = null;
+                    
+                    if ( MethodReflect.isExtendImplement(v_Item.getValue().getParameterTypes()[0] ,List.class) )
                     {
-                        // 1.0.0版本中用的v_Value.getString()
-                        Object v_MethodParam = Help.toObject(v_Item.getValue().getParameterTypes()[0] ,v_Value.getValue());
-                        v_Item.getValue().invoke(v_Ret ,v_MethodParam);
+                        Class<?>        v_ListItemClass = MethodReflect.getGenerics(v_Item.getValue() ,0 ,0);
+                        List<Object>    v_Values        = new ArrayList<Object>();
+                        Iterator<Value> v_Iter          = v_Attribute.iterator();
+                        
+                        v_ListItemClass = Help.NVL(v_ListItemClass ,String.class);
+                        while (v_Iter.hasNext())
+                        {
+                            Value v_Value = v_Iter.next();
+                            
+                            v_Values.add(Help.toObject(v_ListItemClass ,v_Value.getValue()));
+                        }
+                        
+                        v_MPValue = v_Values;
                     }
+                    else if ( MethodReflect.isExtendImplement(v_Item.getValue().getParameterTypes()[0] ,Set.class) )
+                    {
+                        Class<?>        v_SetItemClass = MethodReflect.getGenerics(v_Item.getValue() ,0 ,0);
+                        Set<Object>     v_Values       = new HashSet<Object>();
+                        Iterator<Value> v_Iter         = v_Attribute.iterator();
+                        
+                        v_SetItemClass = Help.NVL(v_SetItemClass ,String.class);
+                        while (v_Iter.hasNext())
+                        {
+                            Value v_Value = v_Iter.next();
+                            
+                            v_Values.add(Help.toObject(v_SetItemClass ,v_Value.getValue()));
+                        }
+                        
+                        v_MPValue = v_Values;
+                    }
+                    else if ( v_Item.getValue().getParameterTypes()[0].isArray() )
+                    {
+                        Class<?>        v_ArrayItemClass = v_Item.getValue().getParameterTypes()[0].getComponentType();
+                        Iterator<Value> v_Iter           = v_Attribute.iterator();
+                        int             v_Index          = 0;
+                        
+                        v_ArrayItemClass = Help.NVL(v_ArrayItemClass ,String.class);
+                        v_MPValue = Array.newInstance(v_ArrayItemClass ,v_Attribute.size());
+                        
+                        while (v_Iter.hasNext())
+                        {
+                            Value v_Value = v_Iter.next();
+                            
+                            Array.set(v_MPValue ,v_Index++ ,Help.toObject(v_ArrayItemClass ,v_Value.getValue()));
+                        }
+                    }
+                    else
+                    {
+                        Value v_Value = v_Attribute.get();
+                        if ( v_Value != null )
+                        {
+                            // 1.0.0版本中用的v_Value.getString()
+                            v_MPValue = Help.toObject(v_Item.getValue().getParameterTypes()[0] ,v_Value.getValue());
+                        }
+                        else
+                        {
+                            v_MPValue = "";
+                        }
+                    }
+                    
+                    v_Item.getValue().invoke(v_Ret ,v_MPValue);
                 }
             }
             catch (Exception exce)

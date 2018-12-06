@@ -17,6 +17,10 @@ __主导思想：__ 通过 @Ldap 注解十分方便的实现Java写入、读取L
   
 （基于：Apache LDAP API 1.0.0-RC2的见 JU_LDAP_V1.xml ）
 
+__特点4：__ 支持同一属性多个属性值的LDAP特性的转换。 
+  
+  Java对象用List<Object>或Set<Object>或数组Object[]定义成员变量的类型，来支持多属性值的LDAP特性
+
 
 ```xml
 	<?xml version="1.0" encoding="UTF-8"?>
@@ -114,63 +118,195 @@ __主导思想：__ 通过 @Ldap 注解十分方便的实现Java写入、读取L
 	public class User
 	{
 	    
-	    /** 定义DN */
-	    @Ldap(type=LdapType.DN)
-	    private String id;
+		/** 定义DN */
+		@Ldap(type=LdapType.DN)
+		private String id;
+		
+		/** 当 LdapType.DN "uid=xx,dc=example,dc=com" 时，在查询时，uid将自动赋值。在写入时，也不用特意赋值 */
+		@Ldap("uid")
+		private String uid;
 	
 		/** 定义属性ou */
-	    @Ldap(name="ou")
-	    private String name;
+		@Ldap(name="ou")
+		private String name;
 	    
-	    /** 定义属性userPassword */
-	    @Ldap("userPassword")
-	    private String password;
+		/** 定义属性userPassword */
+		@Ldap("userPassword")
+		private String password;
 	    
 		/** 定义属性street */
-	    @Ldap("street")
-	    private String address;
+		@Ldap("street")
+		private String address;
+	    
+		/** 支持多个属性值的LDAP特性：字符类型的集合 */
+		@Ldap("cn")
+		private List<String> name;
+		
+		/** 支持多个属性值的LDAP特性：日期类型的集合，LDAP目录数据库中的属性值可以是字符串类型的 */
+		@Ldap("description")
+		private List<Date>   timeList;
+		
+		/** 支持多个属性值的LDAP特性：万能元素类型的集合 */
+		@Ldap("localityName")
+		private List<?>      dataList;
+		
+		/** 支持多个属性值的LDAP特性：字符类型的数组 */
+		@Ldap("telephoneNumber")
+		private String []    tel;
+		
+		/** 支持多个属性值的LDAP特性：日期类型的数组，LDAP目录数据库中的属性值可以是字符串类型的 */
+		@Ldap("gn")
+		private Date   []    times;
 	
 	    
 	    
-	    public String getId()
-	    {
-	        return id;
-	    }
-	    
-	    public void setId(String id)
-	    {
-	        this.id = id;
-	    }
-	
-	    public String getName()
-	    {
-	        return name;
-	    }
-	    
-	    public void setName(String name)
-	    {
-	        this.name = name;
-	    }
-	    
-	    public String getPassword()
-	    {
-	        return password;
-	    }
-	    
-	    public void setPassword(String password)
-	    {
-	        this.password = password;
-	    }
-	    
-	    public String getAddress()
-	    {
-	        return address;
-	    }
-	
-	    public void setAddress(String address)
-	    {
-	        this.address = address;
-	    }
+		public String getId()
+		{
+		    return id;
+		}
+		
+		public void setId(String id)
+		{
+		    this.id = id;
+		}
+		
+		public String getName()
+		{
+		    return name;
+		}
+		
+		public void setName(String name)
+		{
+		    this.name = name;
+		}
+		
+		public String getPassword()
+		{
+		    return password;
+		}
+		
+		public void setPassword(String password)
+		{
+		    this.password = password;
+		}
+		
+		public String getAddress()
+		{
+		    return address;
+		}
+		
+		public void setAddress(String address)
+		{
+		    this.address = address;
+		}
+		
+		/**
+		 * 获取：当 LdapType.DN personNo="uid=xx,dc=example,dc=com" 时，在查询时，uid将自动赋值。在写入时，也不用特意赋值
+		 */
+		public String getUid()
+		{
+		    return uid;
+		}
+		
+		/**
+		 * 设置：当 LdapType.DN personNo="uid=xx,dc=example,dc=com" 时，在查询时，uid将自动赋值。在写入时，也不用特意赋值
+		 * 
+		 * @param uid 
+		 */
+		public void setUid(String uid)
+		{
+		    this.uid = uid;
+		}
+		
+		/**
+		 * 获取：支持多个属性值的LDAP特性：字符类型的集合
+		 */
+		public List<String> getName()
+		{
+		    return name;
+		}
+		
+		/**
+		 * 设置：支持多个属性值的LDAP特性：字符类型的集合
+		 * 
+		 * @param name 
+		 */
+		public void setName(List<String> name)
+		{
+		    this.name = name;
+		}
+		
+		/**
+		 * 获取：支持多个属性值的LDAP特性：日期类型的集合，LDAP目录数据库中的属性值可以是字符串类型的
+		 */
+		public List<Date> getTimeList()
+		{
+		    return timeList;
+		}
+		
+		/**
+		 * 设置：支持多个属性值的LDAP特性：日期类型的集合，LDAP目录数据库中的属性值可以是字符串类型的
+		 * 
+		 * @param timeList 
+		 */
+		public void setTimeList(List<Date> timeList)
+		{
+		    this.timeList = timeList;
+		}
+		
+		/**
+		 * 获取：支持多个属性值的LDAP特性：万能元素类型的集合
+		 */
+		public List<?> getDataList()
+		{
+		    return dataList;
+		}
+		
+		/**
+		 * 设置：支持多个属性值的LDAP特性：万能元素类型的集合
+		 * 
+		 * @param dataList 
+		 */
+		public void setDataList(List<?> dataList)
+		{
+		    this.dataList = dataList;
+		}
+		
+		/**
+		 * 获取：支持多个属性值的LDAP特性：字符类型的数组
+		 */
+		public String [] getTel()
+		{
+		    return tel;
+		}
+		
+		/**
+		 * 设置：支持多个属性值的LDAP特性：字符类型的数组
+		 * 
+		 * @param tel 
+		 */
+		public void setTel(String [] tel)
+		{
+		    this.tel = tel;
+		}
+		
+		/**
+		 * 获取：支持多个属性值的LDAP特性：日期类型的数组，LDAP目录数据库中的属性值可以是字符串类型的
+		 */
+		public Date [] getTimes()
+		{
+		    return times;
+		}
+		
+		/**
+		 * 设置：支持多个属性值的LDAP特性：日期类型的数组，LDAP目录数据库中的属性值可以是字符串类型的
+		 * 
+		 * @param times 
+		 */
+		public void setTimes(Date [] times)
+		{
+		    this.times = times;
+		}
 	}
 ```
 

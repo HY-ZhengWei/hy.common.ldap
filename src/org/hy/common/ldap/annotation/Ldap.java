@@ -24,7 +24,7 @@ public @interface Ldap
 {
     
     /**
-     * LDAP中的"对象类ObjectClass"的名称。多个有逗号分隔。有先后有顺序。
+     * LDAP中的"对象类ObjectClass"的名称。多个有逗号分隔。先后顺序不影响”条目配置翻译官“。区分大小写。
      * 
      * 使用在：Java类的定义上
      * 
@@ -62,7 +62,7 @@ public @interface Ldap
     
     
     /**
-     * LDAP中的"属性Attribute"的名称。
+     * LDAP中的"属性Attribute"的名称。区分大小写。
      * 
      * 使用在：Java类的属性上，或Java类的setter、getter方法上。
      * 

@@ -33,6 +33,7 @@ import org.apache.directory.ldap.client.api.LdapConnection;
 import org.apache.directory.ldap.client.api.LdapConnectionPool;
 import org.apache.directory.ldap.client.api.LdapNetworkConnection;
 import org.hy.common.Help;
+import org.hy.common.StringHelp;
 import org.hy.common.ldap.annotation.LdapAnnotation;
 import org.hy.common.ldap.annotation.LdapEntry;
 import org.hy.common.xml.XJava;
@@ -216,7 +217,14 @@ public class LDAP
     @SuppressWarnings("unchecked")
     public static LdapEntry getLdapEntry(String i_ObjectClassesID)
     {
-        return ((Map<String ,LdapEntry>)XJava.getObject(LdapAnnotation.$LdapEntryClassIDs)).get(i_ObjectClassesID);
+        LdapEntry v_LdapEntry = ((Map<String ,LdapEntry>)XJava.getObject(LdapAnnotation.$LdapEntryClassIDs)).get(i_ObjectClassesID);
+        
+        if ( v_LdapEntry == null )
+        {
+            System.err.println("LDAP.getLdapEntry('" + i_ObjectClassesID + "') is not find Java Object(LdapEntry).");
+        }
+        
+        return v_LdapEntry;
     }
     
     
@@ -240,26 +248,28 @@ public class LDAP
             return null;
         }
         
-        Attribute       v_Attribute = i_Entry.get(LDAP.$ObjectClass);
-        Iterator<Value> v_Iter      = v_Attribute.iterator();
-        StringBuilder   v_Buffer    = new StringBuilder();
+        Attribute       v_Attribute     = i_Entry.get(LDAP.$ObjectClass);
+        Iterator<Value> v_Iter          = v_Attribute.iterator();
+        List<String>    v_ObjectClasses = new ArrayList<String>();
         
         while (v_Iter.hasNext())
         {
             Value v_Value = v_Iter.next();
             
             // 1.0.0版本中用的是v_Value.getString()
-            v_Buffer.append(",").append(v_Value.getValue());
+            v_ObjectClasses.add(v_Value.getValue());
         }
         
-        String v_ObjectClassesID = v_Buffer.toString();
+        Help.toSort(v_ObjectClasses);
+        
+        String v_ObjectClassesID = StringHelp.toString(v_ObjectClasses ,"" ,",");
         if ( Help.isNull(v_ObjectClassesID) )
         {
             return null;
         }
         else
         {
-            return getLdapEntry(v_ObjectClassesID.substring(1));
+            return getLdapEntry(v_ObjectClassesID);
         }
     }
     

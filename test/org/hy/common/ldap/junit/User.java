@@ -9,9 +9,9 @@ import org.hy.common.xml.SerializableDef;
 
 
 /**
- * 用户信息类。
+ * OpenLDAP的用户信息类。
  * 
- * 可测试"条目翻译官"
+ * 测试"条目翻译官"
  *
  * @author      ZhengWei(HY)
  * @createDate  2017-02-14
