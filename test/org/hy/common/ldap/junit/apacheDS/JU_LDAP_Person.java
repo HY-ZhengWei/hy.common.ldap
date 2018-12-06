@@ -48,7 +48,7 @@ public class JU_LDAP_Person
     
     
     /**
-     * 添加人员
+     * 添加人员。测试前，先确保 ou=xx,dc=wzyb,dc=com 层次的树结构。
      * 
      * @author      ZhengWei(HY)
      * @createDate  2018-12-06
