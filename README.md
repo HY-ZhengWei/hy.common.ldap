@@ -19,7 +19,7 @@ __主导思想：__ 通过 @Ldap 注解十分方便的实现Java写入、读取L
 
 __特点4：__ 支持同一属性多个属性值的LDAP特性的转换。 
   
-  Java对象用List<?>或Set<?>或数组Object[]定义成员变量的类型，来支持多属性值的LDAP特性
+  Java对象用List<Object>或Set<Object>或数组Object[]定义成员变量的类型，来支持多属性值的LDAP特性
 
 
 ```xml
