@@ -447,7 +447,7 @@ public class User
 
 
 ### 实战案例：从关系型数据库"拉"数据，并"推"到ApacheDS服务上。
-[案例代码](test/org.hy.common.ldap.junit.dbtoldap)
+[案例代码](test/org/hy/common/ldap/junit/dbtoldap)
 
 
 
