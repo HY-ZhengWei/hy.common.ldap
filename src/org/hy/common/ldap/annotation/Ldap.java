@@ -70,6 +70,13 @@ public @interface Ldap
      * 也可简写为：      @Ldap("ou")
      * 也可采用方法名称： @Ldap
      * 
+     * 注意：当LDAP数据库中的属性名givenName简写为gn时，这里应当配置成givenName。
+     *      配置成gn简写的名称，可以写入，但不能读取成功。LDAP按全称保存了。 
+     *      
+     *      但commonName的简写cn是可以用的。
+     *      也就说，当用简写写入到LDAP中时，LDAP没有自动改成全称保存时，
+     *      也是按简写保存的，就可以用简写，否则不建义用简写的属性名。
+     * 
      * @author      ZhengWei(HY)
      * @createDate  2017-02-14
      * @version     v1.0

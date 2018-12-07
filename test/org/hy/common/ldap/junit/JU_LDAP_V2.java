@@ -91,15 +91,19 @@ public class JU_LDAP_V2
         v_Values.add(v_User01);
         v_Values.add(v_User02);
         
-        boolean v_Ret = v_LDAP.addEntrys(v_Values);
+        int v_AddCount = v_LDAP.addEntrys(v_Values);
         
-        if ( v_Ret )
+        if ( v_AddCount > 0 )
         {
-            System.out.println(Date.getNowTime().getFullMilli() + "  批量添加成功.");
+            System.out.println(Date.getNowTime().getFullMilli() + "  批量添加成功，共添加 " + v_AddCount + " 个条目.");
+        }
+        else if ( v_AddCount == 0 )
+        {
+            System.err.println(Date.getNowTime().getFullMilli() + "  未添加任何条目.");
         }
         else
         {
-            System.out.println(Date.getNowTime().getFullMilli() + "  批量添加异常.");
+            System.err.println(Date.getNowTime().getFullMilli() + "  批量添加异常.");
         }
     }
     

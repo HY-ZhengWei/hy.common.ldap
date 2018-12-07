@@ -17,20 +17,16 @@
 			
 			<content>
 				<![CDATA[
-				SELECT  'uid=' + A.Base_PerNo + ',ou=users,dc=wzyb,dc=com'     AS userID
-				       ,A.Base_PerNo                                           AS userNo
-				       ,A.Base_Pername                                         AS userName
-				       ,LEFT(A.Base_Pername ,1)                                AS surname
-				       ,A.Base_GroupID                                         AS groupNo
-				       ,B.Base_GroupName                                       AS groupName
-				       ,A.Base_CardNo                                          AS cardNo
-				       ,A.Base_Modify_DateTime                                 AS lastTime
-				       ,A.Base_IsDel
-				  FROM  General_Personnel  A
-				       ,General_Group      B
-				 WHERE  A.Base_GroupID = B.Base_GroupID
-				   AND  A.Base_IsDel   = 0
-				   AND  B.Base_IsDel   = 0
+				SELECT  'uid=' + RTRIM(LTRIM(A.编码)) + ',ou=users,dc=wzyb,dc=com'  AS userID
+				       ,RTRIM(LTRIM(A.编码))                                        AS userNo
+				       ,RTRIM(LTRIM(A.姓名))                                        AS userName
+				       ,LEFT(LTRIM(A.姓名) ,1)                                      AS surname
+				       ,RTRIM(LTRIM(A.性别))                                        AS sex
+				       ,RTRIM(LTRIM(A.部门))                                        AS groupName
+				       ,RTRIM(LTRIM(A.联系电话))                                     AS tel
+				       ,RTRIM(LTRIM(A.籍贯))                                        AS city
+				       ,CONVERT(VARCHAR(100) ,GETDATE() ,120)                      AS lastTime
+				  FROM  HR_JBXXB  A
 				 ORDER  BY 1
 				]]>
 			</content>
@@ -50,11 +46,43 @@
 			
 			<content>
 				<![CDATA[
+				SELECT  'uid=' + A.Base_PerNo + ',ou=users,dc=wzyb,dc=com'     AS userID
+				       ,A.Base_PerNo                                           AS userNo
+				       ,A.Base_Pername                                         AS userName
+				       ,LEFT(A.Base_Pername ,1)                                AS surname
+				       ,A.Base_CardNo                                          AS cardNo
+				       ,A.Base_Modify_DateTime                                 AS lastTime
+				  FROM  General_Personnel  A
+				       ,General_Group      B
+				 WHERE  A.Base_GroupID = B.Base_GroupID
+				   AND  A.Base_IsDel   = 0
+				   AND  B.Base_IsDel   = 0
+				 ORDER  BY 1
+				]]>
+			</content>
+			
+			<result>
+				<row>org.hy.common.ldap.junit.dbtoldap.UserInfo</row>
+				<cfill>setter(colValue)</cfill>
+			</result>
+			
+		</sql>
+		
+		
+		
+		<sql id="XSQL_LDAP_UnionB_01_User_QueryAll"> 
+		
+			<dataSourceGroup ref="DSG_XLDAP_UnionB" />
+			
+			<content>
+				<![CDATA[
 				SELECT  'uid=' + A.job_Number + ',ou=users,dc=wzyb,dc=com'  AS userID 
+				       ,A.job_Number                                        AS userNo
 				       ,A.nickName                                          AS userName
+				       ,LEFT(A.nickName ,1)                                 AS surname
 				       ,A.uname                                             AS loginName
 				       ,A.pwd                                               AS loginPwd
-				       ,A.phone                                             AS tel
+				       ,A.updateTime                                        AS lastTime
 				  FROM  Sys_User  A
 				 WHERE  A.job_Number IS NOT NULL
 				   AND  A.job_Number != ''
@@ -67,6 +95,40 @@
 				<row>org.hy.common.ldap.junit.dbtoldap.UserInfo</row>
 				<cfill>setter(colValue)</cfill>
 			</result>
+			
+			<comment>登陆名登陆</comment>
+			
+		</sql>
+		
+		
+		
+		<sql id="XSQL_LDAP_UnionB_02_User_QueryAll"> 
+		
+			<dataSourceGroup ref="DSG_XLDAP_UnionB" />
+			
+			<content>
+				<![CDATA[
+				SELECT  'uid=' + A.job_Number + ',ou=users,dc=wzyb,dc=com'  AS userID 
+				       ,A.job_Number                                        AS userNo
+				       ,A.nickName                                          AS userName
+				       ,LEFT(A.nickName ,1)                                 AS surname
+				       ,A.job_Number                                        AS loginName
+				       ,A.pwd                                               AS loginPwd
+				       ,A.updateTime                                        AS lastTime
+				  FROM  Sys_User  A
+				 WHERE  A.job_Number IS NOT NULL
+				   AND  A.job_Number != ''
+				   AND  A.deleted     = 0
+				 ORDER  BY 1
+				]]>
+			</content>
+			
+			<result>
+				<row>org.hy.common.ldap.junit.dbtoldap.UserInfo</row>
+				<cfill>setter(colValue)</cfill>
+			</result>
+			
+			<comment>工号登陆</comment>
 			
 		</sql>
 		

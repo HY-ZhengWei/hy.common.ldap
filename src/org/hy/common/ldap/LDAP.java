@@ -1,9 +1,11 @@
 package org.hy.common.ldap;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.apache.directory.api.ldap.model.cursor.Cursor;
 import org.apache.directory.api.ldap.model.cursor.EntryCursor;
@@ -506,22 +508,26 @@ public class LDAP
      * 
      * 只用于用 @Ldap 注解的Java对象。
      * 
+     * 注：不存时，才新增写入条目。
+     * 
      * @author      ZhengWei(HY)
      * @createDate  2017-02-16
      * @version     v1.0
      *
      * @param i_ValuesMap
-     * @return
+     * @return   返回实际新增的条目数量。小于0，表示异常。
+     *           -3表示：入参i_ValuesMap中有重复的DN值。
      */
-    public boolean addEntrys(List<?> i_ValuesMap)
+    public int addEntrys(List<?> i_ValuesMap)
     {
         if ( Help.isNull(i_ValuesMap) )
         {
-            return false;
+            return -1;
         }
         
-        boolean     v_Ret    = false;
-        List<Entry> v_Entrys = new ArrayList<Entry>();
+        int         v_AddCount = 0;
+        List<Entry> v_Entrys   = new ArrayList<Entry>();
+        Set<String> v_DNs      = new HashSet<String>();
         
         try
         {
@@ -535,29 +541,42 @@ public class LDAP
                 LdapEntry v_LdapEntry = getLdapEntry(v_Values.getClass());
                 if ( v_LdapEntry == null )
                 {
-                    return v_Ret;
+                    return -2;
                 }
                 
-                Entry v_Entry = v_LdapEntry.toEntry(v_Values);
-                if ( v_Entry == null )
+                String v_DN = v_LdapEntry.getDNValue(v_Values);
+                if ( v_DNs.contains(v_DN) )
                 {
-                    return v_Ret;
+                    System.err.println("LDAP.addEntrys() DN[" + v_DN + "] is duplicate.");
+                    return -3;
                 }
-                v_Entrys.add(v_Entry);
+                v_DNs.add(v_DN);
+                
+                Object v_OldValues = this.queryEntry(v_DN);
+                if ( v_OldValues == null )  // 不存时，才新增写入条目
+                {
+                    Entry v_Entry = v_LdapEntry.toEntry(v_Values);
+                    if ( v_Entry == null )
+                    {
+                        return -4;
+                    }
+                    v_Entrys.add(v_Entry);
+                }
             }
         }
         catch (Exception exce)
         {
             exce.printStackTrace();
-            return v_Ret;
+            return -5;
         }
         
         
+        v_DNs.clear();
+        v_DNs = null;
         LdapConnection v_Conn = null;
         
         try
         {
-            v_Ret  = true;
             v_Conn = this.getConnection();
             
             for (Entry v_Entry : v_Entrys)
@@ -572,22 +591,23 @@ public class LDAP
                 
                 if ( !LDAP.isSuccess(v_Response) )
                 {
-                    v_Ret = false;
-                    break;
+                    return -6;
                 }
+                
+                v_AddCount++;
             }
         }
         catch (Exception exce)
         {
-            v_Ret = false;
             exce.printStackTrace();
+            return -7;
         }
         finally
         {
             this.closeConnection(v_Conn);
         }
         
-        return v_Ret;
+        return v_AddCount;
     }
     
     

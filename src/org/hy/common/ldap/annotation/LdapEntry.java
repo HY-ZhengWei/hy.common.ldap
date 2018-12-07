@@ -20,13 +20,14 @@ import org.apache.directory.api.ldap.model.entry.Value;
 import org.apache.directory.api.ldap.model.exception.LdapException;
 import org.apache.directory.api.ldap.model.message.ModifyRequest;
 import org.apache.directory.api.ldap.model.message.ModifyRequestImpl;
-import org.apache.directory.api.ldap.model.message.ResultCodeEnum;
 import org.apache.directory.api.ldap.model.name.Dn;
 import org.hy.common.Date;
 import org.hy.common.Help;
 import org.hy.common.MethodReflect;
 import org.hy.common.Return;
 import org.hy.common.StringHelp;
+import org.hy.common.comparate.Comparate;
+import org.hy.common.comparate.ComparateResult;
 import org.hy.common.ldap.LDAP;
 
 
@@ -165,6 +166,96 @@ public class LdapEntry
     
     
     /**
+     * Java成员的数值，转成LDAP的属性值，支持同一属性的多个属性值。
+     * 
+     * 多属性值时，有排序动作
+     * 
+     * @author      ZhengWei(HY)
+     * @createDate  2018-12-07
+     * @version     v1.0
+     *
+     * @param i_Data
+     * @return
+     */
+    public static String [] dataToLDAPAttributes(Object i_Data)
+    {
+        if ( i_Data == null )
+        {
+            return new String[] {};
+        }
+        
+        List<String> v_Attrs = new ArrayList<String>();
+        
+        if ( i_Data instanceof List )
+        {
+            List<?> v_Datas = (List<?>)i_Data;
+            
+            for (Object v_Item : v_Datas)
+            {
+                if ( v_Item != null )
+                {
+                    String v_ItemValue = v_Item.toString();
+                    if ( !Help.isNull(v_ItemValue) )
+                    {
+                        v_Attrs.add(v_ItemValue);
+                    }
+                }
+            }
+            
+            Help.toSort(v_Attrs);
+        }
+        else if ( i_Data instanceof Set )
+        {
+            Iterator<?> v_Datas = ((Set<?>)i_Data).iterator();
+            
+            while (v_Datas.hasNext())
+            {
+                Object v_Item = v_Datas.next();
+                if ( v_Item != null )
+                {
+                    String v_ItemValue = v_Item.toString();
+                    if ( !Help.isNull(v_ItemValue) )
+                    {
+                        v_Attrs.add(v_ItemValue);
+                    }
+                }
+            }
+            
+            Help.toSort(v_Attrs);
+        }
+        else if ( i_Data instanceof Object [] )
+        {
+            Object [] v_Datas = (Object [])i_Data;
+            
+            for (Object v_Item : v_Datas)
+            {
+                if ( v_Item != null )
+                {
+                    String v_ItemValue = v_Item.toString();
+                    if ( !Help.isNull(v_ItemValue) )
+                    {
+                        v_Attrs.add(v_ItemValue);
+                    }
+                }
+            }
+            
+            Help.toSort(v_Attrs);
+        }
+        else
+        {
+            String v_ItemValue = i_Data.toString();
+            if ( !Help.isNull(v_ItemValue) )
+            {
+                v_Attrs.add(v_ItemValue);
+            }
+        }
+        
+        return v_Attrs.toArray(new String[] {});
+    }
+    
+    
+    
+    /**
      * 将Java值对象翻译为LDAP条目
      * 
      * @author      ZhengWei(HY)
@@ -210,89 +301,12 @@ public class LdapEntry
         {
             try
             {
-                Object v_Value = v_Item.getValue().invoke(i_Values);
-                if ( v_Value != null )
+                Object    v_Value      = v_Item.getValue().invoke(i_Values);
+                String [] v_AttrValues = dataToLDAPAttributes(v_Value);
+                
+                if ( !Help.isNull(v_AttrValues) )
                 {
-                    if ( v_Value instanceof List )
-                    {
-                        List<?>  v_VList = (List<?>)v_Value;
-                        if ( !Help.isNull(v_VList) )
-                        {
-                            int       v_Size     = v_VList.size();
-                            String [] v_ValueArr = new String[v_Size];
-                            
-                            for (int i=0; i<v_Size; i++)
-                            {
-                                Object v_VLItem = v_VList.get(i);
-                                if ( v_VLItem == null )
-                                {
-                                    v_ValueArr[i] = "";
-                                }
-                                else
-                                {
-                                    v_ValueArr[i] = v_VLItem.toString();
-                                }
-                            }
-                        
-                            v_Entry.add(v_Item.getKey() ,v_ValueArr);
-                        }
-                    }
-                    else if ( v_Value instanceof Set )
-                    {
-                        Set<?> v_VSet = (Set<?>)v_Value; 
-                        if ( !Help.isNull(v_VSet) )
-                        {
-                            int         v_Size     = v_VSet.size();
-                            String []   v_ValueArr = new String[v_Size];
-                            Iterator<?> v_Iter     = v_VSet.iterator();
-                            
-                            for (int i=0; i<v_Size && v_Iter.hasNext(); i++)
-                            {
-                                Object v_VLItem = v_Iter.next();
-                                if ( v_VLItem == null )
-                                {
-                                    v_ValueArr[i] = "";
-                                }
-                                else
-                                {
-                                    v_ValueArr[i] = v_VLItem.toString();
-                                }
-                            }
-                            
-                            v_Entry.add(v_Item.getKey() ,v_ValueArr);
-                        }
-                    }
-                    else if ( v_Value instanceof Object [] )
-                    {
-                        Object [] v_VArray = (Object [])v_Value;
-                        if ( !Help.isNull(v_VArray) )
-                        {
-                            int       v_Size     = v_VArray.length;
-                            String [] v_ValueArr = new String[v_Size];
-                            
-                            for (int i=0; i<v_Size; i++)
-                            {
-                                Object v_VLItem = v_VArray[i];
-                                if ( v_VLItem == null )
-                                {
-                                    v_ValueArr[i] = "";
-                                }
-                                else
-                                {
-                                    v_ValueArr[i] = v_VLItem.toString();
-                                }
-                            }
-                            
-                            v_Entry.add(v_Item.getKey() ,v_ValueArr);
-                        }
-                    }
-                    else
-                    {
-                        if ( !Help.isNull(v_Value.toString()) )
-                        {
-                            v_Entry.add(v_Item.getKey() ,v_Value.toString());
-                        }
-                    }
+                    v_Entry.add(v_Item.getKey() ,v_AttrValues);
                 }
             }
             catch (Exception exce)
@@ -550,6 +564,11 @@ public class LdapEntry
      * @author      ZhengWei(HY)
      * @createDate  2017-02-17
      * @version     v1.0
+     *              v2.0  2018-12-07  添加：支持同一属性的多个属性值的修改、删除。
+     *                                     注：在多属性值的情况下，只有添加属性值、删除属性值的操作，没有替换修改属性值的操作
+     *                                     1. ( i_IsAdd &&  i_IsUpdate)为真时，新的插入、旧的删除：将LDAP数据库中的属性值修改为与i_NewValues属性值一样，不存在的将删除。
+     *                                     2. ( i_IsAdd && !i_IsUpdate)为真时，新的插入、旧的保留：只向LDAP数据库中添加新的属性值，原LDAP数据库中的属性值将保留。
+     *                                     3. (!i_IsAdd &&  i_IsUpdate)为真时，没有插入、旧的删除：不存于i_NewValues的属性值，将被删除。并不向LDAP数据库中添加任何新属性值。
      *
      * @param i_OldValues  LDAP服务中的旧值
      * @param i_NewValues  Java对象中的新值
@@ -574,8 +593,6 @@ public class LdapEntry
         ModifyRequest v_Request = new ModifyRequestImpl();
         String        v_DN      = null;
         int           v_MCount  = 0;
-        
-        v_Request.getResultResponse().getLdapResult().setResultCode(ResultCodeEnum.SUCCESS);
         
         // 设置LDAP的DN
         try
@@ -606,18 +623,47 @@ public class LdapEntry
                         Object v_OldValue = v_Item.getValue().invoke(i_OldValues);
                         if ( v_OldValue != null )
                         {
-                            if ( i_IsUpdate && !v_NewValue.equals(v_OldValue) )
+                            String [] v_AttrValues = dataToLDAPAttributes(v_NewValue);
+                            if ( !Help.isNull(v_AttrValues) )
                             {
-                                // 修改属性值
-                                v_Request.addModification(new DefaultModification(ModificationOperation.REPLACE_ATTRIBUTE ,v_Item.getKey() ,v_NewValue.toString()));
-                                v_MCount++;
+                                if ( v_AttrValues.length >= 2
+                                 ||  v_NewValue instanceof List
+                                 ||  v_NewValue instanceof Set
+                                 ||  v_NewValue instanceof Object [] )
+                                {
+                                    String []                  v_AttrOlds = dataToLDAPAttributes(v_OldValue);
+                                    ComparateResult<String []> v_CResult  = Comparate.comparate(v_AttrOlds ,v_AttrValues);
+                                    
+                                    if ( i_IsAdd && !Help.isNull(v_CResult.getNewData()) )
+                                    {
+                                        // 多个属性值的情况下：添加新的属性值（当新增标记为真时）
+                                        v_Request.addModification(new DefaultModification(ModificationOperation.ADD_ATTRIBUTE    ,v_Item.getKey() ,v_CResult.getNewData()));
+                                        v_MCount++;
+                                    }
+                                    if ( i_IsUpdate && !Help.isNull(v_CResult.getDelData()) )
+                                    {
+                                        // 多个属性值的情况下：删除旧的属性值（当修改标记为真时）
+                                        v_Request.addModification(new DefaultModification(ModificationOperation.REMOVE_ATTRIBUTE ,v_Item.getKey() ,v_CResult.getDelData()));
+                                        v_MCount++;
+                                    }
+                                }
+                                else if ( i_IsUpdate && !v_NewValue.equals(v_OldValue) )
+                                {
+                                    // 修改属性值
+                                    v_Request.addModification(new DefaultModification(ModificationOperation.REPLACE_ATTRIBUTE ,v_Item.getKey() ,v_AttrValues));
+                                    v_MCount++;
+                                }
                             }
                         }
                         else if ( i_IsAdd )
                         {
-                            // 添加属性
-                            v_Request.addModification(new DefaultModification(ModificationOperation.ADD_ATTRIBUTE ,v_Item.getKey() ,v_NewValue.toString()));
-                            v_MCount++;
+                            String [] v_AttrValues = dataToLDAPAttributes(v_NewValue);
+                            if ( !Help.isNull(v_AttrValues) )
+                            {
+                                // 添加属性
+                                v_Request.addModification(new DefaultModification(ModificationOperation.ADD_ATTRIBUTE ,v_Item.getKey() ,v_AttrValues));
+                                v_MCount++;
+                            }
                         }
                     }
                 }

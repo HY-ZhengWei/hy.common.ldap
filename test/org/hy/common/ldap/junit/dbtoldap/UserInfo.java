@@ -43,7 +43,12 @@ public class UserInfo extends SerializableDef
     @Ldap("sn")
     private String       surname;
     
+    /** 性别 */
+    @Ldap("employeeType")
+    private String       sex;
+    
     /** 登陆名称 */
+    @Ldap("givenName")
     private List<String> loginNames;
     
     /** 登陆密码 */
@@ -51,6 +56,7 @@ public class UserInfo extends SerializableDef
     private List<String> loginPwds;
     
     /** 联系电话 */
+    @Ldap("mobile")
     private List<String> tels;
     
     /** 组织编号 */
@@ -60,6 +66,10 @@ public class UserInfo extends SerializableDef
     /** 组织名称 */
     @Ldap("ou")
     private String       groupName;
+    
+    /** 籍贯 */
+    @Ldap("street")
+    private String       city;
     
     /** 工卡编号 */
     @Ldap("employeeNumber")
@@ -352,6 +362,46 @@ public class UserInfo extends SerializableDef
     public void setLastTime(Date lastTime)
     {
         this.lastTime = lastTime;
+    }
+
+    
+    /**
+     * 获取：性别
+     */
+    public String getSex()
+    {
+        return sex;
+    }
+
+
+    /**
+     * 设置：性别
+     * 
+     * @param sex 
+     */
+    public void setSex(String sex)
+    {
+        this.sex = sex;
+    }
+
+    
+    /**
+     * 获取：籍贯
+     */
+    public String getCity()
+    {
+        return city;
+    }
+
+    
+    /**
+     * 设置：籍贯
+     * 
+     * @param city 
+     */
+    public void setCity(String city)
+    {
+        this.city = city;
     }
     
 }
