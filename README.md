@@ -384,7 +384,7 @@ public class User
 
 
 
-### 多组过滤条件查询的代码样例
+### 多组过滤条件查询的代码样例（无须自己写原始且复杂的过滤文本）
 
 ```java
 	LDAP       v_LDAP   = (LDAP)XJava.getObject("LDAP");
@@ -395,7 +395,7 @@ public class User
 	
 	List<User> v_Datas = (List<User>)v_LDAP.searchEntrys(v_Filter);
 	
-	// 相关更复杂的多组过滤条件的查询见 org.hy.common.ldap.LDAP 类中以 search开头的系列方法。
+	// 相关更多高级的多组过滤的查询见 org.hy.common.ldap.LDAP 类中以 search开头的系列方法。
 ``` 
 
 
