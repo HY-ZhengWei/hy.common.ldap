@@ -1,5 +1,6 @@
 package org.hy.common.ldap;
 
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -70,6 +71,12 @@ public class LDAP
     
     /** Entry.get(...) 方法的参数是不区分大小写的，但为了屏蔽歧义和方便固定义此常量 */
     public static final String $ObjectClass = "objectClass";
+    
+    /** 过滤器中的'与'关系 */
+    public static final String $And         = "&";
+    
+    /** 过滤器中的'或'关系 */
+    public static final String $Or          = "|";
     
     
     
@@ -491,6 +498,262 @@ public class LDAP
         {
             LDAP.closeCursor(    v_Cursor);
             this.closeConnection(v_Conn);
+        }
+        
+        return v_Ret;
+    }
+    
+    
+    
+    /**
+     * 基于父节点Base DN，查询符合条件的条目。
+     * 
+     * @author      ZhengWei(HY)
+     * @createDate  2018-12-08
+     * @version     v1.0
+     *
+     * @param i_Values  用@Ldap标记的Java对象实例（必要属性值DN、及其它过滤查询的属性值）
+     * @return          多属性间的过滤条件为'与'，同一属性的多属性值为'或'关系的精确查询。
+     */
+    public List<?> searchEntrys(Object i_Values)
+    {
+        return this.searchEntrys(i_Values ,SearchScope.SUBTREE ,true ,false ,false ,false);
+    }
+    
+    
+    
+    /**
+     * 基于父节点Base DN，查询符合条件的条目。
+     * 
+     * @author      ZhengWei(HY)
+     * @createDate  2018-12-08
+     * @version     v1.0
+     *
+     * @param i_Values            用@Ldap标记的Java对象实例（必要属性值DN、及其它过滤查询的属性值）
+     *                              1. 当没有DN时，返回null
+     *                              2. 当只有DN时，按DN查询，这就与LDAP.query...()开头的方法相同了。
+     * @param i_SearchScope       查询范围（注：查询的Base DN为 i_Values 的DN）
+     *                            搜索范围01：SearchScope.OBJECT    返回输入给定DN，如果它存在的话。
+     *                            搜索范围02：SearchScope.ONELEVEL  返回低于目前DN的所有子元素，不包括当前DN，也不包括与当前DN无直接关系的DN，即树目录深度为1。
+     *                            搜索范围03：SearchScope.SUBTREE   返回所有元素从给出的DN，包括与DN相关的元素，无论树的深度。
+     * @param i_IsAnd             不属性间的属性值的过滤关系，是'与'、'或'关系？
+     * @param i_IsAndByMultValue  同一属性的多个属性值间的过滤关系，是'与'、'或'关系？
+     * @param i_IsLikeBefore      属性值的前缀是否为模糊匹配
+     * @param i_IsLikeAfter       属性值的后缀是否为模糊匹配
+     * @return
+     */
+    public List<?> searchEntrys(Object i_Values ,SearchScope i_SearchScope ,boolean i_IsAnd ,boolean i_IsAndByMultValue ,boolean i_IsLikeBefore ,boolean i_IsLikeAfter)
+    {
+        List<?> v_Ret = null;
+        
+        if ( i_Values == null )
+        {
+            return v_Ret;
+        }
+        
+        LdapEntry v_LdapEntry = getLdapEntry(i_Values.getClass());
+        if ( v_LdapEntry == null )
+        {
+            return v_Ret;
+        }
+        
+        try
+        {
+            String v_BaseDN = v_LdapEntry.getDNValue(i_Values);
+            if ( Help.isNull(v_BaseDN) )
+            {
+                return v_Ret;
+            }
+            
+            String v_Filter = makeSearchFilter(i_Values ,i_IsAnd ,i_IsAndByMultValue ,i_IsLikeBefore ,i_IsLikeAfter);
+            if ( Help.isNull(v_Filter) )
+            {
+                v_Filter = "(" + LDAP.$ObjectClass + "=*)";
+            }
+            
+            v_Ret = this.searchEntrys(v_BaseDN ,v_Filter ,i_SearchScope);
+        }
+        catch (Exception exce)
+        {
+            exce.printStackTrace();
+        }
+        
+        return v_Ret;
+    }
+    
+    
+    
+    /**
+     * 基于父节点Base DN，查询符合条件的条目。
+     * 
+     * @author      ZhengWei(HY)
+     * @createDate  2018-12-08
+     * @version     v1.0
+     *
+     * @param i_BaseDN       父节点标识
+     * @param i_Filter       过滤条件
+     * @param i_SearchScope  查询范围
+     *                       搜索范围01：SearchScope.OBJECT    返回输入给定DN，如果它存在的话。
+     *                       搜索范围02：SearchScope.ONELEVEL  返回低于目前DN的所有子元素，不包括当前DN，也不包括与当前DN无直接关系的DN，即树目录深度为1。
+     *                       搜索范围03：SearchScope.SUBTREE   返回所有元素从给出的DN，包括与DN相关的元素，无论树的深度。
+     * @return
+     */
+    private List<?> searchEntrys(String i_BaseDN ,String i_Filter ,SearchScope i_SearchScope)
+    {
+        LdapConnection v_Conn   = null;
+        EntryCursor    v_Cursor = null;
+        List<Object>   v_Ret    = new ArrayList<Object>();
+        
+        try
+        {
+            v_Conn   = this.getConnection();
+            v_Cursor = v_Conn.search(new Dn(i_BaseDN) ,i_Filter ,i_SearchScope);
+            
+            while ( v_Cursor.next() )
+            {
+                Entry     v_Entry     = v_Cursor.get();
+                LdapEntry v_LdapEntry = getLdapEntry(v_Entry);
+                
+                if ( v_LdapEntry != null )
+                {
+                    v_Ret.add(v_LdapEntry.toObject(v_Entry));
+                }
+            }
+        }
+        catch (Exception exce)
+        {
+            exce.printStackTrace();
+        }
+        finally
+        {
+            LDAP.closeCursor(    v_Cursor);
+            this.closeConnection(v_Conn);
+        }
+        
+        return v_Ret;
+    }
+    
+    
+    
+    /**
+     * 用Java对象(@Ldap)生成查询的过滤器条件。
+     * 
+     * Java对象的成员属性name和pwd，属性值为HY和123456，对应LDAP属性名cn和gn。
+     * 
+     * 与关系时生成：(&(cn=HY)(gn=123456))
+     * 或关系时生成：(|(cn=HY)(gn=123456))
+     * 
+     * 与关系带前缀模糊匹配：(&(cn=*HY )(gn=*123456))
+     * 与关系带后缀模糊匹配：(&(cn= HY*)(gn= 123456*))
+     * 与关系带全模糊匹配：  (&(cn=*HY*)(gn=*123456*))
+     * 
+     * 当同一属性有多个属性值时，要符合上面的规则。
+     * 
+     * @author      ZhengWei(HY)
+     * @createDate  2018-12-08
+     * @version     v1.0
+     *
+     * @param i_Values            用@Ldap注解过的Java对象
+     * @param i_IsAnd             不属性间的属性值的过滤关系，是'与'、'或'关系？
+     * @param i_IsAndByMultValue  同一属性的多个属性值间的过滤关系，是'与'、'或'关系？
+     * @param i_IsLikeBefore      属性值的前缀是否为模糊匹配
+     * @param i_IsLikeAfter       属性值的后缀是否为模糊匹配
+     * @return
+     */
+    public static String makeSearchFilter(Object i_Values ,boolean i_IsAnd ,boolean i_IsAndByMultValue ,boolean i_IsLikeBefore ,boolean i_IsLikeAfter)
+    {
+        LdapEntry     v_LdapEntry = getLdapEntry(i_Values.getClass());
+        StringBuilder v_Filter    = new StringBuilder();
+        
+        for (Map.Entry<String ,Method> v_Item : v_LdapEntry.getElementsToLDAP().entrySet())
+        {
+            try
+            {
+                Object v_Value = v_Item.getValue().invoke(i_Values);
+                if ( v_Value == null )
+                {
+                    continue;
+                }
+                
+                List<String> v_FilterValues = new ArrayList<String>();
+                if ( v_Value instanceof List )
+                {
+                    for (Object v_VItem : (List<?>)v_Value)
+                    {
+                        if ( v_VItem != null && !Help.isNull(v_VItem.toString()) )
+                        {
+                            v_FilterValues.add(v_VItem.toString());
+                        }
+                    }
+                }
+                else if ( v_Value instanceof Set )
+                {
+                    for (Object v_VItem : (Set<?>)v_Value)
+                    {
+                        if ( v_VItem != null && !Help.isNull(v_VItem.toString()) )
+                        {
+                            v_FilterValues.add(v_VItem.toString());
+                        }
+                    }
+                }
+                else if ( v_Value instanceof Object [] )
+                {
+                    for (Object v_VItem : (Object [])v_Value)
+                    {
+                        if ( v_VItem != null && !Help.isNull(v_VItem.toString()) )
+                        {
+                            v_FilterValues.add(v_VItem.toString());
+                        }
+                    }
+                }
+                else
+                {
+                    if ( Help.isNull(v_Value.toString()) )
+                    {
+                        v_FilterValues.add(v_Value.toString());
+                    }
+                }
+                
+                if ( Help.isNull(v_FilterValues) )
+                {
+                    continue;
+                }
+                
+                if ( v_FilterValues.size() >= 2 )
+                {
+                    v_Filter.append("(").append(i_IsAndByMultValue ? $And : $Or);
+                }
+                
+                for (String v_FilterValue : v_FilterValues)
+                {
+                    v_Filter.append("(").append(v_Item.getKey()).append("=");
+                    if ( i_IsLikeBefore )
+                    {
+                        v_Filter.append("*");
+                    }
+                    v_Filter.append(v_FilterValue);
+                    if ( i_IsLikeAfter )
+                    {
+                        v_Filter.append("*");
+                    }
+                    v_Filter.append(")");
+                }
+                
+                if ( v_FilterValues.size() >= 2 )
+                {
+                    v_Filter.append(")");
+                }
+            }
+            catch (Exception exce)
+            {
+                exce.printStackTrace();
+            }
+        }
+        
+        String v_Ret = v_Filter.toString();
+        if ( !Help.isNull(v_Ret) )
+        {
+            v_Ret = "(" + (i_IsAnd ? $And : $Or) + v_Ret + ")";
         }
         
         return v_Ret;

@@ -83,6 +83,8 @@ public class LdapEntry
     /**
      * LDAP中的"属性Attribute"的名称 与对应的 Java对象的getter()方法
      * 
+     * 不包括DN的getter()方法
+     * 
      * Map.key   = "属性名称"。 如，o、ou等。
      * Map.value = Java属性对象的getter()方法
      */
@@ -90,6 +92,8 @@ public class LdapEntry
     
     /**
      * LDAP中的"属性Attribute"的名称 与对应的 Java对象的setter()方法
+     * 
+     * 不包括DN的setter()方法
      * 
      * Map.key   = "属性名称"。 如，o、ou等。
      * Map.value = Java属性对象的setter()方法
@@ -132,6 +136,36 @@ public class LdapEntry
         
         // 重新排序，生成对象ID
         this.objectClassesID = StringHelp.toString(Help.toSort(this.objectClasses) ,"" ,",");
+    }
+    
+    
+    
+    /**
+     * 获取父节点的DN值
+     * 
+     * @author      ZhengWei(HY)
+     * @createDate  2018-12-08
+     * @version     v1.0
+     *
+     * @return
+     */
+    public String getSuperDNValue(Object i_Values) throws IllegalAccessException, IllegalArgumentException, InvocationTargetException
+    {
+        String v_DN = this.getDNValue(i_Values);
+        if ( v_DN == null )
+        {
+            return null;
+        }
+        
+        int v_Index = v_DN.indexOf(",");
+        if ( v_Index > 0 )
+        {
+            return v_DN.substring(v_Index);
+        }
+        else 
+        {
+            return "";
+        }
     }
     
     
@@ -201,8 +235,6 @@ public class LdapEntry
                     }
                 }
             }
-            
-            Help.toSort(v_Attrs);
         }
         else if ( i_Data instanceof Set )
         {
@@ -220,8 +252,6 @@ public class LdapEntry
                     }
                 }
             }
-            
-            Help.toSort(v_Attrs);
         }
         else if ( i_Data instanceof Object [] )
         {
@@ -238,8 +268,6 @@ public class LdapEntry
                     }
                 }
             }
-            
-            Help.toSort(v_Attrs);
         }
         else
         {

@@ -241,12 +241,40 @@ public class JU_DBToLDAP extends AppInitConfig
      * @createDate  2018-12-08
      * @version     v1.0
      */
+    @SuppressWarnings("unchecked")
     @Test
     public void test_UserLogin()
     {
-        LDAP v_LDAP = (LDAP)XJava.getObject("LDAP");
+        LDAP     v_LDAP   = (LDAP)XJava.getObject("LDAP");
+        UserInfo v_User01 = new UserInfo();
+        UserInfo v_User02 = new UserInfo();
         
-        v_LDAP.queryEntry(new Object());
+        v_User01.setUserID("ou=users,dc=wzyb,dc=com");
+        v_User01.setLoginName("admin-xcx");  // 按账号
+        v_User01.setLoginPwd("E10ADC3949BA59ABBE56E057F20F883E");
+        
+        v_User02.setUserID("ou=users,dc=wzyb,dc=com");
+        v_User02.setLoginName("51442");      // 按工号
+        v_User02.setLoginPwd("E10ADC3949BA59ABBE56E057F20F883E");
+        
+        List<UserInfo> v_Users     = null;
+        Date           v_BeginTime = null;
+        Date           v_EndTime   = null;
+        
+        System.out.println("同一用户按账号" + v_User01.getLoginNames().get(0) + "、密码登陆：");
+        v_BeginTime = new Date();
+        v_Users     = (List<UserInfo>)v_LDAP.searchEntrys(v_User01);
+        v_EndTime   = new Date();
+        System.out.println("查询用时：" + Date.toTimeLen(v_EndTime.differ(v_BeginTime)));
+        Help.print(v_Users);
+        
+        System.out.println("\n");
+        System.out.println("同一用户按工号" + v_User02.getLoginNames().get(0) + "、密码登陆：");
+        v_BeginTime = new Date();
+        v_Users     = (List<UserInfo>)v_LDAP.searchEntrys(v_User02);
+        v_EndTime   = new Date();
+        System.out.println("查询用时：" + Date.toTimeLen(v_EndTime.differ(v_BeginTime)));
+        Help.print(v_Users);
     }
     
     

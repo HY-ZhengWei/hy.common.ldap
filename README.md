@@ -357,7 +357,7 @@ public class User
 
 
 
-### 查询具体条目Entry的代码样例
+### 按DN查询具体条目Entry的代码样例
 
 ```java
 	LDAP v_LDAP = (LDAP)XJava.getObject("LDAP");
@@ -366,7 +366,7 @@ public class User
 
 
 
-### 查询子条目Entry(不包含子子条目)的代码样例
+### 按DN查询子条目Entry(不包含子子条目)的代码样例
 
 ```java
 	LDAP       v_LDAP   = (LDAP)XJava.getObject("LDAP");
@@ -375,12 +375,28 @@ public class User
 
 
 
-### 查询所有子条目Entry的代码样例
+### 按DN查询所有子条目Entry的代码样例
 
 ```java
 	LDAP       v_LDAP   = (LDAP)XJava.getObject("LDAP");
 	List<User> v_Entrys = (List<User>)v_LDAP.queryEntryTrees("dc=maxcrc,dc=com");   // 参数也可为User对象
 ```
+
+
+
+### 多组过滤条件查询的代码样例
+
+```java
+	LDAP       v_LDAP   = (LDAP)XJava.getObject("LDAP");
+	User       v_Filter = new User();   // @Ldap注解过的条目翻译官
+	
+	v_Filter.logineName("HY");
+	v_Filter.loginPwd("123456")
+	
+	List<User> v_Datas = (List<User>)v_LDAP.searchEntrys(v_Filter);
+	
+	// 相关更复杂的多组过滤条件的查询见 org.hy.common.ldap.LDAP 类中以 search开头的系列方法。
+``` 
 
 
 
@@ -453,7 +469,7 @@ public class User
 
 	| 文件名称 | 说明 |
 	|:------------------ |:---------------------------------- |
-	| JU_DBToLDAP.java   | 启动测试类                           |
+	| JU_DBToLDAP.java   | 启动测试类。从多个DB整合数据到LDAP中    |
 	| UserInfo.java      | 值对象及条目翻译官                    |
 	| IUserDAO.java      | 关系型数据库的操作类DAO，如查询用户信息  |
 	| db.sql.xml         | 查询SQL语句的配置文件                 |
