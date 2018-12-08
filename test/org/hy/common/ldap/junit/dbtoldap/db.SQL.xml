@@ -46,12 +46,12 @@
 			
 			<content>
 				<![CDATA[
-				SELECT  'uid=' + A.Base_PerNo + ',ou=users,dc=wzyb,dc=com'     AS userID
-				       ,A.Base_PerNo                                           AS userNo
-				       ,A.Base_Pername                                         AS userName
-				       ,LEFT(A.Base_Pername ,1)                                AS surname
-				       ,A.Base_CardNo                                          AS cardNo
-				       ,A.Base_Modify_DateTime                                 AS lastTime
+				SELECT  'uid=' + RTRIM(LTRIM(A.Base_PerNo)) + ',ou=users,dc=wzyb,dc=com' AS userID
+				       ,RTRIM(LTRIM(A.Base_PerNo))                                       AS userNo
+				       ,RTRIM(LTRIM(A.Base_Pername))                                     AS userName
+				       ,LEFT(RTRIM(LTRIM(A.Base_Pername)) ,1)                            AS surname
+				       ,RTRIM(LTRIM(A.Base_CardNo))                                      AS cardNo
+				       ,A.Base_Modify_DateTime                                           AS lastTime
 				  FROM  General_Personnel  A
 				       ,General_Group      B
 				 WHERE  A.Base_GroupID = B.Base_GroupID
@@ -76,13 +76,13 @@
 			
 			<content>
 				<![CDATA[
-				SELECT  'uid=' + A.job_Number + ',ou=users,dc=wzyb,dc=com'  AS userID 
-				       ,A.job_Number                                        AS userNo
-				       ,A.nickName                                          AS userName
-				       ,LEFT(A.nickName ,1)                                 AS surname
-				       ,A.uname                                             AS loginName
-				       ,A.pwd                                               AS loginPwd
-				       ,A.updateTime                                        AS lastTime
+				SELECT  'uid=' + RTRIM(LTRIM(A.job_Number)) + ',ou=users,dc=wzyb,dc=com'  AS userID 
+				       ,RTRIM(LTRIM(A.job_Number))                                        AS userNo
+				       ,RTRIM(LTRIM(A.nickName))                                          AS userName
+				       ,LEFT(RTRIM(LTRIM(A.nickName)) ,1)                                 AS surname
+				       ,RTRIM(LTRIM(A.uname))                                             AS loginName
+				       ,A.pwd                                                             AS loginPwd
+				       ,A.updateTime                                                      AS lastTime
 				  FROM  Sys_User  A
 				 WHERE  A.job_Number IS NOT NULL
 				   AND  A.job_Number != ''
@@ -108,13 +108,13 @@
 			
 			<content>
 				<![CDATA[
-				SELECT  'uid=' + A.job_Number + ',ou=users,dc=wzyb,dc=com'  AS userID 
-				       ,A.job_Number                                        AS userNo
-				       ,A.nickName                                          AS userName
-				       ,LEFT(A.nickName ,1)                                 AS surname
-				       ,A.job_Number                                        AS loginName
-				       ,A.pwd                                               AS loginPwd
-				       ,A.updateTime                                        AS lastTime
+				SELECT  'uid=' + RTRIM(LTRIM(A.job_Number)) + ',ou=users,dc=wzyb,dc=com'  AS userID 
+				       ,RTRIM(LTRIM(A.job_Number))                                        AS userNo
+				       ,RTRIM(LTRIM(A.nickName))                                          AS userName
+				       ,LEFT(RTRIM(LTRIM(A.nickName)) ,1)                                 AS surname
+				       ,RTRIM(LTRIM(A.job_Number))                                        AS loginName
+				       ,A.pwd                                                             AS loginPwd
+				       ,A.updateTime                                                      AS lastTime
 				  FROM  Sys_User  A
 				 WHERE  A.job_Number IS NOT NULL
 				   AND  A.job_Number != ''

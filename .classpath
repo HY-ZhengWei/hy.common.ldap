@@ -7,7 +7,7 @@
 	<classpathentry combineaccessrules="false" kind="src" path="/hy.common.base"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/hy.common.file"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/hy.common.xjava"/>
-	<classpathentry kind="lib" path="lib/api-all-2.0.0.AM2.jar" sourcepath="apache-ldap-api-2.0.0.AM2-src"/>
+	<classpathentry kind="lib" path="lib/api-all-2.0.0.AM2.jar" sourcepath="apache-ldap-api-2.0.0.AM2-src.zip"/>
 	<classpathentry kind="lib" path="lib/api-asn1-api-2.0.0.AM2.jar"/>
 	<classpathentry kind="lib" path="lib/api-asn1-ber-2.0.0.AM2.jar"/>
 	<classpathentry kind="lib" path="lib/api-i18n-2.0.0.AM2.jar"/>

@@ -167,32 +167,6 @@ public class JU_DBToLDAP extends AppInitConfig
     
     
     /**
-     * 用另外多个数据库中的同步更新用户信息
-     * 
-     * @author      ZhengWei(HY)
-     * @createDate  2018-12-07
-     * @version     v1.0
-     *
-     */
-    @Test
-    public void test_UnionB02ToLDAP()
-    {
-        IUserDAO       v_UserDAO = (IUserDAO)XJava.getObject("UserDAO");
-        List<UserInfo> v_Users   = null;
-        
-        v_Users = v_UserDAO.queryUnionB02();  // 工号登陆
-        if ( Help.isNull(v_Users) )
-        {
-            System.err.println("未从关系型数据库中查询到用户");
-            return;
-        }
-        System.out.println(Date.getNowTime().getFullMilli() + "  从关系型数据库中查询到 " + v_Users.size() + " 位用户信息。");
-        addAttr(v_Users);
-    }
-    
-    
-    
-    /**
      * 添加条目
      * 
      * @author      ZhengWei(HY)
@@ -256,6 +230,23 @@ public class JU_DBToLDAP extends AppInitConfig
         {
             System.err.println(Date.getNowTime().getFullMilli() + "  合并异常.");
         }
+    }
+    
+    
+    
+    /**
+     * 测试用户登陆验证
+     * 
+     * @author      ZhengWei(HY)
+     * @createDate  2018-12-08
+     * @version     v1.0
+     */
+    @Test
+    public void test_UserLogin()
+    {
+        LDAP v_LDAP = (LDAP)XJava.getObject("LDAP");
+        
+        v_LDAP.queryEntry(new Object());
     }
     
     

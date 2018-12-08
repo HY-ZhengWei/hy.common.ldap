@@ -279,7 +279,7 @@ public class LDAP
     
     
     /**
-     * 查询条目。只返回条目本身。即只返回一条记录(树目录的一个节点)。
+     * 按DN查询条目。只返回条目本身。即只返回一条记录(树目录的一个节点)。
      * 
      * 只用于用 @Ldap 注解的Java对象。
      * 
@@ -307,7 +307,7 @@ public class LDAP
     
     
     /**
-     * 查询条目。只返回条目本身。即只返回一条记录(树目录的一个节点)。
+     * 按DN查询条目。只返回条目本身。即只返回一条记录(树目录的一个节点)。
      * 
      * @author      ZhengWei(HY)
      * @createDate  2017-02-16
@@ -333,7 +333,7 @@ public class LDAP
     
     
     /**
-     * 查询条目。返回直接隶属于i_DN的子条目，不返回子子条目。
+     * 按DN查询条目。返回直接隶属于i_DN的子条目，不返回子子条目。
      * 
      * 只用于用 @Ldap 注解的Java对象。
      * 
@@ -352,7 +352,7 @@ public class LDAP
     
     
     /**
-     * 查询条目。返回直接隶属于i_DN的子条目，不返回子子条目。
+     * 按DN查询条目。返回直接隶属于i_DN的子条目，不返回子子条目。
      * 
      * @author      ZhengWei(HY)
      * @createDate  2017-02-16
@@ -369,7 +369,7 @@ public class LDAP
     
     
     /**
-     * 查询所有子条目。返回直接或间接隶属于i_DN的子条目及子子条目。
+     * 按DN查询所有子条目。返回直接或间接隶属于i_DN的子条目及子子条目。
      * 
      * 即将i_DN下面的树结构上的所有条目都返回。
      * 
@@ -390,7 +390,7 @@ public class LDAP
     
     
     /**
-     * 查询所有子条目。返回直接或间接隶属于i_DN的子条目及子子条目。
+     * 按DN查询所有子条目。返回直接或间接隶属于i_DN的子条目及子子条目。
      * 
      * 即将i_DN下面的树结构上的所有条目都返回。
      * 
@@ -409,7 +409,7 @@ public class LDAP
     
     
     /**
-     * 查询条目。
+     * 按DN查询条目。
      * 
      * 只用于用 @Ldap 注解的Java对象。
      * 
@@ -417,7 +417,7 @@ public class LDAP
      * @createDate  2017-02-17
      * @version     v1.0
      *
-     * @param i_DN           条目标识
+     * @param i_Values       条目标识
      * @param i_SearchScope  查询范围
      *                       搜索范围01：SearchScope.OBJECT    返回输入给定DN，如果它存在的话。
      *                       搜索范围02：SearchScope.ONELEVEL  返回低于目前DN的所有子元素，不包括当前DN，也不包括与当前DN无直接关系的DN，即树目录深度为1。
@@ -448,7 +448,7 @@ public class LDAP
     
     
     /**
-     * 查询条目。
+     * 按DN查询条目。
      * 
      * @author      ZhengWei(HY)
      * @createDate  2017-02-16
