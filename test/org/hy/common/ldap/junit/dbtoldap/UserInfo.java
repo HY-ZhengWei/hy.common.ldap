@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.hy.common.Date;
+import org.hy.common.Help;
 import org.hy.common.ldap.annotation.Ldap;
 import org.hy.common.ldap.annotation.LdapType;
 import org.hy.common.xml.SerializableDef;
@@ -148,6 +149,11 @@ public class UserInfo extends SerializableDef
      */
     public synchronized void setUserName(String i_UserName)
     {
+        if ( Help.isNull(i_UserName) )
+        {
+            return;
+        }
+        
         if ( this.userNames == null )
         {
             this.userNames = new ArrayList<String>();
@@ -204,6 +210,11 @@ public class UserInfo extends SerializableDef
      */
     public synchronized void setLoginName(String i_LoginName)
     {
+        if ( Help.isNull(i_LoginName) )
+        {
+            return;
+        }
+        
         if ( this.loginNames == null )
         {
             this.loginNames = new ArrayList<String>();
@@ -240,6 +251,11 @@ public class UserInfo extends SerializableDef
      */
     public synchronized void setLoginPwd(String i_LoginPwd)
     {
+        if ( Help.isNull(i_LoginPwd) )
+        {
+            return;
+        }
+        
         if ( this.loginPwds == null )
         {
             this.loginPwds = new ArrayList<String>();
@@ -276,6 +292,11 @@ public class UserInfo extends SerializableDef
      */
     public synchronized void setTel(String i_Tel)
     {
+        if ( Help.isNull(i_Tel) )
+        {
+            return;
+        }
+        
         if ( this.tels == null )
         {
             this.tels = new ArrayList<String>();

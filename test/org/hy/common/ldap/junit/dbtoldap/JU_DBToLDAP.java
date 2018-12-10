@@ -162,6 +162,18 @@ public class JU_DBToLDAP extends AppInitConfig
         }
         System.out.println(Date.getNowTime().getFullMilli() + "  从关系型数据库中查询到 " + v_Users.size() + " 位用户信息。");
         addAttr(v_Users);
+        
+        
+        v_Users = v_UserDAO.queryUnionC();  // 工号登陆
+        if ( Help.isNull(v_Users) )
+        {
+            System.err.println("未从关系型数据库中查询到用户");
+            return;
+        }
+        System.out.println(Date.getNowTime().getFullMilli() + "  从关系型数据库中查询到 " + v_Users.size() + " 位用户信息。");
+        // 添加不存的用户，已存在的不添加
+        create(v_Users);
+        addAttr(v_Users);
     }
     
     
@@ -248,14 +260,19 @@ public class JU_DBToLDAP extends AppInitConfig
         LDAP     v_LDAP   = (LDAP)XJava.getObject("LDAP");
         UserInfo v_User01 = new UserInfo();
         UserInfo v_User02 = new UserInfo();
+        UserInfo v_User03 = new UserInfo();
         
         v_User01.setUserID("ou=users,dc=wzyb,dc=com");
-        v_User01.setLoginName("admin-xcx");  // 按账号
+        v_User01.setLoginName("admin-xcx");   // 按账号
         v_User01.setLoginPwd("E10ADC3949BA59ABBE56E057F20F883E");
         
         v_User02.setUserID("ou=users,dc=wzyb,dc=com");
-        v_User02.setLoginName("51442");      // 按工号
+        v_User02.setLoginName("51442");       // 按工号
         v_User02.setLoginPwd("E10ADC3949BA59ABBE56E057F20F883E");
+        
+        v_User03.setUserID("ou=users,dc=wzyb,dc=com");
+        v_User03.setLoginName("13600000000"); // 按手机号
+        v_User03.setLoginPwd("E10ADC3949BA59ABBE56E057F20F883E");
         
         List<UserInfo> v_Users     = null;
         Date           v_BeginTime = null;
@@ -268,10 +285,20 @@ public class JU_DBToLDAP extends AppInitConfig
         System.out.println("查询用时：" + Date.toTimeLen(v_EndTime.differ(v_BeginTime)));
         Help.print(v_Users);
         
+        
         System.out.println("\n");
         System.out.println("同一用户按工号" + v_User02.getLoginNames().get(0) + "、密码登陆：");
         v_BeginTime = new Date();
         v_Users     = (List<UserInfo>)v_LDAP.searchEntrys(v_User02);
+        v_EndTime   = new Date();
+        System.out.println("查询用时：" + Date.toTimeLen(v_EndTime.differ(v_BeginTime)));
+        Help.print(v_Users);
+        
+        
+        System.out.println("\n");
+        System.out.println("同一用户按手机号" + v_User03.getLoginNames().get(0) + "、密码登陆：");
+        v_BeginTime = new Date();
+        v_Users     = (List<UserInfo>)v_LDAP.searchEntrys(v_User03);
         v_EndTime   = new Date();
         System.out.println("查询用时：" + Date.toTimeLen(v_EndTime.differ(v_BeginTime)));
         Help.print(v_Users);

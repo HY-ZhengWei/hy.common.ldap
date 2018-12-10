@@ -80,6 +80,18 @@
 		</dataSource>
 		
 		
+		<!-- Oracle数据库 -->
+		<dataSource id="DS_XLDAP_UnionC_01">
+			<driverClass>oracle.jdbc.driver.OracleDriver</driverClass>
+			<jdbcUrl>jdbc:oracle:thin:@10.1.50.235:1521:avplan</jdbcUrl>
+			<user>plm</user>
+			<password>plm</password>
+			<maxPoolSize>100</maxPoolSize>
+			<initialPoolSize>2</initialPoolSize>
+			<checkoutTimeout>30000</checkoutTimeout>
+		</dataSource>
+		
+		
 		
 		<!-- 数据库连接池组 -->
 		<dataSourceGroup id="DSG_XLDAP">
@@ -101,6 +113,14 @@
 		<dataSourceGroup id="DSG_XLDAP_UnionB">
 			<call name="add">
 				<dataSource ref="DS_XLDAP_UnionB_01" />
+			</call>
+		</dataSourceGroup>
+		
+		
+		<!-- 第四个数据库连接池组 -->
+		<dataSourceGroup id="DSG_XLDAP_UnionC">
+			<call name="add">
+				<dataSource ref="DS_XLDAP_UnionC_01" />
 			</call>
 		</dataSourceGroup>
 		

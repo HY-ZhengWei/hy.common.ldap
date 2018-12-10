@@ -51,6 +51,9 @@
 				       ,RTRIM(LTRIM(A.Base_Pername))                                     AS userName
 				       ,LEFT(RTRIM(LTRIM(A.Base_Pername)) ,1)                            AS surname
 				       ,RTRIM(LTRIM(A.Base_CardNo))                                      AS cardNo
+				       ,RTRIM(LTRIM(A.Base_Tel))                                         AS tel
+                       ,RTRIM(LTRIM(A.Base_Tel))                                         AS loginName
+                       ,'F16712F527E1AC92D2C4868DDD16AFE9'                               AS loginPwd
 				       ,A.Base_Modify_DateTime                                           AS lastTime
 				  FROM  General_Personnel  A
 				       ,General_Group      B
@@ -119,6 +122,36 @@
 				 WHERE  A.job_Number IS NOT NULL
 				   AND  A.job_Number != ''
 				   AND  A.deleted     = 0
+				 ORDER  BY 1
+				]]>
+			</content>
+			
+			<result>
+				<row>org.hy.common.ldap.junit.dbtoldap.UserInfo</row>
+				<cfill>setter(colValue)</cfill>
+			</result>
+			
+			<comment>工号登陆</comment>
+			
+		</sql>
+		
+		
+		
+		<sql id="XSQL_LDAP_UnionC_User_QueryAll"> 
+		
+			<dataSourceGroup ref="DSG_XLDAP_UnionC" />
+			
+			<content>
+				<![CDATA[
+				SELECT  'uid=' || A.UserNo || ',ou=users,dc=wzyb,dc=com' AS userID
+				       ,A.UserNo                                         AS userNo
+				       ,A.UserName                                       AS userName
+				       ,SUBSTR(A.UserName ,1 ,1)                         AS surname
+                       ,A.UserID                                         AS loginName
+                       ,A.UserPW                                         AS loginPwd
+				  FROM  AAUserData  A
+				 WHERE  A.UserNo IS NOT NULL
+                   AND  A.UserStatus = 'A'
 				 ORDER  BY 1
 				]]>
 			</content>
