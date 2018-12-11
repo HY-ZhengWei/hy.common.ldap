@@ -708,7 +708,7 @@ public class LDAP
                 }
                 else
                 {
-                    if ( Help.isNull(v_Value.toString()) )
+                    if ( !Help.isNull(v_Value.toString()) )
                     {
                         v_FilterValues.add(v_Value.toString());
                     }
