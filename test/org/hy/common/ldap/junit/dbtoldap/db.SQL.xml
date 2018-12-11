@@ -19,7 +19,9 @@
 				<![CDATA[
 				SELECT  'uid=' + RTRIM(LTRIM(A.编码)) + ',ou=users,dc=wzyb,dc=com'  AS userID
 				       ,RTRIM(LTRIM(A.编码))                                        AS userNo
+				       ,RTRIM(LTRIM(A.姓名))                                        AS userTrueName
 				       ,RTRIM(LTRIM(A.姓名))                                        AS userName
+				       ,'HR'                                                       AS userType
 				       ,LEFT(LTRIM(A.姓名) ,1)                                      AS surname
 				       ,RTRIM(LTRIM(A.性别))                                        AS sex
 				       ,RTRIM(LTRIM(A.部门))                                        AS groupName
@@ -48,7 +50,9 @@
 				<![CDATA[
 				SELECT  'uid=' + RTRIM(LTRIM(A.Base_PerNo)) + ',ou=users,dc=wzyb,dc=com' AS userID
 				       ,RTRIM(LTRIM(A.Base_PerNo))                                       AS userNo
+				       ,RTRIM(LTRIM(A.Base_Pername))                                     AS userTrueName
 				       ,RTRIM(LTRIM(A.Base_Pername))                                     AS userName
+				       ,'HR'                                                             AS userType
 				       ,LEFT(RTRIM(LTRIM(A.Base_Pername)) ,1)                            AS surname
 				       ,RTRIM(LTRIM(A.Base_CardNo))                                      AS cardNo
 				       ,RTRIM(LTRIM(A.Base_Tel))                                         AS tel

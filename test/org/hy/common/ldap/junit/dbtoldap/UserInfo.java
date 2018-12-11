@@ -36,9 +36,17 @@ public class UserInfo extends SerializableDef
     @Ldap("uid")
     private String       userNo;
     
+    /** 用户真实名称 */
+    @Ldap("title")
+    private String       userTrueName;
+    
     /** 用户名称 */
     @Ldap("cn")
     private List<String> userNames;
+    
+    /** 用户标记 */
+    @Ldap("postalCode")
+    private String       userType;
     
     /** 用户姓氏 */
     @Ldap("sn")
@@ -79,7 +87,7 @@ public class UserInfo extends SerializableDef
     /** 最后修改时间 */
     @Ldap("description")
     private Date         lastTime;
-
+    
     
     
     /**
@@ -120,8 +128,28 @@ public class UserInfo extends SerializableDef
     {
         this.userNo = userNo;
     }
+    
+    
+    /**
+     * 获取：用户真实名称
+     */
+    public String getUserTrueName()
+    {
+        return userTrueName;
+    }
 
     
+    /**
+     * 设置：用户真实名称
+     * 
+     * @param userTrueName 
+     */
+    public void setUserTrueName(String userTrueName)
+    {
+        this.userTrueName = userTrueName;
+    }
+
+
     /**
      * 获取：用户名称
      */
@@ -423,6 +451,26 @@ public class UserInfo extends SerializableDef
     public void setCity(String city)
     {
         this.city = city;
+    }
+
+    
+    /**
+     * 获取：用户标记
+     */
+    public String getUserType()
+    {
+        return userType;
+    }
+
+
+    /**
+     * 设置：用户标记
+     * 
+     * @param userType 
+     */
+    public void setUserType(String userType)
+    {
+        this.userType = userType;
     }
     
 }
