@@ -84,6 +84,10 @@ public class UserInfo extends SerializableDef
     @Ldap("employeeNumber")
     private String       cardNo;
     
+    /** 微信的OpenID */
+    @Ldap("displayName")
+    private String       openID;
+    
     /** 最后修改时间 */
     @Ldap("description")
     private Date         lastTime;
@@ -471,6 +475,26 @@ public class UserInfo extends SerializableDef
     public void setUserType(String userType)
     {
         this.userType = userType;
+    }
+
+
+    /**
+     * 获取：微信的OpenID
+     */
+    public String getOpenID()
+    {
+        return openID;
+    }
+
+    
+    /**
+     * 设置：微信的OpenID
+     * 
+     * @param openID 
+     */
+    public void setOpenID(String openID)
+    {
+        this.openID = openID;
     }
     
 }

@@ -169,6 +169,31 @@
 			
 		</sql>
 		
+		
+		
+		<sql id="XSQL_LDAP_UnionD_User_QueryAll"> 
+		
+			<dataSourceGroup ref="DSG_XLDAP_UnionD" />
+			
+			<content>
+				<![CDATA[
+				SELECT  'uid=' + RTRIM(LTRIM(A.Base_PerNo)) + ',ou=users,dc=wzyb,dc=com' AS userID
+				       ,RTRIM(LTRIM(A.Base_PerNo))                                       AS userNo
+				       ,A.openID                                                         AS openID
+				  FROM  Users  A
+				 WHERE  openID IS NOT NULL
+				]]>
+			</content>
+			
+			<result>
+				<row>org.hy.common.ldap.junit.dbtoldap.UserInfo</row>
+				<cfill>setter(colValue)</cfill>
+			</result>
+			
+			<comment>微信的OpenID</comment>
+			
+		</sql>
+		
 	</sqls>
 	
 </config>

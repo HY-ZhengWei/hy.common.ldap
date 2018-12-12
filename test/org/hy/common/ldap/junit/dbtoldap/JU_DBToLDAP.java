@@ -179,6 +179,32 @@ public class JU_DBToLDAP extends AppInitConfig
     
     
     /**
+     * 用另外多个数据库中的同步更新用户信息
+     * 
+     * @author      ZhengWei(HY)
+     * @createDate  2018-12-12
+     * @version     v1.0
+     *
+     */
+    @Test
+    public void test_UnionToLDAP_OpenID()
+    {
+        IUserDAO       v_UserDAO = (IUserDAO)XJava.getObject("UserDAO");
+        List<UserInfo> v_Users   = null;
+        
+        v_Users = v_UserDAO.queryUnionD();
+        if ( Help.isNull(v_Users) )
+        {
+            System.err.println("未从关系型数据库中查询到用户");
+            return;
+        }
+        System.out.println(Date.getNowTime().getFullMilli() + "  从关系型数据库中查询到 " + v_Users.size() + " 位用户信息。");
+        addAttr(v_Users);
+    }
+    
+    
+    
+    /**
      * 添加条目
      * 
      * @author      ZhengWei(HY)

@@ -93,4 +93,18 @@ public interface IUserDAO
     @Xsql("XSQL_LDAP_UnionC_User_QueryAll")
     public List<UserInfo> queryUnionC();
     
+    
+    
+    /**
+     * 从关系型数据库中查询所有用户信息（第五个数据库中的用户信息）
+     * 
+     * @author      ZhengWei(HY)
+     * @createDate  2018-12-12
+     * @version     v1.0
+     *
+     * @return
+     */
+    @Xsql("XSQL_LDAP_UnionD_User_QueryAll")
+    public List<UserInfo> queryUnionD();
+    
 }
