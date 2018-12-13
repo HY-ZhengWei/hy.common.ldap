@@ -50,8 +50,8 @@ public @interface Ldap
      * 
      * 编码形式如：@Ldap(type=LdapType.Attribute)
      *           @Ldap(type=LdapType.DN)
-     *           @Ldap(type=LdapType.DN ,name="uid")   当type=LdapType.DN的同时，name=为RDN的名称。
-     *           @Ldap(type=LdapType.DN ,value="uid")  当type=LdapType.DN的同时，value=为RDN的名称。
+     *           @Ldap(type=LdapType.DN ,name="entryDN")   当type=LdapType.DN的同时，name=为RDN的名称。
+     *           @Ldap(type=LdapType.DN ,value="entryDN")  当type=LdapType.DN的同时，value=为RDN的名称。
      *           
      * 
      * @author      ZhengWei(HY)
