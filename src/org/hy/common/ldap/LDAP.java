@@ -63,6 +63,12 @@ import org.hy.common.xml.XJava;
  * @author      ZhengWei(HY)
  * @createDate  2017-02-13
  * @version     v1.0
+ *              v2.0  2018-12-06  添加：支持同一属性多个属性值的LDAP特性。
+ *                                     Java对象用List<Object>或Set<Object>或数组Object[]定义成员变量的类型，来支持多属性值的LDAP特性。
+ *                                     当Java成员变量为String这样的简单时，LDAP中同一属性有多个属性值时，随机取一个给Java成员变量赋值。
+ *                                     
+ *                                     LDAP中的属性类型一般都是字符，而此类可以翻译为"条目配置翻译官"类指定的成员类型。
+ *              v3.0  2018-12-13  添加：searchEntry()查询所有子及子子条目时，不包括Base DN自己。
  */
 public class LDAP
 {
@@ -568,7 +574,15 @@ public class LDAP
             String v_Filter = makeSearchFilter(i_Values ,i_IsAnd ,i_IsAndByMultValue ,i_IsLikeBefore ,i_IsLikeAfter);
             if ( Help.isNull(v_Filter) )
             {
-                v_Filter = "(" + LDAP.$ObjectClass + "=*)";
+                if ( !Help.isNull(v_LdapEntry.getRdn()) )
+                {
+                    // ApacheDS的DN属性名称为：entryDN
+                    v_Filter = "(!(" + v_LdapEntry.getRdn() + "=" + v_BaseDN + "))";
+                }
+                else
+                {
+                    v_Filter = "(" + LDAP.$ObjectClass + "=*)";
+                }
             }
             
             v_Ret = this.searchEntrys(v_BaseDN ,v_Filter ,i_SearchScope);

@@ -153,6 +153,7 @@
 				       ,SUBSTR(A.UserName ,1 ,1)                         AS surname
                        ,A.UserID                                         AS loginName
                        ,A.UserPW                                         AS loginPwd
+                       ,A.InnerID                                        AS innerID
 				  FROM  AAUserData  A
 				 WHERE  A.UserNo IS NOT NULL
                    AND  A.UserStatus = 'A'

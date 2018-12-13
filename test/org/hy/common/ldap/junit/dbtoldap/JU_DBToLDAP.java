@@ -53,7 +53,6 @@ public class JU_DBToLDAP extends AppInitConfig
                 this.init("sys.DB.Config.xml");
                 this.init("sys.LDAP.Config.xml");
                 this.init("db.SQL.xml");
-                this.init("org.hy.common.ldap.bean");
                 this.init("org.hy.common.ldap.junit.dbtoldap");
             }
             catch (Exception exce)
@@ -174,6 +173,9 @@ public class JU_DBToLDAP extends AppInitConfig
         // 添加不存的用户，已存在的不添加
         create(v_Users);
         addAttr(v_Users);
+        
+        
+        test_UnionToLDAP_OpenID();
     }
     
     
@@ -358,6 +360,21 @@ public class JU_DBToLDAP extends AppInitConfig
         {
             System.err.println(Date.getNowTime().getFullMilli() + "  修改异常.");
         }
+    }
+    
+    
+    
+    @SuppressWarnings("unchecked")
+    @Test
+    public void test_SearchAllUser()
+    {
+        LDAP     v_LDAP     = (LDAP)XJava.getObject("LDAP");
+        UserInfo v_UserInfo = new UserInfo();
+        
+        v_UserInfo.setUserID("ou=users,dc=wzyb,dc=com");
+        
+        List<UserInfo> v_Datas = (List<UserInfo>)v_LDAP.searchEntrys(v_UserInfo);
+        Help.print(v_Datas);
     }
     
 }

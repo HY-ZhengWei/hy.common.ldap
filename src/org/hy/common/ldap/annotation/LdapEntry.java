@@ -53,6 +53,8 @@ import org.hy.common.ldap.LDAP;
  *                                     当Java成员变量为String这样的简单时，LDAP中同一属性有多个属性值时，随机取一个给Java成员变量赋值。
  *                                     
  *                                     LDAP中的属性类型一般都是字符，而此类可以翻译为"条目配置翻译官"类指定的成员类型。
+ *              v3.0  2018-12-13  添加：RDN属性，指DN逗号最左边的部分，最小的子条目。用于更新特性功能。
+ *                                     如，查询所有子及子子条目时，不包括Base DN自己。
  */
 public class LdapEntry
 {
@@ -73,6 +75,9 @@ public class LdapEntry
      * 格式为：List.get(index) = "对象名称" 。如，top、person等。
      */
     private List<String>       objectClasses;
+    
+    /** 指DN逗号最左边的部分，最小的子条目 */
+    private String             rdn;
     
     /** 获取DN值的getter方法 */
     private Method             dnGetMethod;
@@ -195,6 +200,13 @@ public class LdapEntry
         }
         
         return null;
+    }
+    
+    
+    
+    public String getDNName()
+    {
+        return StringHelp.toLowerCaseByFirst(this.dnGetMethod.getName());
     }
     
     
@@ -835,6 +847,28 @@ public class LdapEntry
     public void setElementsToObject(Map<String ,Method> elementsToObject)
     {
         this.elementsToObject = elementsToObject;
+    }
+
+
+    
+    /**
+     * 获取：指DN逗号最左边的部分，最小的子条目
+     */
+    public String getRdn()
+    {
+        return rdn;
+    }
+
+    
+    
+    /**
+     * 设置：指DN逗号最左边的部分，最小的子条目
+     * 
+     * @param rdn 
+     */
+    public void setRdn(String rdn)
+    {
+        this.rdn = rdn;
     }
     
 }

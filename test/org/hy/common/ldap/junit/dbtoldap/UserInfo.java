@@ -29,7 +29,7 @@ public class UserInfo extends SerializableDef
     private static final long serialVersionUID = -289778484008103225L;
 
     /** 用户ID */
-    @Ldap(type=LdapType.DN)
+    @Ldap(type=LdapType.DN ,name="entryDN")
     private String       userID;
     
     /** 用户编号 */
@@ -87,6 +87,10 @@ public class UserInfo extends SerializableDef
     /** 微信的OpenID */
     @Ldap("displayName")
     private String       openID;
+    
+    /** Avplan中的内部ID */
+    @Ldap("businessCategory")
+    private String       innerID;
     
     /** 最后修改时间 */
     @Ldap("description")
@@ -495,6 +499,26 @@ public class UserInfo extends SerializableDef
     public void setOpenID(String openID)
     {
         this.openID = openID;
+    }
+
+    
+    /**
+     * 获取：Avplan中的内部ID
+     */
+    public String getInnerID()
+    {
+        return innerID;
+    }
+
+    
+    /**
+     * 设置：Avplan中的内部ID
+     * 
+     * @param innerID 
+     */
+    public void setInnerID(String innerID)
+    {
+        this.innerID = innerID;
     }
     
 }

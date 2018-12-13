@@ -48,8 +48,11 @@ public @interface Ldap
      * 
      * 使用在：Java类的属性上，或Java类的setter、getter方法上。
      * 
-     * 编码形式如：@Ldap(type=LdapType.DN)
-     *           @Ldap(type=LdapType.Attribute)
+     * 编码形式如：@Ldap(type=LdapType.Attribute)
+     *           @Ldap(type=LdapType.DN)
+     *           @Ldap(type=LdapType.DN ,name="uid")   当type=LdapType.DN的同时，name=为RDN的名称。
+     *           @Ldap(type=LdapType.DN ,value="uid")  当type=LdapType.DN的同时，value=为RDN的名称。
+     *           
      * 
      * @author      ZhengWei(HY)
      * @createDate  2017-02-16
@@ -69,6 +72,9 @@ public @interface Ldap
      * 编码形式如：      @Ldap(name="ou")
      * 也可简写为：      @Ldap("ou")
      * 也可采用方法名称： @Ldap
+     * 
+     * 当type=LdapType.DN的同时，name=为RDN的名称。
+     * 当type=LdapType.DN的同时，value=为RDN的名称。
      * 
      * 注意：当LDAP数据库中的属性名givenName简写为gn时，这里应当配置成givenName。
      *      配置成gn简写的名称，可以写入，但不能读取成功。LDAP按全称保存了。 
