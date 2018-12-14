@@ -679,88 +679,95 @@ public class LDAP
         LdapEntry     v_LdapEntry = getLdapEntry(i_Values.getClass());
         StringBuilder v_Filter    = new StringBuilder();
         
-        for (Map.Entry<String ,Method> v_Item : v_LdapEntry.getElementsToLDAP().entrySet())
+        for (Map.Entry<String ,Map<String ,Method>> v_Item : v_LdapEntry.getElementsToLDAP().entrySet())
         {
-            try
+            for (Map.Entry<String ,Method> v_ItemMethod : v_Item.getValue().entrySet())
             {
-                Object v_Value = v_Item.getValue().invoke(i_Values);
-                if ( v_Value == null )
+                try
                 {
-                    continue;
-                }
-                
-                List<String> v_FilterValues = new ArrayList<String>();
-                if ( v_Value instanceof List )
-                {
-                    for (Object v_VItem : (List<?>)v_Value)
+                    Object v_Value = v_ItemMethod.getValue().invoke(i_Values);
+                    if ( v_Value == null )
                     {
-                        if ( v_VItem != null && !Help.isNull(v_VItem.toString()) )
+                        continue;
+                    }
+                    
+                    List<String> v_FilterValues = new ArrayList<String>();
+                    if ( v_Value instanceof List )
+                    {
+                        for (Object v_VItem : (List<?>)v_Value)
                         {
-                            v_FilterValues.add(v_VItem.toString());
+                            if ( v_VItem != null && !Help.isNull(v_VItem.toString()) )
+                            {
+                                v_FilterValues.add(v_VItem.toString());
+                            }
                         }
                     }
-                }
-                else if ( v_Value instanceof Set )
-                {
-                    for (Object v_VItem : (Set<?>)v_Value)
+                    else if ( v_Value instanceof Set )
                     {
-                        if ( v_VItem != null && !Help.isNull(v_VItem.toString()) )
+                        for (Object v_VItem : (Set<?>)v_Value)
                         {
-                            v_FilterValues.add(v_VItem.toString());
+                            if ( v_VItem != null && !Help.isNull(v_VItem.toString()) )
+                            {
+                                v_FilterValues.add(v_VItem.toString());
+                            }
                         }
                     }
-                }
-                else if ( v_Value instanceof Object [] )
-                {
-                    for (Object v_VItem : (Object [])v_Value)
+                    else if ( v_Value instanceof Object [] )
                     {
-                        if ( v_VItem != null && !Help.isNull(v_VItem.toString()) )
+                        for (Object v_VItem : (Object [])v_Value)
                         {
-                            v_FilterValues.add(v_VItem.toString());
+                            if ( v_VItem != null && !Help.isNull(v_VItem.toString()) )
+                            {
+                                v_FilterValues.add(v_VItem.toString());
+                            }
                         }
                     }
-                }
-                else
-                {
-                    if ( !Help.isNull(v_Value.toString()) )
+                    else if ( v_Value instanceof Map )
                     {
-                        v_FilterValues.add(v_Value.toString());
+                        ////////////////////////////////////
+                    }
+                    else
+                    {
+                        if ( !Help.isNull(v_Value.toString()) )
+                        {
+                            v_FilterValues.add(v_Value.toString());
+                        }
+                    }
+                    
+                    if ( Help.isNull(v_FilterValues) )
+                    {
+                        continue;
+                    }
+                    
+                    if ( v_FilterValues.size() >= 2 )
+                    {
+                        v_Filter.append("(").append(i_IsAndByMultValue ? $And : $Or);
+                    }
+                    
+                    for (String v_FilterValue : v_FilterValues)
+                    {
+                        v_Filter.append("(").append(v_Item.getKey()).append("=");
+                        if ( i_IsLikeBefore )
+                        {
+                            v_Filter.append("*");
+                        }
+                        v_Filter.append(v_FilterValue);
+                        if ( i_IsLikeAfter )
+                        {
+                            v_Filter.append("*");
+                        }
+                        v_Filter.append(")");
+                    }
+                    
+                    if ( v_FilterValues.size() >= 2 )
+                    {
+                        v_Filter.append(")");
                     }
                 }
-                
-                if ( Help.isNull(v_FilterValues) )
+                catch (Exception exce)
                 {
-                    continue;
+                    exce.printStackTrace();
                 }
-                
-                if ( v_FilterValues.size() >= 2 )
-                {
-                    v_Filter.append("(").append(i_IsAndByMultValue ? $And : $Or);
-                }
-                
-                for (String v_FilterValue : v_FilterValues)
-                {
-                    v_Filter.append("(").append(v_Item.getKey()).append("=");
-                    if ( i_IsLikeBefore )
-                    {
-                        v_Filter.append("*");
-                    }
-                    v_Filter.append(v_FilterValue);
-                    if ( i_IsLikeAfter )
-                    {
-                        v_Filter.append("*");
-                    }
-                    v_Filter.append(")");
-                }
-                
-                if ( v_FilterValues.size() >= 2 )
-                {
-                    v_Filter.append(")");
-                }
-            }
-            catch (Exception exce)
-            {
-                exce.printStackTrace();
             }
         }
         
@@ -1245,13 +1252,16 @@ public class LDAP
     /**
      * 修改条目的属性值
      * 
+     * 注意：如果LDAP库中已有同一属性的多个属性值，旧值1、旧值2、旧值x，
+     *      执行此方法后，LDAP库中的属性值将改为，新值1、新值2、新值x
+     * 
      * @author      ZhengWei(HY)
      * @createDate  2017-02-16
      * @version     v1.0
      *
      * @param i_DN              DN标识
      * @param i_AttributeName   属性名称
-     * @param i_AttributeValue  属性值(可为多个)
+     * @param i_AttributeValue  属性值(可为多个，新值1、新值2、新值x)
      * @return
      */
     public boolean modifyAttribute(String i_DN ,String i_AttributeName ,String ... i_AttributeValue)
@@ -1283,7 +1293,30 @@ public class LDAP
     
     
     /**
-     * 删除条目的属性
+     * 删除条目的属性。
+     * 
+     * 有能力删除某一属性名称下多个属性值的某一项属性值（通过属性值匹配）。
+     * 
+     * @author      ZhengWei(HY)
+     * @createDate  2018-12-14
+     * @version     v1.0
+     *
+     * @param i_DN              DN标识
+     * @param i_AttributeName   属性名称
+     * @param i_AttributeValue  属性值
+     * @return
+     */
+    public boolean delAttribute(String i_DN ,String i_AttributeName ,String ... i_AttributeValue)
+    {
+        return this.modifyEntry(ModificationOperation.REMOVE_ATTRIBUTE ,i_DN ,i_AttributeName ,i_AttributeValue);
+    }
+    
+    
+    
+    /**
+     * 删除条目的属性。
+     * 
+     * 注：当同一属性有多个属性值时，将一起同被删除。
      * 
      * @author      ZhengWei(HY)
      * @createDate  2017-02-16
@@ -1295,7 +1328,7 @@ public class LDAP
      */
     public boolean delAttribute(String i_DN ,String i_AttributeName)
     {
-        return this.modifyEntry(ModificationOperation.REMOVE_ATTRIBUTE ,i_DN ,i_AttributeName ,"");
+        return this.modifyEntry(ModificationOperation.REMOVE_ATTRIBUTE ,i_DN ,i_AttributeName);
     }
     
     
@@ -1381,6 +1414,13 @@ public class LDAP
      * @author      ZhengWei(HY)
      * @createDate  2017-02-17
      * @version     v1.0
+     *              v2.0  2018-12-07  添加：支持同一属性的多个属性值的修改、删除。
+     *                                     注：在多属性值的情况下，只有添加属性值、删除属性值的操作，没有替换修改属性值的操作
+     *                                     1. ( i_IsAdd &&  i_IsUpdate)为真时，新的插入、旧的删除：将LDAP数据库中的属性值修改为与i_NewValues属性值一样，不存在的将删除。
+     *                                     2. ( i_IsAdd && !i_IsUpdate)为真时，新的插入、旧的保留：只向LDAP数据库中添加新的属性值，原LDAP数据库中的属性值将保留。
+     *                                     3. (!i_IsAdd &&  i_IsUpdate)为真时，没有插入、旧的删除：不存于i_NewValues的属性值，将被删除。并不向LDAP数据库中添加任何新属性值。
+     *                                     
+     *              v3.0  2018-12-14  添加：支Java对象用Map<Object ,Object>定义成员变量的类型，来支持多属性值情况下，旧值改为新值的场景。并且支持批量。
      *
      * @param i_NewValues
      * @param i_IsAdd      当LDAP中没有时，是否新增LDAP属性

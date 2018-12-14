@@ -341,10 +341,8 @@ public class JU_DBToLDAP extends AppInitConfig
         UserInfo v_UserInfo = new UserInfo();
         
         v_UserInfo.setUserID("uid=52140,ou=users,dc=wzyb,dc=com");
-        v_UserInfo.setLoginName("admin-zw");
-        v_UserInfo.setLoginPwd("123456");
-        v_UserInfo.setLoginName("mes-zw");
-        v_UserInfo.setLoginPwd("654321");
+        v_UserInfo.setTel("3");
+        v_UserInfo.setTel("4");
         v_UserInfo.setLastTime(new Date());
         
         int v_ModAttrCount = v_LDAP.modifyEntry(v_UserInfo ,true ,true ,false);
@@ -360,6 +358,26 @@ public class JU_DBToLDAP extends AppInitConfig
         {
             System.err.println(Date.getNowTime().getFullMilli() + "  修改异常.");
         }
+    }
+    
+    
+    
+    @Test
+    public void test_ModValues()
+    {
+        LDAP v_LDAP = (LDAP)XJava.getObject("LDAP");
+        
+        v_LDAP.modifyAttribute("uid=52140,ou=users,dc=wzyb,dc=com" ,"mobile" ,"3");
+    }
+    
+    
+    
+    @Test
+    public void test_DelValues()
+    {
+        LDAP v_LDAP = (LDAP)XJava.getObject("LDAP");
+        
+        v_LDAP.delAttribute("uid=52140,ou=users,dc=wzyb,dc=com" ,"mobile");
     }
     
     
