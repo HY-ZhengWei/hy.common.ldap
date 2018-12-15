@@ -334,6 +334,13 @@ public class JU_DBToLDAP extends AppInitConfig
     
     
     
+    /**
+     * 某一用户添加多个联系方式
+     * 
+     * @author      ZhengWei(HY)
+     * @createDate  2018-12-15
+     * @version     v1.0
+     */
     @Test
     public void test_ModUser()
     {
@@ -362,6 +369,13 @@ public class JU_DBToLDAP extends AppInitConfig
     
     
     
+    /**
+     * 某一用户的联系方式修改，并且之前的联系方式均删除
+     * 
+     * @author      ZhengWei(HY)
+     * @createDate  2018-12-15
+     * @version     v1.0
+     */
     @Test
     public void test_ModValues()
     {
@@ -372,6 +386,62 @@ public class JU_DBToLDAP extends AppInitConfig
     
     
     
+    /**
+     * 可实现定向修改属性的某一属性值。
+     * 
+     * 如LDAP中已记录用户了两种联系方式，现在要修改其中一个联系方式。
+     * 
+     * @author      ZhengWei(HY)
+     * @createDate  2018-12-15
+     * @version     v1.0
+     */
+    @Test
+    public void test_ModValues_ByMap()
+    {
+        LDAP     v_LDAP = (LDAP)XJava.getObject("LDAP");
+        UserInfo v_User = (UserInfo)v_LDAP.queryEntry("uid=52140,ou=users,dc=wzyb,dc=com");
+        
+        if ( v_User == null )
+        {
+            System.out.println("未查询到用户");
+            return;
+        }
+
+        System.out.println("\n已查询到用户，其联系方式如下List");
+        Help.print(v_User.getTels());
+        System.out.println("\n已查询到用户，其联系方式如下Map");
+        Help.print(v_User.getTelMap());
+        
+        v_User.getTelMap().put("123" ,"789");               // 定向修改，将123改成789
+        int v_ModCount = v_LDAP.modifyEntry(v_User);
+        
+        if ( v_ModCount >= 1 )
+        {
+            System.out.println("修改了" + v_ModCount + "属性");
+            
+            v_User = (UserInfo)v_LDAP.queryEntry(v_User);
+            System.out.println("\n修改后的联系方式如下Map");
+            Help.print(v_User.getTelMap());
+        }
+        else if ( v_ModCount == 0 )
+        {
+            System.err.println("未修改任何属性");
+        }
+        else
+        {
+            System.err.println("修改异常");
+        }
+    }
+    
+    
+    
+    /**
+     * 删除某一用户的所有联系方式
+     * 
+     * @author      ZhengWei(HY)
+     * @createDate  2018-12-15
+     * @version     v1.0
+     */
     @Test
     public void test_DelValues()
     {
@@ -382,6 +452,13 @@ public class JU_DBToLDAP extends AppInitConfig
     
     
     
+    /**
+     * 查询所有的用户，但不包括父条目。
+     * 
+     * @author      ZhengWei(HY)
+     * @createDate  2018-12-15
+     * @version     v1.0
+     */
     @SuppressWarnings("unchecked")
     @Test
     public void test_SearchAllUser()

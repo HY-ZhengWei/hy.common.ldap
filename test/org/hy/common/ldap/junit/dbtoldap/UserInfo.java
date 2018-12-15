@@ -2,6 +2,7 @@ package org.hy.common.ldap.junit.dbtoldap;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import org.hy.common.Date;
 import org.hy.common.Help;
@@ -67,6 +68,10 @@ public class UserInfo extends SerializableDef
     /** 联系电话 */
     @Ldap("mobile")
     private List<String> tels;
+    
+    /** 联系电话。别一种数据结构。可实现定向修改属性的某一属性值 */
+    @Ldap("mobile")
+    private Map<String ,String> telMap;
     
     /** 组织编号 */
     @Ldap("o")
@@ -339,6 +344,26 @@ public class UserInfo extends SerializableDef
         }
         
         this.tels.add(i_Tel);
+    }
+
+    
+    /**
+     * 获取：联系电话。别一种数据结构。可实现定向修改属性的某一属性值
+     */
+    public Map<String ,String> getTelMap()
+    {
+        return telMap;
+    }
+
+    
+    /**
+     * 设置：联系电话。别一种数据结构。可实现定向修改属性的某一属性值
+     * 
+     * @param telMap 
+     */
+    public void setTelMap(Map<String ,String> telMap)
+    {
+        this.telMap = telMap;
     }
 
 

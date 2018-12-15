@@ -1335,6 +1335,36 @@ public class LDAP
     
     /**
      * 批量修改条目的多个属性。i_ValuesMap集合中的每个元素可以是不同类型的，对应不同类型的LDAP类。
+     * （只添加属性、或只修改属性，不删除属性）
+     * 
+     * 注1：有顺序的修改。这样可以实现先添加父条目，再添加子条目的功能。
+     * 注2：没有事务机构，这不是LDAP的长项。不要指望LDAP可以作到。
+     *      某个元素执行异常后，前面的不回滚，其后的不再执行添加。
+     * 注3：批量修改时占用多个连接。
+     * 
+     * 只用于用 @Ldap 注解的Java对象。
+     * 
+     *   1. 自动识别要添加的多个属性
+     *   2. 自动识别要修改的多个属性
+     * 
+     * 只用于用 @Ldap 注解的Java对象。
+     * 
+     * @author      ZhengWei(HY)
+     * @createDate  2018-12-06
+     * @version     v1.0
+     *
+     * @param i_ValuesMap
+     * @return             修改的条目的个数。小于0表示异常
+     */
+    public int modifyEntrys(List<?> i_ValuesMap)
+    {
+        return modifyEntrys(i_ValuesMap ,true ,true ,false);
+    }
+    
+    
+    
+    /**
+     * 批量修改条目的多个属性。i_ValuesMap集合中的每个元素可以是不同类型的，对应不同类型的LDAP类。
      * 
      * 注1：有顺序的修改。这样可以实现先添加父条目，再添加子条目的功能。
      * 注2：没有事务机构，这不是LDAP的长项。不要指望LDAP可以作到。
@@ -1398,6 +1428,29 @@ public class LDAP
         }
         
         return v_ModEntryCount;
+    }
+    
+    
+    
+    /**
+     * 修改条目的多个属性。（只添加属性、或只修改属性，不删除属性）
+     * 
+     *   1. 自动识别要添加的多个属性
+     *   2. 自动识别要修改的多个属性
+     *   3. 自动识别要删除的多个属性
+     * 
+     * 只用于用 @Ldap 注解的Java对象。
+     * 
+     * @author      ZhengWei(HY)
+     * @createDate  2018-12-15
+     * @version     v1.0
+     *
+     * @param i_NewValues
+     * @return             修改的属性个数。小于0表示异常
+     */
+    public int modifyEntry(Object i_NewValues)
+    {
+        return modifyEntry(i_NewValues ,true ,true ,false);
     }
     
     
