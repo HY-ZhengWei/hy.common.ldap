@@ -1,9 +1,13 @@
 package org.hy.common.ldap.junit.dbtoldap;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.hy.common.Date;
 import org.hy.common.Help;
+import org.hy.common.StringHelp;
 import org.hy.common.ldap.LDAP;
 import org.hy.common.ldap.objectclasses.LDAPNode;
 import org.hy.common.xml.XJava;
@@ -470,6 +474,106 @@ public class JU_DBToLDAP extends AppInitConfig
         
         List<UserInfo> v_Datas = (List<UserInfo>)v_LDAP.searchEntrys(v_UserInfo);
         Help.print(v_Datas);
+    }
+    
+    
+    
+    /**
+     * 更新LDAP中的手机号
+     * 
+     * @author      ZhengWei(HY)
+     * @createDate  2018-12-29
+     * @version     v1.0
+     */
+    @Test
+    public void test_UpdateTels()
+    {
+        LDAP           v_LDAP    = (LDAP)XJava.getObject("LDAP");
+        IUserDAO       v_UserDAO = (IUserDAO)XJava.getObject("UserDAO");
+        List<UserInfo> v_Users   = v_UserDAO.queryUnionA();
+        int            v_UCount  = 0;
+        
+        for (UserInfo v_User : v_Users)
+        {
+            if ( Help.isNull(v_User.getTels()) )
+            {
+                continue;
+            }
+            
+            String   v_DBTel    = v_User.getTels().get(0);
+            UserInfo v_LDAPUser = (UserInfo)v_LDAP.queryEntry(v_User);
+            if ( v_LDAPUser == null )
+            {
+                System.out.println("用户工号 " + v_User.getUserNo() + " 不在LDAP库中");
+                continue;
+            }
+            
+            boolean             v_IsUpdate = false;
+            Map<String ,String> v_Tels     = v_LDAPUser.getTelMap();
+            if ( Help.isNull(v_Tels) )
+            {
+                v_Tels = new HashMap<String ,String>();
+                v_Tels.put(v_DBTel ,v_DBTel);
+                v_LDAPUser.setTelMap(v_Tels);
+                v_IsUpdate = true;
+            }
+            else
+            {
+                if ( !v_Tels.containsKey(v_DBTel) )
+                {
+                    v_Tels.clear();
+                    v_Tels.put(v_DBTel ,v_DBTel);
+                    
+                    v_IsUpdate = true;
+                }
+            }
+            
+            if ( v_IsUpdate )
+            {
+                v_LDAP.modifyEntry(v_LDAPUser);
+                v_UCount++;
+            }
+        }
+        
+        System.out.println("共更新了 " + v_UCount + " 位用户的手机号");
+    }
+    
+    
+    
+    @SuppressWarnings("unchecked")
+    @Test
+    public void copyUsers()
+    {
+        LDAP     v_LDAP     = (LDAP)XJava.getObject("LDAP");
+        UserInfo v_UserInfo = new UserInfo();
+        
+        v_UserInfo.setUserID("ou=users,dc=wzyb,dc=com");
+        v_UserInfo.setOpenID("*");
+        
+        List<UserInfo> v_Datas     = (List<UserInfo>)v_LDAP.searchEntrys(v_UserInfo);
+        List<UserInfo> v_CopyDatas = new ArrayList<UserInfo>();
+        
+        for (UserInfo v_User : v_Datas)
+        {
+            UserInfo v_MUser = new UserInfo();
+            
+            v_MUser.setUserID(StringHelp.replaceAll(v_User.getUserID() ,"ou=users" ,"ou=weixin"));
+            v_MUser.setUserNo(   v_User.getUserNo());
+            v_MUser.setUserNames(v_User.getUserNames());
+            v_MUser.setSurname(  v_User.getSurname());
+            v_MUser.setOpenID(   v_User.getOpenID());
+            v_MUser.setLastTime( v_User.getLastTime());
+            
+            v_CopyDatas.add(v_MUser);
+        }
+        
+        int v_Count = 0;
+        if ( v_CopyDatas.size() >= 1 )
+        {
+            v_Count = v_LDAP.addEntrys(v_CopyDatas);
+        }
+        
+        System.out.println("应Copy " + v_CopyDatas.size() + " 位用户，实际成功Copy " + v_Count + " 位用户。");
     }
     
 }
