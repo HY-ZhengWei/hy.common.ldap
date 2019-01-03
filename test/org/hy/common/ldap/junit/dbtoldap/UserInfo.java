@@ -61,6 +61,10 @@ public class UserInfo extends SerializableDef
     @Ldap("givenName")
     private List<String> loginNames;
     
+    /** 登陆名称 */
+    @Ldap("givenName")
+    private Map<String ,String> loginNameMap;
+    
     /** 登陆密码 */
     @Ldap("carLicense")
     private List<String> loginPwds;
@@ -544,6 +548,27 @@ public class UserInfo extends SerializableDef
     public void setInnerID(String innerID)
     {
         this.innerID = innerID;
+    }
+
+
+    
+    /**
+     * 获取：登陆名称
+     */
+    public Map<String ,String> getLoginNameMap()
+    {
+        return loginNameMap;
+    }
+
+    
+    /**
+     * 设置：登陆名称
+     * 
+     * @param loginNameMap 
+     */
+    public void setLoginNameMap(Map<String ,String> loginNameMap)
+    {
+        this.loginNameMap = loginNameMap;
     }
     
 }

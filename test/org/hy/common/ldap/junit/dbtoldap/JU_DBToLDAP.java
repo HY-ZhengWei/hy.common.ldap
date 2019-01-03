@@ -528,6 +528,29 @@ public class JU_DBToLDAP extends AppInitConfig
                 }
             }
             
+            Map<String ,String> v_LoginNames = v_LDAPUser.getLoginNameMap();
+            if ( Help.isNull(v_LoginNames) )
+            {
+                v_LoginNames = new HashMap<String ,String>();
+                v_LoginNames.put(v_DBTel ,v_DBTel);
+                v_LDAPUser.setLoginNameMap(v_LoginNames);
+                v_IsUpdate = true;
+            }
+            else
+            {
+                if ( !v_LoginNames.containsKey(v_DBTel) )
+                {
+                    for (String v_LoginName : v_LoginNames.keySet())
+                    {
+                        if ( v_LoginName.length() == 11 && Help.isNumber(v_LoginName) )
+                        {
+                            v_LoginNames.put(v_LoginName ,v_DBTel);
+                            v_IsUpdate = true;
+                        }
+                    }
+                }
+            }
+            
             if ( v_IsUpdate )
             {
                 v_LDAP.modifyEntry(v_LDAPUser);
