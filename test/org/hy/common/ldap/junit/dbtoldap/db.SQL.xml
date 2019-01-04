@@ -157,7 +157,6 @@
 				  FROM  AAUserData  A
 				 WHERE  A.UserNo IS NOT NULL
                    AND  A.UserStatus = 'A'
-                   AND  A.UserNo = '52139'
 				 ORDER  BY 1
 				]]>
 			</content>

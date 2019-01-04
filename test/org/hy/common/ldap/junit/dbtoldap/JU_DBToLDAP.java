@@ -278,26 +278,6 @@ public class JU_DBToLDAP extends AppInitConfig
     
     
     
-    @Test
-    public void test_addAttr()
-    {
-        IUserDAO       v_UserDAO = (IUserDAO)XJava.getObject("UserDAO");
-        List<UserInfo> v_Users   = null;
-        
-        v_Users = v_UserDAO.queryUnionC();  // 工号登陆
-        if ( Help.isNull(v_Users) )
-        {
-            System.err.println("未从关系型数据库中查询到用户");
-            return;
-        }
-        System.out.println(Date.getNowTime().getFullMilli() + "  从关系型数据库中查询到 " + v_Users.size() + " 位用户信息。");
-        // 添加不存的用户，已存在的不添加
-        // create(v_Users);
-        addAttr(v_Users);
-    }
-    
-    
-    
     /**
      * 测试用户登陆验证
      * 
@@ -640,9 +620,16 @@ public class JU_DBToLDAP extends AppInitConfig
     
     
     
+    /**
+     * 从备份区恢复OpenID
+     * 
+     * @author      ZhengWei(HY)
+     * @createDate  2019-01-04
+     * @version     v1.0
+     */
     @SuppressWarnings("unchecked")
     @Test
-    public void rrrCopyOpenID()
+    public void recoveryCopyOpenID()
     {
         LDAP     v_LDAP     = (LDAP)XJava.getObject("LDAP");
         UserInfo v_UserInfo = new UserInfo();
