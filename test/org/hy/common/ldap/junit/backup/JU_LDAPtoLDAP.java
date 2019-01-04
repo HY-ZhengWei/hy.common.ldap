@@ -81,7 +81,7 @@ public class JU_LDAPtoLDAP extends AppInitConfig
         
         if ( !Help.isNull(v_Datas) )
         {
-            v_LDAP02.delEntrys((List<String>) Help.toList(v_Datas ,"userID"));
+            v_LDAP02.delEntryChildTree(v_UserInfo.getUserID());
             v_Count = v_LDAP02.addEntrys(v_Datas);
         }
         
