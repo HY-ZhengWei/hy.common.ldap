@@ -26,7 +26,7 @@
 	<classpathentry kind="lib" path="lib/commons-pool2-2.6.0.jar" sourcepath="apache-ldap-api-2.0.0.AM2-src"/>
 	<classpathentry kind="lib" path="lib/junit-4.11.jar"/>
 	<classpathentry kind="lib" path="lib/log4j-1.2.17.jar"/>
-	<classpathentry kind="lib" path="lib/mina-core-2.0.18.jar"/>
+	<classpathentry kind="lib" path="lib/mina-core-2.0.18.jar" sourcepath="/Volumes/HY_HD_06/Develop_HD/apache-maven-localRepository/org/apache/mina/mina-core/2.0.18/mina-core-2.0.18-sources.jar"/>
 	<classpathentry kind="lib" path="lib/org.apache.servicemix.bundles.antlr-2.7.7_5.jar"/>
 	<classpathentry kind="lib" path="lib/org.apache.servicemix.bundles.dom4j-1.6.1_5.jar"/>
 	<classpathentry kind="lib" path="lib/org.apache.servicemix.bundles.xpp3-1.1.4c_7.jar"/>

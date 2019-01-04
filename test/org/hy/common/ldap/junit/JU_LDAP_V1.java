@@ -274,9 +274,9 @@ public class JU_LDAP_V1
         v_DNs.add("ou=Batch01,dc=maxcrc,dc=com");
         v_DNs.add("ou=Batch02,dc=maxcrc,dc=com");
         
-        boolean v_Ret = v_LDAP.delEntrys(v_DNs);
+        int v_Ret = v_LDAP.delEntrys(v_DNs);
         
-        if ( v_Ret )
+        if ( v_Ret >= 0 )
         {
             System.out.println(Date.getNowTime().getFullMilli() + "  批量删除成功.");
         }

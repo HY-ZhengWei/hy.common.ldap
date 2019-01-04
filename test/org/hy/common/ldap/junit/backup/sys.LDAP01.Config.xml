@@ -38,8 +38,8 @@
 		<poolConfig id="LDAPPoolConfig01">
 			<lifo>true</lifo>
 			<maxWait>-1</maxWait>
-			<maxActive>8</maxActive>
-			<maxIdle>8</maxIdle>
+			<maxActive>100</maxActive>
+			<maxIdle>10</maxIdle>
 			<minIdle>0</minIdle>
 			<minEvictableIdleTimeMillis>1800000</minEvictableIdleTimeMillis>    <!-- 30分钟 -->
 			<numTestsPerEvictionRun>3</numTestsPerEvictionRun>

@@ -30,11 +30,9 @@ import org.apache.directory.api.ldap.model.message.ResultCodeEnum;
 import org.apache.directory.api.ldap.model.message.ResultResponse;
 import org.apache.directory.api.ldap.model.message.SearchScope;
 import org.apache.directory.api.ldap.model.message.controls.ManageDsaITImpl;
-import org.apache.directory.api.ldap.model.message.controls.OpaqueControl;
 import org.apache.directory.api.ldap.model.name.Dn;
 import org.apache.directory.ldap.client.api.LdapConnection;
 import org.apache.directory.ldap.client.api.LdapConnectionPool;
-import org.apache.directory.ldap.client.api.LdapNetworkConnection;
 import org.hy.common.Help;
 import org.hy.common.Return;
 import org.hy.common.StringHelp;
@@ -68,7 +66,8 @@ import org.hy.common.xml.XJava;
  *                                     当Java成员变量为String这样的简单时，LDAP中同一属性有多个属性值时，随机取一个给Java成员变量赋值。
  *                                     
  *                                     LDAP中的属性类型一般都是字符，而此类可以翻译为"条目配置翻译官"类指定的成员类型。
- *              v3.0  2018-12-13  添加：searchEntry()查询所有子及子子条目时，不包括Base DN自己。
+ *              v3.0  2018-12-13  添加：searchEntrys()查询所有子及子子条目时，不包括Base DN自己。
+ *              v4.0  2019-01-04  修改：delEntryTree()删除条目及子子条目的功能。
  */
 public class LDAP
 {
@@ -1043,7 +1042,7 @@ public class LDAP
     
     
     /**
-     * 批量删除条目。i_DNs集合中的每个元素可对应不同类型的LDAP类。
+     * 批量删除条目。i_Datas集合中的每个元素可对应不同类型的LDAP类。
      * 
      * 注1：有顺序的删除。这样可以实现先删除子条目，再添加父条目的功能。
      * 注2：没有事务机构，这不是LDAP的长项。不要指望LDAP可以作到。
@@ -1051,30 +1050,33 @@ public class LDAP
      * 注3：批量删除时只占用一个连接。
      * 
      * @author      ZhengWei(HY)
-     * @createDate  2017-02-16
+     * @createDate  2019-01-04
      * @version     v1.0
      *
-     * @param i_DNs
-     * @return
+     * @param i_Datas  支持三种大的分类：
+     *                 1. List<String> 形式的入参，这时集合元素应当 DN 含义，元素为 DN 的值。
+     *                 2. List<Object> 形式的入参，这时集合元素应当 @Ldap 注解的Java值对象。
+     *                                 并且每个元素的类型可以不一样。
+     *                 3. List<?>      混合的入参，元素可以是String、@Ldap 注解的Java值对象，并且每个元素的类型可以不一样。
+     * @return   >=0 表示删除的条目数量。小于0时，表示异常。
      */
-    public boolean delEntrys(List<String> i_DNs)
+    public int delEntrys(List<?> i_Datas)
     {
-        boolean        v_Ret  = false;
-        LdapConnection v_Conn = null;
+        LdapConnection v_Conn  = null;
+        int            v_Count = 0;
         
-        if ( Help.isNull(i_DNs) )
+        if ( Help.isNull(i_Datas) )
         {
-            return v_Ret;
+            return v_Count;
         }
         
         try
         {
-            v_Ret = true;
             v_Conn = this.getConnection();
             
-            for (String v_DN : i_DNs)
+            for (Object v_Data : i_Datas)
             {
-                if ( Help.isNull(v_DN) )
+                if ( v_Data == null )
                 {
                     continue;
                 }
@@ -1082,20 +1084,29 @@ public class LDAP
                 DeleteRequest  v_Request  = new DeleteRequestImpl();
                 DeleteResponse v_Response = null;
                 
-                v_Request.setName(new Dn(v_DN));
+                if ( v_Data instanceof String )
+                {
+                    v_Request.setName(new Dn(v_Data.toString()));
+                }
+                else
+                {
+                    LdapEntry v_LdapEntry = getLdapEntry(v_Data.getClass());
+                    v_Request.setName(new Dn(v_LdapEntry.getDNValue(v_Data)));
+                }
                 
                 v_Response = v_Conn.delete(v_Request);
                 
                 if ( !LDAP.isSuccess(v_Response) )
                 {
-                    v_Ret = false;
+                    v_Count = -1;
                     break;
                 }
+                
+                v_Count++;
             }
         }
         catch (Exception exce)
         {
-            v_Ret = false;
             exce.printStackTrace();
         }
         finally
@@ -1103,7 +1114,43 @@ public class LDAP
             this.closeConnection(v_Conn);
         }
         
-        return v_Ret;
+        return v_Count;
+    }
+    
+    
+    
+    /**
+     * 删除条目
+     * 
+     * 只用于用 @Ldap 注解的Java对象。
+     * 
+     * @author      ZhengWei(HY)
+     * @createDate  2019-01-04
+     * @version     v1.0
+     *
+     * @param i_Values
+     * @return
+     */
+    public boolean delEntry(Object i_Values)
+    {
+        LdapEntry v_LdapEntry = getLdapEntry(i_Values.getClass());
+        
+        if ( v_LdapEntry == null )
+        {
+            return false;
+        }
+        
+        try
+        {
+            String v_DN = v_LdapEntry.getDNValue(i_Values);
+            
+            return this.delEntry(v_DN);
+        }
+        catch (Exception exce)
+        {
+            exce.printStackTrace();
+        }
+        return false;
     }
     
     
@@ -1160,30 +1207,70 @@ public class LDAP
      * @param i_DN  条目标识
      * @return
      */
-    public boolean delEntryTree(String i_DN)
+    public int delEntryTree(String i_DN)
     {
-        LdapConnection v_Conn     = null;
-        DeleteRequest  v_Request  = new DeleteRequestImpl();
-        DeleteResponse v_Response = null;
+        // 下面的方法也不能删除带在子条目的父条目，官方好像没有出删除树的API
+        // LdapNetworkConnection v_ConnNetwork = (LdapNetworkConnection)((MonitoringLdapConnection)v_Conn).wrapped();
+        // v_ConnNetwork.deleteTree(i_DN);
         
         try
         {
-            v_Request.setName(new Dn(i_DN));
-            
-            v_Request.addControl(new OpaqueControl($ControlOID));
-            v_Conn = (LdapNetworkConnection)this.getConnection();
-            v_Response = v_Conn.delete(v_Request);
+            // ApacheDS的DN属性名称为：entryDN
+            int v_RetCount = this.delEntrys(this.searchEntrys(i_DN ,"(!(entryDN=" + i_DN + "))" ,SearchScope.SUBTREE));
+            if ( v_RetCount >= 0 )
+            {
+                if ( this.delEntry(i_DN) )
+                {
+                    return v_RetCount + 1;
+                }
+                else
+                {
+                    return -2;
+                }
+            }
         }
         catch (Exception exce)
         {
             exce.printStackTrace();
         }
-        finally
+        
+        return -1;
+    }
+    
+    
+    
+    /**
+     * 删除条目树（递归删除条目），但不删除自己
+     * 
+     * LdapNetworkConnection类中是一个deleteTree()方法的，但没有返回值，真不知道开发者是怎么考虑的。
+     * 看过它的源码，发现它是通过delete()方法实现的，只是添加一个控制对象。所以本方法实现思路相同，如下。
+     * 
+     * @see org.apache.directory.ldap.client.api.LdapNetworkConnection.deleteTree()
+     * 
+     * @author      ZhengWei(HY)
+     * @createDate  2019-01-04
+     * @version     v1.0
+     *
+     * @param i_DN  条目标识
+     * @return
+     */
+    public int delEntryChildTree(String i_DN)
+    {
+        // 下面的方法也不能删除带在子条目的父条目，官方好像没有出删除树的API
+        // LdapNetworkConnection v_ConnNetwork = (LdapNetworkConnection)((MonitoringLdapConnection)v_Conn).wrapped();
+        // v_ConnNetwork.deleteTree(i_DN);
+        
+        try
         {
-            closeConnection(v_Conn);
+            // ApacheDS的DN属性名称为：entryDN
+            return this.delEntrys(this.searchEntrys(i_DN ,"(!(entryDN=" + i_DN + "))" ,SearchScope.SUBTREE));
+        }
+        catch (Exception exce)
+        {
+            exce.printStackTrace();
         }
         
-        return LDAP.isSuccess(v_Response);
+        return -1;
     }
     
     

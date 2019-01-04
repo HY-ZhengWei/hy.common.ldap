@@ -63,6 +63,9 @@ public class JU_LDAPtoLDAP extends AppInitConfig
     
     
     
+    /**
+     * 备份数据
+     */
     @SuppressWarnings("unchecked")
     @Test
     public void test_Backup()
@@ -78,7 +81,41 @@ public class JU_LDAPtoLDAP extends AppInitConfig
         
         if ( !Help.isNull(v_Datas) )
         {
+            v_LDAP02.delEntrys((List<String>) Help.toList(v_Datas ,"userID"));
             v_Count = v_LDAP02.addEntrys(v_Datas);
+        }
+        
+        System.out.println("应备份 " + v_Datas.size() + " 条数据，实际成功备份 " + v_Count + " 条数据。");
+    }
+    
+    
+    
+    /**
+     * 用备份数据恢复 
+     */
+    @SuppressWarnings("unchecked")
+    @Test
+    public void test_Recovery()
+    {
+        LDAP     v_LDAP01   = (LDAP)XJava.getObject("LDAP01");
+        LDAP     v_LDAP02   = (LDAP)XJava.getObject("LDAP02");
+        UserInfo v_UserInfo = new UserInfo();
+        
+        v_UserInfo.setUserID("ou=users,dc=wzyb,dc=com");
+        
+        List<UserInfo> v_Datas = (List<UserInfo>)v_LDAP02.searchEntrys(v_UserInfo);
+        int            v_Count = 0;
+        
+        if ( !Help.isNull(v_Datas) )
+        {
+            for (UserInfo v_User : v_Datas)
+            {
+                v_LDAP01.delEntry(v_User);
+                v_LDAP01.addEntry(v_User);
+                
+                v_Count++;
+                System.out.println(v_Count + "\t" + v_User.getUserNo() + "\t" + v_User.getUserTrueName());
+            }
         }
         
         System.out.println("应备份 " + v_Datas.size() + " 条数据，实际成功备份 " + v_Count + " 条数据。");

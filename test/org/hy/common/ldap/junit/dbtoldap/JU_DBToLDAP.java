@@ -278,6 +278,26 @@ public class JU_DBToLDAP extends AppInitConfig
     
     
     
+    @Test
+    public void test_addAttr()
+    {
+        IUserDAO       v_UserDAO = (IUserDAO)XJava.getObject("UserDAO");
+        List<UserInfo> v_Users   = null;
+        
+        v_Users = v_UserDAO.queryUnionC();  // 工号登陆
+        if ( Help.isNull(v_Users) )
+        {
+            System.err.println("未从关系型数据库中查询到用户");
+            return;
+        }
+        System.out.println(Date.getNowTime().getFullMilli() + "  从关系型数据库中查询到 " + v_Users.size() + " 位用户信息。");
+        // 添加不存的用户，已存在的不添加
+        // create(v_Users);
+        addAttr(v_Users);
+    }
+    
+    
+    
     /**
      * 测试用户登陆验证
      * 
@@ -570,6 +590,25 @@ public class JU_DBToLDAP extends AppInitConfig
         LDAP     v_LDAP     = (LDAP)XJava.getObject("LDAP");
         UserInfo v_UserInfo = new UserInfo();
         
+        
+        LDAPNode v_SuperNode = new LDAPNode();
+        
+        v_SuperNode.setId("ou=weixin,dc=wzyb,dc=com");
+        v_SuperNode.setDescription("绑定微信OpenID的用户");
+        
+        v_LDAP.delEntryTree(v_SuperNode.getId());
+        boolean v_Ret = v_LDAP.addEntry(v_SuperNode);
+        if ( !v_Ret )
+        {
+            System.err.println("在LDAP服务上创建父节点异常，请查检并确保分区Partition是存在的。");
+            return;
+        }
+        else
+        {
+            System.out.println(Date.getNowTime().getFullMilli() + "  创建父节点成功。");
+        }
+        
+        
         v_UserInfo.setUserID("ou=users,dc=wzyb,dc=com");
         v_UserInfo.setOpenID("*");
         
@@ -591,12 +630,48 @@ public class JU_DBToLDAP extends AppInitConfig
         }
         
         int v_Count = 0;
-        if ( v_CopyDatas.size() >= 1 )
+        if ( !Help.isNull(v_CopyDatas) )
         {
             v_Count = v_LDAP.addEntrys(v_CopyDatas);
         }
         
         System.out.println("应Copy " + v_CopyDatas.size() + " 位用户，实际成功Copy " + v_Count + " 位用户。");
+    }
+    
+    
+    
+    @SuppressWarnings("unchecked")
+    @Test
+    public void rrrCopyOpenID()
+    {
+        LDAP     v_LDAP     = (LDAP)XJava.getObject("LDAP");
+        UserInfo v_UserInfo = new UserInfo();
+        
+        v_UserInfo.setUserID("ou=weixin,dc=wzyb,dc=com");
+        v_UserInfo.setOpenID("*");
+        
+        List<UserInfo> v_OpenIDs  = (List<UserInfo>)v_LDAP.searchEntrys(v_UserInfo);
+        List<UserInfo> v_RRRCopys = new ArrayList<UserInfo>();
+        
+        for (UserInfo v_User : v_OpenIDs)
+        {
+            UserInfo v_MUser = new UserInfo();
+            
+            v_MUser.setUserID(StringHelp.replaceAll(v_User.getUserID() ,"ou=weixin" ,"ou=users"));
+            v_MUser.setUserNo(   v_User.getUserNo());
+            v_MUser.setOpenID(   v_User.getOpenID());
+            v_MUser.setLastTime( v_User.getLastTime());
+            
+            v_RRRCopys.add(v_MUser);
+        }
+        
+        int v_Count = 0;
+        if ( !Help.isNull(v_RRRCopys) )
+        {
+            v_Count = v_LDAP.modifyEntrys(v_RRRCopys);
+        }
+        
+        System.out.println("应Copy " + v_RRRCopys.size() + " 位用户，实际成功Copy " + v_Count + " 位用户。");
     }
     
 }

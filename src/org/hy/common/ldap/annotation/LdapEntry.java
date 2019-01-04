@@ -610,10 +610,9 @@ public class LdapEntry
                                 String [] v_AttrValues = dataToLDAPAttributes(v_NewValue);
                                 if ( !Help.isNull(v_AttrValues) )
                                 {
-                                    if ( v_AttrValues.length >= 2
-                                     && (v_NewValue instanceof List
+                                    if ( v_NewValue instanceof List
                                      ||  v_NewValue instanceof Set
-                                     ||  v_NewValue instanceof Object []) )
+                                     ||  v_NewValue instanceof Object [] )
                                     {
                                         String []                  v_AttrOlds = dataToLDAPAttributes(v_OldValue);
                                         ComparateResult<String []> v_CResult  = Comparate.comparate(v_AttrOlds ,v_AttrValues);
