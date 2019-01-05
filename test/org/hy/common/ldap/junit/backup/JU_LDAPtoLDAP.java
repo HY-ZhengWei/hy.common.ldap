@@ -118,7 +118,7 @@ public class JU_LDAPtoLDAP extends AppInitConfig
             }
         }
         
-        System.out.println("应备份 " + v_Datas.size() + " 条数据，实际成功备份 " + v_Count + " 条数据。");
+        System.out.println("应恢复 " + v_Datas.size() + " 条数据，实际成功恢复 " + v_Count + " 条数据。");
     }
     
 }
