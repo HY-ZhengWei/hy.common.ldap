@@ -51,10 +51,11 @@ public class LdapAnnotation
      *
      * @param i_PackageName  包路径
      */
+    @SuppressWarnings("unchecked")
     public synchronized static void parser(String i_PackageName)
     {
-        Map<Class<?> ,LdapEntry> v_LdapEntryClasses  = null;
-        Map<String   ,LdapEntry> v_LdapEntryClassIDs = null;
+        Map<Class<?> ,LdapEntry> v_LdapEntryClasses  = (Map<Class<?> ,LdapEntry>)XJava.getObject($LdapEntryClasses);
+        Map<String   ,LdapEntry> v_LdapEntryClassIDs = (Map<String   ,LdapEntry>)XJava.getObject($LdapEntryClassIDs);
         
         if ( XJava.getObject($LdapEntryClasses) == null )
         {
