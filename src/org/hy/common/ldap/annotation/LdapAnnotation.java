@@ -37,14 +37,6 @@ public class LdapAnnotation
     
     public static void parser()
     {
-        Map<Class<?> ,LdapEntry> v_LdapEntryClasses  = new Hashtable<Class<?> ,LdapEntry>();
-        Map<String   ,LdapEntry> v_LdapEntryClassIDs = new Hashtable<String   ,LdapEntry>();
-        
-        parser(Help.getClasses() ,v_LdapEntryClasses ,v_LdapEntryClassIDs);
-        
-        XJava.putObject($LdapEntryClasses  ,v_LdapEntryClasses);
-        XJava.putObject($LdapEntryClassIDs ,v_LdapEntryClassIDs);
-        
         parser("org.hy.common.ldap.objectclasses");
     }
     
@@ -59,10 +51,21 @@ public class LdapAnnotation
      *
      * @param i_PackageName  包路径
      */
-    @SuppressWarnings("unchecked")
-    public static void parser(String i_PackageName)
+    public synchronized static void parser(String i_PackageName)
     {
-        parser(Help.getClasses(i_PackageName) ,(Map<Class<?> ,LdapEntry>)XJava.getObject($LdapEntryClasses) ,(Map<String ,LdapEntry>)XJava.getObject($LdapEntryClassIDs));
+        Map<Class<?> ,LdapEntry> v_LdapEntryClasses  = null;
+        Map<String   ,LdapEntry> v_LdapEntryClassIDs = null;
+        
+        if ( XJava.getObject($LdapEntryClasses) == null )
+        {
+            v_LdapEntryClasses  = new Hashtable<Class<?> ,LdapEntry>();
+            v_LdapEntryClassIDs = new Hashtable<String   ,LdapEntry>();
+            
+            XJava.putObject($LdapEntryClasses  ,v_LdapEntryClasses);
+            XJava.putObject($LdapEntryClassIDs ,v_LdapEntryClassIDs);
+        }
+        
+        parser(Help.getClasses(i_PackageName) ,v_LdapEntryClasses ,v_LdapEntryClassIDs);
     }
     
     

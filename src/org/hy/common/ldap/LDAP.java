@@ -90,10 +90,11 @@ public class LDAP
     
     
     
-    public LDAP(LdapConnectionPool i_ConnPool)
+    public LDAP(LdapConnectionPool i_ConnPool ,String i_PackageName)
     {
         this.connPool = i_ConnPool;
         LdapAnnotation.parser();
+        LdapAnnotation.parser(i_PackageName);
     }
     
     
