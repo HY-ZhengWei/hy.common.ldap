@@ -8,7 +8,7 @@
   <packaging>jar</packaging>
 
   <name>hy.common.ldap</name>
-  <url>https://github.com/HY-ZhengWei/hy.common.ldap</url>
+  <url>https://github.com/HY-ZhengWei/hy.common.ldap</url>   <!-- https://gitee.com/HY-ZhengWei/hy.common.ldap -->
   
   <developers>
     <developer>
@@ -31,18 +31,19 @@
       <scope>test</scope>
     </dependency>
     
-	<!-- https://github.com/HY-ZhengWei/XJava -->
-	<dependency>
-	    <groupId>org</groupId>
-	    <artifactId>hy.common.xjava</artifactId>
-	    <version>4.0.2</version>
-	</dependency>
-	
-	<dependency>
-	    <groupId>org.apache.directory.api</groupId>
-	    <artifactId>api-all</artifactId>
-	    <version>2.0.0.AM2</version>
-	</dependency>
-	
+    <!-- https://github.com/HY-ZhengWei/XJava -->
+    <!-- https://gitee.com/HY-ZhengWei/XJava -->
+    <dependency>
+        <groupId>org</groupId>
+        <artifactId>hy.common.xjava</artifactId>
+        <version>4.1.1</version>
+    </dependency>
+    
+    <dependency>
+        <groupId>org.apache.directory.api</groupId>
+        <artifactId>api-all</artifactId>
+        <version>2.0.0.AM2</version>
+    </dependency>
+    
   </dependencies>
 </project>
