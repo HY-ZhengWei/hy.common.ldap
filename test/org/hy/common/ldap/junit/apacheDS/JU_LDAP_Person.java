@@ -28,7 +28,7 @@ import org.junit.runners.MethodSorters;
  * @version     v1.0
  */
 @Xjava(value=XType.XML)
-@FixMethodOrder(MethodSorters.NAME_ASCENDING) 
+@FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class JU_LDAP_Person
 {
     
@@ -42,6 +42,36 @@ public class JU_LDAP_Person
         {
             $isInit = true;
             XJava.parserAnnotation(JU_LDAP_Person.class.getName());
+        }
+    }
+    
+    
+    
+    /**
+     * 添加OU
+     * 
+     * @author      ZhengWei(HY)
+     * @createDate  2021-08-17
+     * @version     v1.0
+     */
+    @Test
+    public void test_000_AddOU()
+    {
+        LDAP     v_LDAP = (LDAP)XJava.getObject("LDAP");
+        OUObject v_OU   = new OUObject();
+        
+        v_OU.setId("ou=ou001,dc=wzyb,dc=com");
+        v_OU.setDescription("说明");
+        
+        boolean v_Ret = v_LDAP.addEntry(v_OU);
+        
+        if ( v_Ret )
+        {
+            System.out.println(Date.getNowTime().getFullMilli() + "  添加成功.");
+        }
+        else
+        {
+            System.out.println(Date.getNowTime().getFullMilli() + "  添加异常.");
         }
     }
     

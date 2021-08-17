@@ -2,77 +2,78 @@
 
 <config>
 
-	<import name="xconfig"         class="java.util.ArrayList" />
-	<import name="connConfig"      class="org.apache.directory.ldap.client.api.LdapConnectionConfig" />
-	<import name="connFactory"     class="org.apache.directory.ldap.client.api.DefaultLdapConnectionFactory" />
-	<import name="poolConfig"      class="org.apache.commons.pool2.impl.GenericObjectPoolConfig" />
-	<import name="connPool"        class="org.apache.directory.ldap.client.api.LdapConnectionPool" />
-	<import name="connPoolFactory" class="org.apache.directory.ldap.client.api.ValidatingPoolableLdapConnectionFactory" />
-	<import name="ldap"            class="org.hy.common.ldap.LDAP" />
-	
-	
-	
-	<!-- Apache LDAP API配置信息（可支持对OpenLDAP服务的连接） -->
-	<xconfig>
-	
-		<!-- 连接基本配置 -->
-		<connConfig id="LDAPConnConfig02">
-			<ldapHost>172.27.35.1</ldapHost>             <!-- LDAP服务器IP -->
-			<ldapPort>10389</ldapPort>                   <!-- 访问端号 -->
-			<name>uid=admin,ou=system</name>             <!-- RootDN 用户名称 -->
-			<credentials>hy.1qaz!QAZ</credentials>       <!-- RootPW 用户密码 -->
-		</connConfig>
-		
-		
-		<!-- LDAP连接工厂 -->
-		<connFactory id="LDAPConnFactory02">
-			<constructor>
-				<connConfig ref="LDAPConnConfig02" />
-			</constructor>
-			
-			<timeOut>30000</timeOut>
-		</connFactory>
-		
-		
-		<!-- 连接池参数，下面都是默认值，即可不设置这些参数 -->
-		<poolConfig id="LDAPPoolConfig02">
-			<lifo>true</lifo>
-			<maxWait>-1</maxWait>
-			<maxActive>100</maxActive>
-			<maxIdle>10</maxIdle>
-			<minIdle>0</minIdle>
-			<minEvictableIdleTimeMillis>1800000</minEvictableIdleTimeMillis>    <!-- 30分钟 -->
-			<numTestsPerEvictionRun>3</numTestsPerEvictionRun>
-			<softMinEvictableIdleTimeMillis>-1</softMinEvictableIdleTimeMillis>
-			<testOnBorrow>false</testOnBorrow>
-			<testOnReturn>false</testOnReturn>
-			<testWhileIdle>false</testWhileIdle>
-			<timeBetweenEvictionRunsMillis>-1</timeBetweenEvictionRunsMillis>
-			<whenExhaustedAction>1</whenExhaustedAction>
-		</poolConfig>
-		
-		
-		<!-- 构建LDAP连接池 -->
-		<connPool id="LDAPConnPool02">
-			<constructor>
-				<connPoolFactory>
-					<constructor>
-						<connFactory ref="LDAPConnFactory02" />
-					</constructor>
-				</connPoolFactory>
-				
-				<poolConfig ref="LDAPPoolConfig02" />
-			</constructor>
-		</connPool>
-		
-		
-		<!-- 构建LDAP统一操作类 -->
-		<ldap id="LDAP02">
-			<constructor>
-				<connPool ref="LDAPConnPool02" />
-			</constructor>
-		</ldap>
-		
-	</xconfig>
-	
+    <import name="xconfig"         class="java.util.ArrayList" />
+    <import name="connConfig"      class="org.apache.directory.ldap.client.api.LdapConnectionConfig" />
+    <import name="connFactory"     class="org.apache.directory.ldap.client.api.DefaultLdapConnectionFactory" />
+    <import name="poolConfig"      class="org.apache.commons.pool2.impl.GenericObjectPoolConfig" />
+    <import name="connPool"        class="org.apache.directory.ldap.client.api.LdapConnectionPool" />
+    <import name="connPoolFactory" class="org.apache.directory.ldap.client.api.ValidatingPoolableLdapConnectionFactory" />
+    <import name="ldap"            class="org.hy.common.ldap.LDAP" />
+    
+    
+    
+    <!-- Apache LDAP API配置信息（可支持对OpenLDAP服务的连接） -->
+    <xconfig>
+    
+        <!-- 连接基本配置 -->
+        <connConfig id="LDAPConnConfig02">
+            <ldapHost>172.27.35.1</ldapHost>             <!-- LDAP服务器IP -->
+            <ldapPort>10389</ldapPort>                   <!-- 访问端号 -->
+            <name>uid=admin,ou=system</name>             <!-- RootDN 用户名称 -->
+            <credentials>1</credentials>                 <!-- RootPW 用户密码 -->
+        </connConfig>
+        
+        
+        <!-- LDAP连接工厂 -->
+        <connFactory id="LDAPConnFactory02">
+            <constructor>
+                <connConfig ref="LDAPConnConfig02" />
+            </constructor>
+            
+            <timeOut>30000</timeOut>
+        </connFactory>
+        
+        
+        <!-- 连接池参数，下面都是默认值，即可不设置这些参数 -->
+        <poolConfig id="LDAPPoolConfig02">
+            <lifo>true</lifo>
+            <maxWait>-1</maxWait>
+            <maxActive>100</maxActive>
+            <maxIdle>10</maxIdle>
+            <minIdle>0</minIdle>
+            <minEvictableIdleTimeMillis>1800000</minEvictableIdleTimeMillis>    <!-- 30分钟 -->
+            <numTestsPerEvictionRun>3</numTestsPerEvictionRun>
+            <softMinEvictableIdleTimeMillis>-1</softMinEvictableIdleTimeMillis>
+            <testOnBorrow>false</testOnBorrow>
+            <testOnReturn>false</testOnReturn>
+            <testWhileIdle>false</testWhileIdle>
+            <timeBetweenEvictionRunsMillis>-1</timeBetweenEvictionRunsMillis>
+            <whenExhaustedAction>1</whenExhaustedAction>
+        </poolConfig>
+        
+        
+        <!-- 构建LDAP连接池 -->
+        <connPool id="LDAPConnPool02">
+            <constructor>
+                <connPoolFactory>
+                    <constructor>
+                        <connFactory ref="LDAPConnFactory02" />
+                    </constructor>
+                </connPoolFactory>
+                
+                <poolConfig ref="LDAPPoolConfig02" />
+            </constructor>
+        </connPool>
+        
+        
+        <!-- 构建LDAP统一操作类 -->
+        <ldap id="LDAP02">
+            <constructor>
+                <connPool ref="LDAPConnPool02" />
+                <String>org.hy.common</String>
+            </constructor>
+        </ldap>
+        
+    </xconfig>
+    
 </config>
