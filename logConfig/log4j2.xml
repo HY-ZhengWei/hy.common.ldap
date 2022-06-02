@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+    <properties>
+        <!-- 文件输出格式 -->
+        <property name="PATTERN">[%-5p] %d %l - %m%n</property>
+    </properties>
+
+    <appenders>
+        <Console name="CONSOLE" target="system_out">
+            <PatternLayout pattern="${PATTERN}"/>
+        </Console>
+    </appenders>
+
+    <loggers>
+        <logger name="org.hy.common" level="debug"/>
+        <root level="info">
+            <appenderref ref="CONSOLE"/>
+        </root>
+    </loggers>
+    
+</configuration>

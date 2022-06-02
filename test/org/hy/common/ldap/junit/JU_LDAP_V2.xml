@@ -70,6 +70,7 @@
         <ldap id="LDAP">
             <constructor>
                 <connPool ref="LDAPConnPool" />
+                <String>org.hy.common.ldap.junit</String>
             </constructor>
         </ldap>
         

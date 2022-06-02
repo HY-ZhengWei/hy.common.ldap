@@ -19,7 +19,7 @@ import org.junit.Test;
 
 
 /**
- * 测试单元：从关系型数据库中拉取数据，并推入到LDAP中。 
+ * 测试单元：从关系型数据库中拉取数据，并推入到LDAP中。
  *
  * @author      ZhengWei(HY)
  * @createDate  2018-12-06
@@ -70,7 +70,7 @@ public class JU_DBToLDAP extends AppInitConfig
     
     
     /**
-     * 从关系型数据库中拉取数据，并推入到LDAP中。 
+     * 从关系型数据库中拉取数据，并推入到LDAP中。
      * 
      * @author      ZhengWei(HY)
      * @createDate  2018-12-06
@@ -471,6 +471,7 @@ public class JU_DBToLDAP extends AppInitConfig
         UserInfo v_UserInfo = new UserInfo();
         
         v_UserInfo.setUserID("ou=users,dc=wzyb,dc=com");
+        v_UserInfo.setUserNo("52329");
         
         List<UserInfo> v_Datas = (List<UserInfo>)v_LDAP.searchEntrys(v_UserInfo);
         Help.print(v_Datas);

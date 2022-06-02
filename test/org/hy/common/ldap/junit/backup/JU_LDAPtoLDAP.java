@@ -4,8 +4,10 @@ import java.util.List;
 
 import org.hy.common.Help;
 import org.hy.common.ldap.LDAP;
+import org.hy.common.ldap.junit.dbtoldap.DSLdapUser;
 import org.hy.common.ldap.junit.dbtoldap.UserInfo;
 import org.hy.common.xml.XJava;
+import org.hy.common.xml.log.Logger;
 import org.hy.common.xml.plugins.AppInitConfig;
 import org.junit.Test;
 
@@ -24,6 +26,8 @@ public class JU_LDAPtoLDAP extends AppInitConfig
 {
     
     private static boolean $Init = false;
+    
+    private static final Logger $Logger = new Logger(JU_LDAPtoLDAP.class);
     
     
     
@@ -70,19 +74,64 @@ public class JU_LDAPtoLDAP extends AppInitConfig
     @Test
     public void test_Backup()
     {
-        LDAP     v_LDAP01   = (LDAP)XJava.getObject("LDAP01");
-        LDAP     v_LDAP02   = (LDAP)XJava.getObject("LDAP02");
-        UserInfo v_UserInfo = new UserInfo();
+        LDAP       v_LDAP01 = (LDAP)XJava.getObject("LDAP01");
+        LDAP       v_LDAP02 = (LDAP)XJava.getObject("LDAP02");
+        DSLdapUser v_User   = new DSLdapUser();
         
-        v_UserInfo.setUserID("ou=users,dc=wzyb,dc=com");
+        v_User.setUserID("ou=users,dc=wzyb,dc=com");
         
-        List<UserInfo> v_Datas = (List<UserInfo>)v_LDAP01.searchEntrys(v_UserInfo);
-        int            v_Count = 0;
+        List<DSLdapUser> v_Datas = (List<DSLdapUser>)v_LDAP01.searchEntrys(v_User);
+        int              v_Count = 0;
         
         if ( !Help.isNull(v_Datas) )
         {
-            v_LDAP02.delEntryChildTree(v_UserInfo.getUserID());
+            v_LDAP02.delEntryChildTree(v_User.getUserID());
+            // v_Count = v_LDAP02.addEntrys(v_Datas);
+            
+            
+            for (Object v_DataItem : v_Datas)
+            {
+                if ( v_DataItem instanceof DSLdapUser )
+                {
+                    if ( v_LDAP02.addEntry(v_DataItem) )
+                    {
+                        v_Count++;
+                    }
+                }
+                else
+                {
+                    $Logger.info(v_DataItem);
+                }
+            }
+            
+        }
+        
+        System.out.println("应备份 " + v_Datas.size() + " 条数据，实际成功备份 " + v_Count + " 条数据。");
+    }
+    
+    
+    
+    
+    /**
+     * 备份数据
+     */
+    @Test
+    public void test_BackupWeiXin()
+    {
+        LDAP       v_LDAP01 = (LDAP)XJava.getObject("LDAP01");
+        LDAP       v_LDAP02 = (LDAP)XJava.getObject("LDAP02");
+        DSLdapUser v_User   = new DSLdapUser();
+        
+        v_User.setUserID("ou=weixin,dc=wzyb,dc=com");
+        
+        List<?> v_Datas = v_LDAP01.searchEntrys(v_User);
+        int     v_Count = 0;
+        
+        if ( !Help.isNull(v_Datas) )
+        {
+            v_LDAP02.delEntryChildTree(v_User.getUserID());
             v_Count = v_LDAP02.addEntrys(v_Datas);
+            
         }
         
         System.out.println("应备份 " + v_Datas.size() + " 条数据，实际成功备份 " + v_Count + " 条数据。");
@@ -91,7 +140,7 @@ public class JU_LDAPtoLDAP extends AppInitConfig
     
     
     /**
-     * 用备份数据恢复 
+     * 用备份数据恢复
      */
     @SuppressWarnings("unchecked")
     @Test

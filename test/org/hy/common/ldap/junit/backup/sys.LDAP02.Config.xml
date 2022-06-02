@@ -17,10 +17,10 @@
     
         <!-- 连接基本配置 -->
         <connConfig id="LDAPConnConfig02">
-            <ldapHost>172.27.35.1</ldapHost>             <!-- LDAP服务器IP -->
-            <ldapPort>10389</ldapPort>                   <!-- 访问端号 -->
-            <name>uid=admin,ou=system</name>             <!-- RootDN 用户名称 -->
-            <credentials>1</credentials>                 <!-- RootPW 用户密码 -->
+            <ldapHost>10.1.90.24</ldapHost>                                            <!-- LDAP服务器IP -->
+            <ldapPort>10389</ldapPort>                                                 <!-- 访问端号 -->
+            <name        encrypt="org.hy.common.StringHelp">uid=admin,ou=system</name> <!-- RootDN 用户名称 -->
+            <credentials encrypt="org.hy.common.StringHelp">wzyb9114</credentials>     <!-- RootPW 用户密码 -->
         </connConfig>
         
         

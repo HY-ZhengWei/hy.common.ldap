@@ -64,7 +64,7 @@ import org.hy.common.xml.XJava;
  *              v2.0  2018-12-06  添加：支持同一属性多个属性值的LDAP特性。
  *                                     Java对象用List<Object>或Set<Object>或数组Object[]定义成员变量的类型，来支持多属性值的LDAP特性。
  *                                     当Java成员变量为String这样的简单时，LDAP中同一属性有多个属性值时，随机取一个给Java成员变量赋值。
- *                                     
+ * 
  *                                     LDAP中的属性类型一般都是字符，而此类可以翻译为"条目配置翻译官"类指定的成员类型。
  *              v3.0  2018-12-13  添加：searchEntrys()查询所有子及子子条目时，不包括Base DN自己。
  *              v4.0  2019-01-04  修改：delEntryTree()删除条目及子子条目的功能。
@@ -578,6 +578,7 @@ public class LDAP
                 {
                     // ApacheDS的DN属性名称为：entryDN
                     v_Filter = "(!(" + v_LdapEntry.getRdn() + "=" + v_BaseDN + "))";
+                    v_Filter = "(" + LDAP.$ObjectClass + "=*)";
                 }
                 else
                 {
@@ -1560,7 +1561,7 @@ public class LDAP
      *                                     1. ( i_IsAdd &&  i_IsUpdate)为真时，新的插入、旧的删除：将LDAP数据库中的属性值修改为与i_NewValues属性值一样，不存在的将删除。
      *                                     2. ( i_IsAdd && !i_IsUpdate)为真时，新的插入、旧的保留：只向LDAP数据库中添加新的属性值，原LDAP数据库中的属性值将保留。
      *                                     3. (!i_IsAdd &&  i_IsUpdate)为真时，没有插入、旧的删除：不存于i_NewValues的属性值，将被删除。并不向LDAP数据库中添加任何新属性值。
-     *                                     
+     * 
      *              v3.0  2018-12-14  添加：支Java对象用Map<Object ,Object>定义成员变量的类型，来支持多属性值情况下，旧值改为新值的场景。并且支持批量。
      *
      * @param i_NewValues
@@ -1616,7 +1617,7 @@ public class LDAP
     
     /**
      * 修改条目(准确是修改条目的属性)。可包括如下操作。
-     *   1. ModificationOperation.ADD_ATTRIBUTE：    添加属性  
+     *   1. ModificationOperation.ADD_ATTRIBUTE：    添加属性
      *   2. ModificationOperation.REMOVE_ATTRIBUTE： 删除属性
      *   3. ModificationOperation.REPLACE_ATTRIBUTE：替换属性值
      * 

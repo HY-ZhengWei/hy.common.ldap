@@ -6,6 +6,7 @@ import java.util.List;
 import org.hy.common.Date;
 import org.hy.common.Help;
 import org.hy.common.ldap.LDAP;
+import org.hy.common.ldap.junit.dbtoldap.UserInfo;
 import org.hy.common.xml.XJava;
 import org.hy.common.xml.annotation.XType;
 import org.hy.common.xml.annotation.Xjava;
@@ -30,7 +31,7 @@ import org.junit.runners.MethodSorters;
  * @version     v1.0
  */
 @Xjava(value=XType.XML)
-@FixMethodOrder(MethodSorters.NAME_ASCENDING) 
+@FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class JU_LDAP_V2
 {
     private static boolean $isInit = false;
@@ -110,10 +111,34 @@ public class JU_LDAP_V2
     
     
     @Test
+    public void test_002_AddUserInfo()
+    {
+        LDAP         v_LDAP   = (LDAP)XJava.getObject("LDAP");
+        UserInfo     v_User   = new UserInfo();
+        
+        v_User.setUserID("uid=52329,ou=users,dc=wzyb,dc=com");
+        v_User.setUserName("HY");
+        v_User.setSurname("HY");
+        
+        boolean v_Ret = v_LDAP.addEntry(v_User);
+        
+        if ( v_Ret )
+        {
+            System.out.println(Date.getNowTime().getFullMilli() + "  添加成功.");
+        }
+        else
+        {
+            System.out.println(Date.getNowTime().getFullMilli() + "  添加异常.");
+        }
+    }
+    
+    
+    
+    @Test
     public void test_003_QueryEntry()
     {
-        LDAP v_LDAP = (LDAP)XJava.getObject("LDAP");
-        User v_User = (User)v_LDAP.queryEntry("ou=ZhengWei,dc=wzyb,dc=com");
+        LDAP     v_LDAP = (LDAP)XJava.getObject("LDAP");
+        UserInfo v_User = (UserInfo)v_LDAP.queryEntry("uid=52329,ou=users,dc=wzyb,dc=com");
         
         if ( v_User != null )
         {
@@ -123,6 +148,20 @@ public class JU_LDAP_V2
         {
             System.out.println(Date.getNowTime().getFullMilli() + "  查询异常.");
         }
+    }
+    
+    
+    @Test
+    public void test_SearchAllUser()
+    {
+        LDAP     v_LDAP     = (LDAP)XJava.getObject("LDAP");
+        UserInfo v_UserInfo = new UserInfo();
+        
+        v_UserInfo.setUserID("ou=users,dc=wzyb,dc=com");
+        v_UserInfo.setUserNo("52329");
+        
+        List<UserInfo> v_Datas = (List<UserInfo>)v_LDAP.searchEntrys(v_UserInfo);
+        Help.print(v_Datas);
     }
     
     
@@ -251,7 +290,7 @@ public class JU_LDAP_V2
     {
         LDAP v_LDAP = (LDAP)XJava.getObject("LDAP");
         
-        boolean v_Ret = v_LDAP.delEntry("ou=ZhengWei,dc=wzyb,dc=com");
+        boolean v_Ret = v_LDAP.delEntry("uid=52329,ou=users,dc=wzyb,dc=com");
         
         if ( v_Ret )
         {
@@ -269,7 +308,7 @@ public class JU_LDAP_V2
     public void test_092_Dels()
     {
         LDAP         v_LDAP = (LDAP)XJava.getObject("LDAP");
-        List<String> v_DNs  = new ArrayList<String>();  
+        List<String> v_DNs  = new ArrayList<String>();
         
         v_DNs.add("ou=Batch01,dc=wzyb,dc=com");
         v_DNs.add("ou=Batch02,dc=wzyb,dc=com");
