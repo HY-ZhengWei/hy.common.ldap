@@ -1,41 +1,39 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
-	<classpathentry kind="src" path="src"/>
-	<classpathentry kind="src" path="logConfig"/>
-	<classpathentry kind="src" path="test"/>
-	<classpathentry kind="lib" path="lib/antlr-2.7.7.jar"/>
-	<classpathentry combineaccessrules="false" kind="src" path="/hy.common.base"/>
-	<classpathentry combineaccessrules="false" kind="src" path="/hy.common.file"/>
-	<classpathentry combineaccessrules="false" kind="src" path="/hy.common.xjava"/>
-	<classpathentry kind="lib" path="lib/api-all-2.0.0.AM2.jar" sourcepath="apache-ldap-api-2.0.0.AM2-src.zip"/>
-	<classpathentry kind="lib" path="lib/api-asn1-api-2.0.0.AM2.jar"/>
-	<classpathentry kind="lib" path="lib/api-asn1-ber-2.0.0.AM2.jar"/>
-	<classpathentry kind="lib" path="lib/api-i18n-2.0.0.AM2.jar"/>
-	<classpathentry kind="lib" path="lib/api-ldap-client-api-2.0.0.AM2.jar"/>
-	<classpathentry kind="lib" path="lib/api-ldap-codec-core-2.0.0.AM2.jar"/>
-	<classpathentry kind="lib" path="lib/api-ldap-extras-aci-2.0.0.AM2.jar"/>
-	<classpathentry kind="lib" path="lib/api-ldap-extras-codec-2.0.0.AM2.jar"/>
-	<classpathentry kind="lib" path="lib/api-ldap-extras-codec-api-2.0.0.AM2.jar"/>
-	<classpathentry kind="lib" path="lib/api-ldap-model-2.0.0.AM2.jar"/>
-	<classpathentry kind="lib" path="lib/api-ldap-schema-converter-2.0.0.AM2.jar"/>
-	<classpathentry kind="lib" path="lib/api-ldap-schema-data-2.0.0.AM2.jar"/>
-	<classpathentry kind="lib" path="lib/api-util-2.0.0.AM2.jar"/>
-	<classpathentry kind="lib" path="lib/commons-codec-1.11.jar"/>
-	<classpathentry kind="lib" path="lib/commons-collections-3.2.2.jar"/>
-	<classpathentry kind="lib" path="lib/commons-lang-2.6.jar"/>
-	<classpathentry kind="lib" path="lib/commons-pool2-2.6.0.jar" sourcepath="apache-ldap-api-2.0.0.AM2-src"/>
-	<classpathentry kind="lib" path="lib/log4j-1.2.17.jar"/>
-	<classpathentry kind="lib" path="lib/mina-core-2.0.18.jar" sourcepath="/Volumes/HY_HD_06/Develop_HD/apache-maven-localRepository/org/apache/mina/mina-core/2.0.18/mina-core-2.0.18-sources.jar"/>
-	<classpathentry kind="lib" path="lib/org.apache.servicemix.bundles.antlr-2.7.7_5.jar"/>
-	<classpathentry kind="lib" path="lib/org.apache.servicemix.bundles.dom4j-1.6.1_5.jar"/>
-	<classpathentry kind="lib" path="lib/org.apache.servicemix.bundles.xpp3-1.1.4c_7.jar"/>
-	<classpathentry kind="lib" path="lib/servlet-api.jar"/>
-	<classpathentry kind="lib" path="lib/slf4j-api-1.7.25.jar"/>
-	<classpathentry kind="lib" path="lib/slf4j-log4j12-1.7.25.jar"/>
-	<classpathentry kind="lib" path="lib/xml-apis-2.0.2.jar"/>
-	<classpathentry kind="lib" path="lib/c3p0-0.9.2-pre5.jar"/>
-	<classpathentry kind="lib" path="lib/sqljdbc4.jar"/>
-	<classpathentry kind="lib" path="lib/junit-4.13.1.jar"/>
-	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
-	<classpathentry kind="output" path="bin"/>
+	<classpathentry kind="src" output="target/classes" path="src/main/java">
+		<attributes>
+			<attribute name="optional" value="true"/>
+			<attribute name="maven.pomderived" value="true"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry excluding="**" kind="src" output="target/classes" path="src/main/resources">
+		<attributes>
+			<attribute name="maven.pomderived" value="true"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="src" output="target/test-classes" path="src/test/java">
+		<attributes>
+			<attribute name="optional" value="true"/>
+			<attribute name="maven.pomderived" value="true"/>
+			<attribute name="test" value="true"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry excluding="**" kind="src" output="target/test-classes" path="src/test/resources">
+		<attributes>
+			<attribute name="maven.pomderived" value="true"/>
+			<attribute name="test" value="true"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.8">
+		<attributes>
+			<attribute name="maven.pomderived" value="true"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="con" path="org.eclipse.m2e.MAVEN2_CLASSPATH_CONTAINER">
+		<attributes>
+			<attribute name="maven.pomderived" value="true"/>
+			<attribute name="org.eclipse.jst.component.nondependency" value=""/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="output" path="target/classes"/>
 </classpath>
