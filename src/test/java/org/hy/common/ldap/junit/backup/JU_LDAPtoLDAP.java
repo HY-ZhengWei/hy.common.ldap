@@ -1,8 +1,10 @@
 package org.hy.common.ldap.junit.backup;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.hy.common.Help;
+import org.hy.common.StringHelp;
 import org.hy.common.ldap.LDAP;
 import org.hy.common.ldap.junit.dbtoldap.DSLdapUser;
 import org.hy.common.ldap.junit.dbtoldap.UserInfo;
@@ -63,6 +65,69 @@ public class JU_LDAPtoLDAP extends AppInitConfig
                 exce.printStackTrace();
             }
         }
+    }
+    
+    
+    @Test
+    public void test_Backup2023()
+    {
+        LDAP       v_LDAP01 = (LDAP)XJava.getObject("LDAP01");
+        LDAP       v_LDAP02 = (LDAP)XJava.getObject("LDAP02");
+        DSLdapUser v_User   = new DSLdapUser();
+        
+        List<DSLdapUser> v_Datas = new ArrayList<DSLdapUser>();
+        
+        String    v_UIDs   = StringHelp.replaceAll(StringHelp.replaceAll(XJava.getParam("UIDs").getValue() ,"\n" ,"") ,"\r" ,"");
+        String [] v_UIDArr = v_UIDs.split(",");
+        
+        for (String v_UID : v_UIDArr)
+        {
+            v_User = (DSLdapUser)v_LDAP01.queryEntry("uid=" + v_UID + ",ou=users,dc=wzyb,dc=com");
+            
+            if ( v_User != null )
+            {
+                v_Datas.add(v_User);
+            }
+        }
+        
+//        for (int x=50006; x<=52786; x++)
+//        {
+//            v_User = (DSLdapUser)v_LDAP01.queryEntry("uid=" + x + ",ou=users,dc=wzyb,dc=com");
+//
+//            if ( v_User != null )
+//            {
+//                v_Datas.add(v_User);
+//            }
+//
+//        }
+        
+        int              v_Count = 0;
+        
+        if ( !Help.isNull(v_Datas) )
+        {
+            //v_LDAP02.delEntryChildTree(v_User.getUserID());
+            // v_Count = v_LDAP02.addEntrys(v_Datas);
+            
+            
+            for (Object v_DataItem : v_Datas)
+            {
+                if ( v_DataItem instanceof DSLdapUser )
+                {
+                    v_LDAP02.delEntry(v_DataItem);
+                    if ( v_LDAP02.addEntry(v_DataItem) )
+                    {
+                        v_Count++;
+                    }
+                }
+                else
+                {
+                    $Logger.info(v_DataItem);
+                }
+            }
+            
+        }
+        
+        System.out.println("应备份 " + v_Datas.size() + " 条数据，实际成功备份 " + v_Count + " 条数据。");
     }
     
     

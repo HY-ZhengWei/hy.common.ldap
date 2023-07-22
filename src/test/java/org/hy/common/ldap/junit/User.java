@@ -15,10 +15,10 @@ import org.hy.common.xml.SerializableDef;
  *
  * @author      ZhengWei(HY)
  * @createDate  2017-02-14
- * @version     v1.0
+ * @version     v1.0@Ldap("top ,organizationalUnit")
  */
 /** 定义ObjectClass。多类名个用英文逗号分隔。 */
-@Ldap("top ,organizationalUnit")
+
 public class User extends SerializableDef
 {
     

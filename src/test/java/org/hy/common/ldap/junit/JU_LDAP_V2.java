@@ -138,7 +138,7 @@ public class JU_LDAP_V2
     public void test_003_QueryEntry()
     {
         LDAP     v_LDAP = (LDAP)XJava.getObject("LDAP");
-        UserInfo v_User = (UserInfo)v_LDAP.queryEntry("uid=52329,ou=users,dc=wzyb,dc=com");
+        UserInfo v_User = (UserInfo)v_LDAP.queryEntry("uid=969696,ou=users,dc=wzyb,dc=com");
         
         if ( v_User != null )
         {

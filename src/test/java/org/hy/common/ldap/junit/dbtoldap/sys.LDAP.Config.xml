@@ -20,7 +20,7 @@
             <ldapHost>10.1.90.22</ldapHost>              <!-- LDAP服务器IP -->
             <ldapPort>10389</ldapPort>                   <!-- 访问端号 -->
             <name>uid=admin,ou=system</name>             <!-- RootDN 用户名称 -->
-            <credentials>wzyb9114</credentials>          <!-- RootPW 用户密码 -->
+            <credentials></credentials>                  <!-- RootPW 用户密码 -->
         </connConfig>
         
         

@@ -9,6 +9,7 @@
     <import name="connPool"        class="org.apache.directory.ldap.client.api.LdapConnectionPool" />
     <import name="connPoolFactory" class="org.apache.directory.ldap.client.api.ValidatingPoolableLdapConnectionFactory" />
     <import name="ldap"            class="org.hy.common.ldap.LDAP" />
+    <import name="item"            class="org.hy.common.app.Param" />
     
     
     
@@ -20,7 +21,7 @@
             <ldapHost>10.1.90.22</ldapHost>                                            <!-- LDAP服务器IP -->
             <ldapPort>10389</ldapPort>                                                 <!-- 访问端号 -->
             <name        encrypt="org.hy.common.StringHelp">uid=admin,ou=system</name> <!-- RootDN 用户名称 -->
-            <credentials encrypt="org.hy.common.StringHelp">wzyb9114</credentials>     <!-- RootPW 用户密码 -->
+            <credentials encrypt="org.hy.common.StringHelp"></credentials>             <!-- RootPW 用户密码 -->
         </connConfig>
         
         
@@ -70,9 +71,17 @@
         <ldap id="LDAP01">
             <constructor>
                 <connPool ref="LDAPConnPool01" />
-                <String>org.hy.common</String>
+                <String>org.hy.common.ldap.junit</String>
             </constructor>
         </ldap>
+        
+        
+        <item id="UIDs">
+            <value>
+000012
+,0000150
+            </value>
+        </item>
         
     </xconfig>
     

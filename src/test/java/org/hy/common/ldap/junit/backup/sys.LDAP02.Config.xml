@@ -20,7 +20,7 @@
             <ldapHost>10.1.90.24</ldapHost>                                            <!-- LDAP服务器IP -->
             <ldapPort>10389</ldapPort>                                                 <!-- 访问端号 -->
             <name        encrypt="org.hy.common.StringHelp">uid=admin,ou=system</name> <!-- RootDN 用户名称 -->
-            <credentials encrypt="org.hy.common.StringHelp">wzyb9114</credentials>     <!-- RootPW 用户密码 -->
+            <credentials encrypt="org.hy.common.StringHelp"></credentials>             <!-- RootPW 用户密码 -->
         </connConfig>
         
         
@@ -70,7 +70,7 @@
         <ldap id="LDAP02">
             <constructor>
                 <connPool ref="LDAPConnPool02" />
-                <String>org.hy.common</String>
+                <String>org.hy.common.ldap.junit</String>
             </constructor>
         </ldap>
         
