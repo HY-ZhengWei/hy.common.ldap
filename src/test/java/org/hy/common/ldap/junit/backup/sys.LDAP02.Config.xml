@@ -21,6 +21,7 @@
             <ldapPort>10389</ldapPort>                                                 <!-- 访问端号 -->
             <name        encrypt="org.hy.common.StringHelp">uid=admin,ou=system</name> <!-- RootDN 用户名称 -->
             <credentials encrypt="org.hy.common.StringHelp"></credentials>             <!-- RootPW 用户密码 -->
+            <timeout>60000</timeout>
         </connConfig>
         
         
@@ -30,7 +31,7 @@
                 <connConfig ref="LDAPConnConfig02" />
             </constructor>
             
-            <timeOut>30000</timeOut>
+            <timeOut>60000</timeOut>
         </connFactory>
         
         
@@ -40,7 +41,7 @@
             <maxWait>-1</maxWait>
             <maxActive>100</maxActive>
             <maxIdle>10</maxIdle>
-            <minIdle>0</minIdle>
+            <minIdle>1</minIdle>
             <minEvictableIdleTimeMillis>1800000</minEvictableIdleTimeMillis>    <!-- 30分钟 -->
             <numTestsPerEvictionRun>3</numTestsPerEvictionRun>
             <softMinEvictableIdleTimeMillis>-1</softMinEvictableIdleTimeMillis>
