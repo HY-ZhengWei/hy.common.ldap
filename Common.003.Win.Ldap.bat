@@ -27,3 +27,5 @@ copy hy.common.ldap-sources.jar ..\..\..
 del /Q hy.common.ldap-sources.jar
 rd /s/q META-INF
 cd ..\..\..
+
+pause

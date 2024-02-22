@@ -41,7 +41,7 @@ import org.hy.common.ldap.LDAP;
  *  1. 将Java值对象翻译为LDAP条目
  *     1.1. Java类中的 @Ldap 注解将被翻译为本类。
  *     1.2. 再通过本类的 toEntry(...) 方法即可翻译成为 Apache LDAP API 中的条目对象。
- *     
+ * 
  *  2. 将LDAP条目翻译为Java值对象的实例
  *     2.1. Java类中的 @Ldap 注解将被翻译为本类。
  *     2.2. 再通过本类的 toObject(...) 方法即可翻译 Apache LDAP API 中的条目对象为Java值对象。
@@ -52,21 +52,21 @@ import org.hy.common.ldap.LDAP;
  *              v2.0  2018-12-06  添加：支持同一属性多个属性值的LDAP特性。
  *                                     Java对象用List<Object>或Set<Object>或数组Object[]定义成员变量的类型，来支持多属性值的LDAP特性。
  *                                     当Java成员变量为String这样的简单时，LDAP中同一属性有多个属性值时，随机取一个给Java成员变量赋值。
- *                                     
+ * 
  *                                     LDAP中的属性类型一般都是字符，而此类可以翻译为"条目配置翻译官"类指定的成员类型。
- *                                     
+ * 
  *              v3.0  2018-12-13  添加：RDN属性，指DN逗号最左边的部分，最小的子条目。用于更新特性功能。
  *                                     如，查询所有子及子子条目时，不包括Base DN自己。
- *                                     
+ * 
  *              v4.0  2018-12-14  添加：支Java对象用Map<Object ,Object>定义成员变量的类型，来支持多属性值情况下，旧值改为新值的场景。并且支持批量。
  *                                添加：相同名称的@Ladp("名称")注解，在同一Java对象的多个成员变量上定义。使其更加灵活好用。
  *                                     如下同一属性名称"mobile"，可以定义在同一个Java对象中。
- *                                         @Ldap("mobile") 
+ *                                         @Ldap("mobile")
  *                                         private String              tel;     // 用于单手机号的场景
- *                                         
+ * 
  *                                         @Ldap("mobile")
  *                                         private List<String>        tels;    // 用于多手机号的场景
- *                                         
+ * 
  *                                         @Ldap("mobile")
  *                                         private Map<String ,String> telMap;  // 用于多手机号有指定性修改的场景
  *                                                                              // Map.key   为旧属性值
@@ -78,14 +78,14 @@ public class LdapEntry
     /** Java值对象类的元类型。即有 @Ldap 注解的类 */
     private Class<?>          metaClass;
     
-    /** 
+    /**
      * LDAP中的"对象类ObjectClass"的名称组合成的ID。内部有自动排序过。区分大小写。
      * 
-     * 格式为："对象名称1,对象名称2,...对象名称n"。如，"top,person"。 
+     * 格式为："对象名称1,对象名称2,...对象名称n"。如，"top,person"。
      */
     private String            objectClassesID;
 
-    /** 
+    /**
      * LDAP中的"对象类ObjectClass"的名称。内部有自动排序过。
      * 
      * 格式为：List.get(index) = "对象名称" 。如，top、person等。
@@ -183,7 +183,7 @@ public class LdapEntry
         {
             return v_DN.substring(v_Index);
         }
-        else 
+        else
         {
             return "";
         }
@@ -200,9 +200,9 @@ public class LdapEntry
      *
      * @param i_Values
      * @return
-     * @throws InvocationTargetException 
-     * @throws IllegalArgumentException 
-     * @throws IllegalAccessException 
+     * @throws InvocationTargetException
+     * @throws IllegalArgumentException
+     * @throws IllegalAccessException
      */
     public String getDNValue(Object i_Values) throws IllegalAccessException, IllegalArgumentException, InvocationTargetException
     {
@@ -449,7 +449,7 @@ public class LdapEntry
                             {
                                 Value v_Value = v_Iter.next();
                                 
-                                v_Values.add(Help.toObject(v_ListItemClass ,v_Value.getValue()));
+                                v_Values.add(Help.toObject(v_ListItemClass ,v_Value.getString()));
                             }
                             
                             v_MPValue = v_Values;
@@ -465,7 +465,7 @@ public class LdapEntry
                             {
                                 Value v_Value = v_Iter.next();
                                 
-                                v_Values.add(Help.toObject(v_SetItemClass ,v_Value.getValue()));
+                                v_Values.add(Help.toObject(v_SetItemClass ,v_Value.getString()));
                             }
                             
                             v_MPValue = v_Values;
@@ -483,7 +483,7 @@ public class LdapEntry
                             {
                                 Value v_Value = v_Iter.next();
                                 
-                                Array.set(v_MPValue ,v_Index++ ,Help.toObject(v_ArrayItemClass ,v_Value.getValue()));
+                                Array.set(v_MPValue ,v_Index++ ,Help.toObject(v_ArrayItemClass ,v_Value.getString()));
                             }
                         }
                         else if ( MethodReflect.isExtendImplement(v_ItemMethod.getValue().getParameterTypes()[0] ,Map.class) )
@@ -497,7 +497,7 @@ public class LdapEntry
                             {
                                 Value v_Value = v_Iter.next();
                                 
-                                Object v_AttrValue = Help.toObject(v_MapItemClass ,v_Value.getValue());
+                                Object v_AttrValue = Help.toObject(v_MapItemClass ,v_Value.getString());
                                 v_Values.put(v_AttrValue ,v_AttrValue);
                             }
                             
@@ -509,7 +509,7 @@ public class LdapEntry
                             if ( v_Value != null )
                             {
                                 // 1.0.0版本中用的v_Value.getString()
-                                v_MPValue = Help.toObject(v_ItemMethod.getValue().getParameterTypes()[0] ,v_Value.getValue());
+                                v_MPValue = Help.toObject(v_ItemMethod.getValue().getParameterTypes()[0] ,v_Value.getString());
                             }
                             else
                             {
@@ -548,7 +548,7 @@ public class LdapEntry
      *                                     1. ( i_IsAdd &&  i_IsUpdate)为真时，新的插入、旧的删除：将LDAP数据库中的属性值修改为与i_NewValues属性值一样，不存在的将删除。
      *                                     2. ( i_IsAdd && !i_IsUpdate)为真时，新的插入、旧的保留：只向LDAP数据库中添加新的属性值，原LDAP数据库中的属性值将保留。
      *                                     3. (!i_IsAdd &&  i_IsUpdate)为真时，没有插入、旧的删除：不存于i_NewValues的属性值，将被删除。并不向LDAP数据库中添加任何新属性值。
-     *                                     
+     * 
      *              v3.0  2018-12-14  添加：支Java对象用Map<Object ,Object>定义成员变量的类型，来支持多属性值情况下，旧值改为新值的场景。并且支持批量。
      *
      * @param i_OldValues  LDAP服务中的旧值
@@ -559,7 +559,7 @@ public class LdapEntry
      * @return
      */
     @SuppressWarnings("unchecked")
-    public Return<ModifyRequest> toModify(Object i_OldValues ,Object i_NewValues 
+    public Return<ModifyRequest> toModify(Object i_OldValues ,Object i_NewValues
                                  ,boolean i_IsAdd
                                  ,boolean i_IsUpdate
                                  ,boolean i_IsDel)
@@ -749,7 +749,7 @@ public class LdapEntry
     {
         try
         {
-            return this.metaClass.newInstance();
+            return this.metaClass.getDeclaredConstructor().newInstance();
         }
         catch (Exception exce)
         {
@@ -774,7 +774,7 @@ public class LdapEntry
     /**
      * 设置：Java值对象类的元类型。即有 @Ldap 注解的类
      * 
-     * @param metaClass 
+     * @param metaClass
      */
     public void setMetaClass(Class<?> metaClass)
     {
@@ -800,7 +800,7 @@ public class LdapEntry
      * 
      * 格式为："对象名称1,对象名称2,...对象名称n"。如，"top,person"。
      * 
-     * @param objectClassesID 
+     * @param objectClassesID
      */
     public void setObjectClassesID(String objectClassesID)
     {
@@ -826,7 +826,7 @@ public class LdapEntry
      * 
      * 格式为：List.get(index) = "对象名称" 。如，top、person等。
      * 
-     * @param objectClasses 
+     * @param objectClasses
      */
     public void setObjectClasses(List<String> objectClasses)
     {
@@ -848,7 +848,7 @@ public class LdapEntry
     /**
      * 设置：获取DN值的getter方法
      * 
-     * @param dnGetMethod 
+     * @param dnGetMethod
      */
     public void setDnGetMethod(Method dnGetMethod)
     {
@@ -870,7 +870,7 @@ public class LdapEntry
     /**
      * 设置：设置DN值的setter方法
      * 
-     * @param dnSetMethod 
+     * @param dnSetMethod
      */
     public void setDnSetMethod(Method dnSetMethod)
     {
@@ -898,7 +898,7 @@ public class LdapEntry
      * Map.key   = "属性名称"。 如，o、ou等。
      * Map.value = Java属性对象的getter()方法
      * 
-     * @param elementsToLDAP 
+     * @param elementsToLDAP
      */
     public void setElementsToLDAP(TablePartitionRID<String ,Method> elementsToLDAP)
     {
@@ -926,7 +926,7 @@ public class LdapEntry
      * Map.key   = "属性名称"。 如，o、ou等。
      * Map.value = Java属性对象的setter()方法
      * 
-     * @param elementsToObject 
+     * @param elementsToObject
      */
     public void setElementsToObject(TablePartitionRID<String ,Method> elementsToObject)
     {
@@ -948,7 +948,7 @@ public class LdapEntry
     /**
      * 设置：指DN逗号最左边的部分，最小的子条目
      * 
-     * @param rdn 
+     * @param rdn
      */
     public void setRdn(String rdn)
     {

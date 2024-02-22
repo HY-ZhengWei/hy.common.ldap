@@ -272,8 +272,9 @@ public class LDAP
         {
             Value v_Value = v_Iter.next();
             
-            // 1.0.0版本中用的是v_Value.getString()
-            v_ObjectClasses.add(v_Value.getValue());
+            // 1.0.0    版本中用的是v_Value.getString()
+            // 2.0.0.AM2版本中用的是v_Value.getValue()
+            v_ObjectClasses.add(v_Value.getString());
         }
         
         Help.toSort(v_ObjectClasses);
