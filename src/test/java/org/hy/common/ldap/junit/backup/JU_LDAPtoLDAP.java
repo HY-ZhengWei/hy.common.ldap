@@ -82,7 +82,7 @@ public class JU_LDAPtoLDAP extends AppInitConfig
         
         for (String v_UID : v_UIDArr)
         {
-            v_User = (DSLdapUser)v_LDAP01.queryEntry("uid=" + v_UID + ",ou=users,dc=wzyb,dc=com");
+            v_User = (DSLdapUser)v_LDAP01.queryEntry("uid=" + v_UID + ",ou=users,dc=wwww,dc=com");
             
             if ( v_User != null )
             {
@@ -92,7 +92,7 @@ public class JU_LDAPtoLDAP extends AppInitConfig
         
 //        for (int x=50006; x<=52786; x++)
 //        {
-//            v_User = (DSLdapUser)v_LDAP01.queryEntry("uid=" + x + ",ou=users,dc=wzyb,dc=com");
+//            v_User = (DSLdapUser)v_LDAP01.queryEntry("uid=" + x + ",ou=users,dc=wwww,dc=com");
 //
 //            if ( v_User != null )
 //            {
@@ -143,7 +143,7 @@ public class JU_LDAPtoLDAP extends AppInitConfig
         LDAP       v_LDAP02 = (LDAP)XJava.getObject("LDAP02");
         DSLdapUser v_User   = new DSLdapUser();
         
-        v_User.setUserID("ou=users,dc=wzyb,dc=com");
+        v_User.setUserID("ou=users,dc=wwww,dc=com");
         
         List<DSLdapUser> v_Datas = (List<DSLdapUser>)v_LDAP01.searchEntrys(v_User);
         int              v_Count = 0;
@@ -187,7 +187,7 @@ public class JU_LDAPtoLDAP extends AppInitConfig
         LDAP       v_LDAP02 = (LDAP)XJava.getObject("LDAP02");
         DSLdapUser v_User   = new DSLdapUser();
         
-        v_User.setUserID("ou=weixin,dc=wzyb,dc=com");
+        v_User.setUserID("ou=weixin,dc=wwww,dc=com");
         
         List<?> v_Datas = v_LDAP01.searchEntrys(v_User);
         int     v_Count = 0;
@@ -215,7 +215,7 @@ public class JU_LDAPtoLDAP extends AppInitConfig
         LDAP     v_LDAP02   = (LDAP)XJava.getObject("LDAP02");
         UserInfo v_UserInfo = new UserInfo();
         
-        v_UserInfo.setUserID("ou=users,dc=wzyb,dc=com");
+        v_UserInfo.setUserID("ou=users,dc=wwww,dc=com");
         
         List<UserInfo> v_Datas = (List<UserInfo>)v_LDAP02.searchEntrys(v_UserInfo);
         int            v_Count = 0;

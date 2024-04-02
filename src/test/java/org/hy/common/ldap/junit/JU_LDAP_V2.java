@@ -55,7 +55,7 @@ public class JU_LDAP_V2
         LDAP v_LDAP = (LDAP)XJava.getObject("LDAP");
         
         User v_User = new User();
-        v_User.setId(      "ou=ZhengWei,dc=wzyb,dc=com");
+        v_User.setId(      "ou=ZhengWei,dc=wwww,dc=com");
         v_User.setName(    "ZhengWei");
         v_User.setPassword("1234567890");
         
@@ -81,11 +81,11 @@ public class JU_LDAP_V2
         User         v_User02 = new User();
         List<Object> v_Values = new ArrayList<Object>();
         
-        v_User01.setId(      "ou=Batch01,dc=wzyb,dc=com");
+        v_User01.setId(      "ou=Batch01,dc=wwww,dc=com");
         v_User01.setName(    "Batch01");
         v_User01.setPassword("1234567890");
         
-        v_User02.setId(      "ou=Batch02,dc=wzyb,dc=com");
+        v_User02.setId(      "ou=Batch02,dc=wwww,dc=com");
         v_User02.setName(    "Batch02");
         v_User02.setPassword("0987654321");
         
@@ -116,7 +116,7 @@ public class JU_LDAP_V2
         LDAP         v_LDAP   = (LDAP)XJava.getObject("LDAP");
         UserInfo     v_User   = new UserInfo();
         
-        v_User.setUserID("uid=52329,ou=users,dc=wzyb,dc=com");
+        v_User.setUserID("uid=52329,ou=users,dc=wwww,dc=com");
         v_User.setUserName("HY");
         v_User.setSurname("HY");
         
@@ -138,7 +138,7 @@ public class JU_LDAP_V2
     public void test_003_QueryEntry()
     {
         LDAP     v_LDAP = (LDAP)XJava.getObject("LDAP");
-        UserInfo v_User = (UserInfo)v_LDAP.queryEntry("uid=969696,ou=users,dc=wzyb,dc=com");
+        UserInfo v_User = (UserInfo)v_LDAP.queryEntry("uid=969696,ou=users,dc=wwww,dc=com");
         
         if ( v_User != null )
         {
@@ -157,7 +157,7 @@ public class JU_LDAP_V2
         LDAP     v_LDAP     = (LDAP)XJava.getObject("LDAP");
         UserInfo v_UserInfo = new UserInfo();
         
-        v_UserInfo.setUserID("ou=users,dc=wzyb,dc=com");
+        v_UserInfo.setUserID("ou=users,dc=wwww,dc=com");
         v_UserInfo.setUserNo("52329");
         
         List<UserInfo> v_Datas = (List<UserInfo>)v_LDAP.searchEntrys(v_UserInfo);
@@ -171,7 +171,7 @@ public class JU_LDAP_V2
     public void test_004_QueryEntryChilds()
     {
         LDAP       v_LDAP   = (LDAP)XJava.getObject("LDAP");
-        List<User> v_Entrys = (List<User>)v_LDAP.queryEntryChilds("dc=wzyb,dc=com");
+        List<User> v_Entrys = (List<User>)v_LDAP.queryEntryChilds("dc=wwww,dc=com");
         
         if ( !Help.isNull(v_Entrys) )
         {
@@ -191,7 +191,7 @@ public class JU_LDAP_V2
     public void test_005_QueryEntryTrees()
     {
         LDAP       v_LDAP   = (LDAP)XJava.getObject("LDAP");
-        List<User> v_Entrys = (List<User>)v_LDAP.queryEntryTrees("dc=wzyb,dc=com");
+        List<User> v_Entrys = (List<User>)v_LDAP.queryEntryTrees("dc=wwww,dc=com");
         
         if ( !Help.isNull(v_Entrys) )
         {
@@ -210,7 +210,7 @@ public class JU_LDAP_V2
     public void test_011_IsExists()
     {
         LDAP    v_LDAP     = (LDAP)XJava.getObject("LDAP");
-        boolean v_IsExists = v_LDAP.isExists("ou=ZhengWei,dc=wzyb,dc=com");
+        boolean v_IsExists = v_LDAP.isExists("ou=ZhengWei,dc=wwww,dc=com");
         
         if ( v_IsExists )
         {
@@ -231,7 +231,7 @@ public class JU_LDAP_V2
         User v_User         = new User();
         int  v_ModAttrCount = 0;
         
-        v_User.setId(      "ou=ZhengWei,dc=wzyb,dc=com");
+        v_User.setId(      "ou=ZhengWei,dc=wwww,dc=com");
         v_User.setName(    "ZhengWei");
         v_User.setPassword("改密码：ABC");
         v_User.setAddress( "新属性：西安");
@@ -290,7 +290,7 @@ public class JU_LDAP_V2
     {
         LDAP v_LDAP = (LDAP)XJava.getObject("LDAP");
         
-        boolean v_Ret = v_LDAP.delEntry("uid=52329,ou=users,dc=wzyb,dc=com");
+        boolean v_Ret = v_LDAP.delEntry("uid=52329,ou=users,dc=wwww,dc=com");
         
         if ( v_Ret )
         {
@@ -310,8 +310,8 @@ public class JU_LDAP_V2
         LDAP         v_LDAP = (LDAP)XJava.getObject("LDAP");
         List<String> v_DNs  = new ArrayList<String>();
         
-        v_DNs.add("ou=Batch01,dc=wzyb,dc=com");
-        v_DNs.add("ou=Batch02,dc=wzyb,dc=com");
+        v_DNs.add("ou=Batch01,dc=wwww,dc=com");
+        v_DNs.add("ou=Batch02,dc=wwww,dc=com");
         
         int v_Ret = v_LDAP.delEntrys(v_DNs);
         

@@ -60,7 +60,7 @@ public class JU_LDAP_Person
         LDAP     v_LDAP = (LDAP)XJava.getObject("LDAP");
         OUObject v_OU   = new OUObject();
         
-        v_OU.setId("ou=ou001,dc=wzyb,dc=com");
+        v_OU.setId("ou=ou001,dc=wwww,dc=com");
         v_OU.setDescription("说明");
         
         boolean v_Ret = v_LDAP.addEntry(v_OU);
@@ -78,7 +78,7 @@ public class JU_LDAP_Person
     
     
     /**
-     * 添加人员。测试前，先确保 ou=xx,dc=wzyb,dc=com 层次的树结构。
+     * 添加人员。测试前，先确保 ou=xx,dc=wwww,dc=com 层次的树结构。
      * 
      * @author      ZhengWei(HY)
      * @createDate  2018-12-06
@@ -102,7 +102,7 @@ public class JU_LDAP_Person
         v_Times[0] = new Date();
         v_Times[1] = new Date().getFirstTimeOfDay();
         
-        v_User.setPersonNo("uid=003,ou=xx,dc=wzyb,dc=com");
+        v_User.setPersonNo("uid=003,ou=xx,dc=wwww,dc=com");
         v_User.setName(    v_Names);
         v_User.setTimeList(Help.toList(v_Times));
         v_User.setTel(     v_Tels);
@@ -135,7 +135,7 @@ public class JU_LDAP_Person
     public void test_002_QueryPerson()
     {
         LDAP          v_LDAP = (LDAP)XJava.getObject("LDAP");
-        InetOrgPerson v_User = (InetOrgPerson)v_LDAP.queryEntry("uid=003,ou=xx,dc=wzyb,dc=com");
+        InetOrgPerson v_User = (InetOrgPerson)v_LDAP.queryEntry("uid=003,ou=xx,dc=wwww,dc=com");
         
         if ( v_User != null )
         {

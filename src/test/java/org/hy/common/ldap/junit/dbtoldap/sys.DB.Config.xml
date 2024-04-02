@@ -59,7 +59,7 @@
         <!-- SQL Server数据库 -->
         <dataSource id="DS_XLDAP_UnionA_01" if="SQLSERVER == XLDAP_DataSourceType.getValue">
             <driverClass>net.sourceforge.jtds.jdbc.Driver</driverClass>
-            <jdbcUrl>jdbc:jtds:sqlserver://10.1.50.229:1433;DatabaseName=wzyb</jdbcUrl>
+            <jdbcUrl>jdbc:jtds:sqlserver://10.1.50.229:1433;DatabaseName=wwww</jdbcUrl>
             <user>sa</user>
             <password></password>
             <maxPoolSize>100</maxPoolSize>

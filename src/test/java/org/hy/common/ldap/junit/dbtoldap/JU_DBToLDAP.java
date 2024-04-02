@@ -91,7 +91,7 @@ public class JU_DBToLDAP extends AppInitConfig
         
         
         LDAP     v_LDAP          = (LDAP)XJava.getObject("LDAP");
-        String   v_LDAPNodeDN    = "ou=users,dc=wzyb,dc=com";
+        String   v_LDAPNodeDN    = "ou=users,dc=wwww,dc=com";
         LDAPNode v_UsersLDAPNode = (LDAPNode)v_LDAP.queryEntry(v_LDAPNodeDN);
         
         // 如果父节点不存在，先创建父节点，之后再在父节点下创建用户数据。
@@ -294,15 +294,15 @@ public class JU_DBToLDAP extends AppInitConfig
         UserInfo v_User02 = new UserInfo();
         UserInfo v_User03 = new UserInfo();
         
-        v_User01.setUserID("ou=users,dc=wzyb,dc=com");
+        v_User01.setUserID("ou=users,dc=wwww,dc=com");
         v_User01.setLoginName("admin-xcx");   // 按账号
         v_User01.setLoginPwd("E10ADC3949BA59ABBE56E057F20F883E");
         
-        v_User02.setUserID("ou=users,dc=wzyb,dc=com");
+        v_User02.setUserID("ou=users,dc=wwww,dc=com");
         v_User02.setLoginName("51442");       // 按工号
         v_User02.setLoginPwd("E10ADC3949BA59ABBE56E057F20F883E");
         
-        v_User03.setUserID("ou=users,dc=wzyb,dc=com");
+        v_User03.setUserID("ou=users,dc=wwww,dc=com");
         v_User03.setLoginName("13600000000"); // 按手机号
         v_User03.setLoginPwd("E10ADC3949BA59ABBE56E057F20F883E");
         
@@ -351,7 +351,7 @@ public class JU_DBToLDAP extends AppInitConfig
         LDAP     v_LDAP     = (LDAP)XJava.getObject("LDAP");
         UserInfo v_UserInfo = new UserInfo();
         
-        v_UserInfo.setUserID("uid=52140,ou=users,dc=wzyb,dc=com");
+        v_UserInfo.setUserID("uid=52140,ou=users,dc=wwww,dc=com");
         v_UserInfo.setTel("3");
         v_UserInfo.setTel("4");
         v_UserInfo.setLastTime(new Date());
@@ -385,7 +385,7 @@ public class JU_DBToLDAP extends AppInitConfig
     {
         LDAP v_LDAP = (LDAP)XJava.getObject("LDAP");
         
-        v_LDAP.modifyAttribute("uid=52140,ou=users,dc=wzyb,dc=com" ,"mobile" ,"3");
+        v_LDAP.modifyAttribute("uid=52140,ou=users,dc=wwww,dc=com" ,"mobile" ,"3");
     }
     
     
@@ -403,7 +403,7 @@ public class JU_DBToLDAP extends AppInitConfig
     public void test_ModValues_ByMap()
     {
         LDAP     v_LDAP = (LDAP)XJava.getObject("LDAP");
-        UserInfo v_User = (UserInfo)v_LDAP.queryEntry("uid=52140,ou=users,dc=wzyb,dc=com");
+        UserInfo v_User = (UserInfo)v_LDAP.queryEntry("uid=52140,ou=users,dc=wwww,dc=com");
         
         if ( v_User == null )
         {
@@ -451,7 +451,7 @@ public class JU_DBToLDAP extends AppInitConfig
     {
         LDAP v_LDAP = (LDAP)XJava.getObject("LDAP");
         
-        v_LDAP.delAttribute("uid=52140,ou=users,dc=wzyb,dc=com" ,"mobile");
+        v_LDAP.delAttribute("uid=52140,ou=users,dc=wwww,dc=com" ,"mobile");
     }
     
     
@@ -470,7 +470,7 @@ public class JU_DBToLDAP extends AppInitConfig
         LDAP     v_LDAP     = (LDAP)XJava.getObject("LDAP");
         UserInfo v_UserInfo = new UserInfo();
         
-        v_UserInfo.setUserID("ou=users,dc=wzyb,dc=com");
+        v_UserInfo.setUserID("ou=users,dc=wwww,dc=com");
         v_UserInfo.setUserNo("52329");
         
         List<UserInfo> v_Datas = (List<UserInfo>)v_LDAP.searchEntrys(v_UserInfo);
@@ -574,7 +574,7 @@ public class JU_DBToLDAP extends AppInitConfig
         
         LDAPNode v_SuperNode = new LDAPNode();
         
-        v_SuperNode.setId("ou=weixin,dc=wzyb,dc=com");
+        v_SuperNode.setId("ou=weixin,dc=wwww,dc=com");
         v_SuperNode.setDescription("绑定微信OpenID的用户");
         
         v_LDAP.delEntryTree(v_SuperNode.getId());
@@ -590,7 +590,7 @@ public class JU_DBToLDAP extends AppInitConfig
         }
         
         
-        v_UserInfo.setUserID("ou=users,dc=wzyb,dc=com");
+        v_UserInfo.setUserID("ou=users,dc=wwww,dc=com");
         v_UserInfo.setOpenID("*");
         
         List<UserInfo> v_Datas     = (List<UserInfo>)v_LDAP.searchEntrys(v_UserInfo);
@@ -635,7 +635,7 @@ public class JU_DBToLDAP extends AppInitConfig
         LDAP     v_LDAP     = (LDAP)XJava.getObject("LDAP");
         UserInfo v_UserInfo = new UserInfo();
         
-        v_UserInfo.setUserID("ou=weixin,dc=wzyb,dc=com");
+        v_UserInfo.setUserID("ou=weixin,dc=wwww,dc=com");
         v_UserInfo.setOpenID("*");
         
         List<UserInfo> v_OpenIDs  = (List<UserInfo>)v_LDAP.searchEntrys(v_UserInfo);
