@@ -1,7 +1,7 @@
-Manifest-Version: 1.0.9
+Manifest-Version: 1.1.0
 Created-By: HY.ZhengWei@qq.com  2017
-Specification-Version: 1.0.9  2024-02-22
+Specification-Version: 1.1.0  2024-05-31
 SourceCode: https://github.com/HY-ZhengWei/hy.common.ldap
 SourceCodeChina: https://gitee.com/HY-ZhengWei/hy.common.ldap
-Build-JDK: 11
+Build-JDK: 17
 LDAP-API: 2.1.6

@@ -6,33 +6,19 @@
 
     <groupId>org</groupId>
     <artifactId>hy.common.ldap</artifactId>
-    <version>1.0.9</version>
+    <version>1.1.0</version>
     <packaging>jar</packaging>
 
-    <name>cn.openapis.hy.common.ldap</name>
+    <name>org.hy.common.ldap</name>
     <!-- https://gitee.com/HY-ZhengWei/hy.common.ldap -->
     <url>https://github.com/HY-ZhengWei/hy.common.ldap</url>
-    <description>cn.openapis.hy.common.ldap</description>
+    <description>org.hy.common.ldap</description>
 
     <properties>
         <maven.compiler.source>17</maven.compiler.source>
         <maven.compiler.target>17</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
-
-    <distributionManagement>
-        <snapshotRepository>
-            <id>maven-public</id>
-            <name>oss sonatype snapshots</name>
-            <url>https://s01.oss.sonatype.org/content/repositories/snapshots/</url>
-        </snapshotRepository>
-
-        <repository>
-            <id>maven-public</id>
-            <name>oss sonatype releases</name>
-            <url>https://s01.oss.sonatype.org/content/repositories/releases/</url>
-        </repository>
-    </distributionManagement>
 
     <licenses>
         <license>
@@ -52,37 +38,51 @@
 
     <dependencies>
         <dependency>
-            <groupId>cn.openapis</groupId>
+            <groupId>org</groupId>
             <artifactId>hy.common.base</artifactId>
-            <version>1.0.183</version>
+            <version>1.0.185</version>
             <scope>provided</scope>
         </dependency>
 
         <dependency>
-            <groupId>cn.openapis</groupId>
+            <groupId>org</groupId>
             <artifactId>hy.common.file</artifactId>
-            <version>1.3.0</version>
+            <version>1.3.1</version>
             <scope>provided</scope>
+            <exclusions>
+                <exclusion>
+                    <groupId>commons-codec</groupId>
+                    <artifactId>commons-codec</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>com.google.protobuf</groupId>
+                    <artifactId>protobuf-java</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.slf4j</groupId>
+                    <artifactId>slf4j-api</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
         
         <dependency>
-            <groupId>cn.openapis</groupId>
+            <groupId>org</groupId>
             <artifactId>hy.common.tpool</artifactId>
-            <version>1.3.7</version>
+            <version>1.3.8</version>
             <scope>provided</scope>
         </dependency>
 
         <dependency>
-            <groupId>cn.openapis</groupId>
+            <groupId>org</groupId>
             <artifactId>hy.common.net</artifactId>
-            <version>3.0.5</version>
+            <version>3.0.6</version>
             <scope>provided</scope>
         </dependency>
         
         <dependency>
-            <groupId>cn.openapis</groupId>
+            <groupId>org</groupId>
             <artifactId>hy.common.xjava</artifactId>
-            <version>4.5.2</version>
+            <version>4.5.5</version>
             <scope>provided</scope>
         </dependency>
         
@@ -90,6 +90,12 @@
             <groupId>org.apache.directory.api</groupId>
             <artifactId>api-all</artifactId>
             <version>2.1.6</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.apache.commons</groupId>
+                    <artifactId>commons-lang3</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
         
         <dependency>
@@ -106,13 +112,6 @@
             <scope>test</scope>
         </dependency>
     </dependencies>
-
-    <scm>
-        <tag>master</tag>
-        <url>git@github.com:HY-ZhengWei/hy.common.ldap.git</url>
-        <connection>git@github.com:HY-ZhengWei/hy.common.ldap.git</connection>
-        <developerConnection>git@github.com:HY-ZhengWei/hy.common.ldap.git</developerConnection>
-    </scm>
 
     <build>
         <resources>
