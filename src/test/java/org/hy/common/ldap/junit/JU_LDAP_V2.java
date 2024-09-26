@@ -151,6 +151,7 @@ public class JU_LDAP_V2
     }
     
     
+    @SuppressWarnings("unchecked")
     @Test
     public void test_SearchAllUser()
     {
